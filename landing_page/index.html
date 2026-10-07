@@ -64,14 +64,14 @@ a{text-decoration:none}
 .language-toggle{display:inline-flex;flex:none;align-items:center;justify-content:center;gap:4px;min-width:48px;height:28px;padding:2px 8px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-family:'VT323',monospace;font-size:15px;color:#0A2A52;cursor:pointer}
 .language-toggle:hover{filter:brightness(1.06)}
 .language-toggle:active{transform:translateY(1px);box-shadow:inset 0 1px 3px rgba(20,70,140,0.3)}
-.language-toggle:focus-visible{outline:2px solid #1C5FC4;outline-offset:2px}
+.language-toggle:focus-visible{outline:3px solid #FFC9E8;outline-offset:3px}
 .language-switcher{position:relative;flex:none}
 .language-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:6;min-width:140px;padding:5px;border:1px solid #ffffff;border-radius:7px;background:linear-gradient(180deg,#F4FAFF,#BFE0FB);box-shadow:0 6px 16px rgba(20,70,140,0.32),inset 0 1px 0 #ffffff}
 .language-menu[hidden]{display:none}
 .language-option{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:7px 9px;border:1px solid transparent;border-radius:4px;background:transparent;font-family:'VT323',monospace;font-size:17px;color:#0A2A52;text-align:left;cursor:pointer}
 .language-option:hover,.language-option[aria-checked="true"]{border-color:#8EBDE8;background:linear-gradient(180deg,#ffffff,#D8ECFC)}
 .language-option__check{color:#1C5FC4}
-.language-option:focus-visible{outline:2px solid #1C5FC4;outline-offset:-2px}
+.language-option:focus-visible{outline:3px solid #FFC9E8;outline-offset:-3px}
 .hero-greeting{max-width:100%;min-height:2.8em;line-height:1.4;letter-spacing:0.12em!important;white-space:pre-line;font-size:28px!important}
 .hero-greeting::after{content:"_";display:inline-block;margin-left:2px;animation:blink 1s steps(1) infinite}
 .hero-greeting.is-complete::after{display:none}
@@ -94,7 +94,7 @@ a{text-decoration:none}
 .xp-window__button--close{border-color:#A82020;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
 .xp-window__button:hover{filter:brightness(1.1)}
 .xp-window__button:active{transform:translateY(1px)}
-.xp-window__button:focus-visible{outline:2px solid #1C5FC4;outline-offset:1px}
+.xp-window__button:focus-visible{outline:3px solid #FFC9E8;outline-offset:2px}
 .xp-window__button svg{display:block}
 .xp-window__collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease}
 .xp-window__clip{min-height:0;overflow:hidden}
@@ -152,6 +152,12 @@ html.theme-pending,html.theme-pending body{overflow:hidden}
 .theme-choice:hover{filter:brightness(1.06);transform:translateY(-2px)}
 .theme-choice:active{transform:translateY(1px)}
 .theme-choice:focus-visible{outline:3px solid #FFC9E8;outline-offset:3px}
+.theme-gate__hint{margin:0;font-size:13px;opacity:0.7;text-align:center}
+/* Keyboard focus: one pink outline everywhere, the same as on the theme picker. */
+:focus-visible{outline:3px solid #FFC9E8;outline-offset:3px}
+.dock a:focus-visible,.route-home:focus-visible{border-radius:8px;outline:3px solid #FFC9E8;outline-offset:3px}
+.path-suggestion:focus-visible{outline:3px solid #FFC9E8;outline-offset:-3px}
+.status-bar:has(.path-search__input:focus-visible){outline:3px solid #FFC9E8;outline-offset:3px}
 .theme-choice__preview{display:grid;width:100%;height:64px;box-sizing:border-box;place-items:center;border:2px solid #ffffff;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(20,70,140,0.25)}
 .theme-choice__preview--light{background:radial-gradient(circle,rgba(255,255,255,0.9) 0 1px,transparent 1.6px) 0 0/14px 14px,linear-gradient(180deg,#EAF6FF,#7FCDFB 55%,#2E7FE0)}
 .theme-choice__preview--dark{background:radial-gradient(circle,rgba(255,255,255,0.9) 0 1px,transparent 1.6px) 0 0/14px 14px,linear-gradient(180deg,#0A1030,#18225E 55%,#352C7E)}
@@ -369,6 +375,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
           <span data-i18n="themeDark">Тёмная</span>
         </button>
       </div>
+      <p data-i18n="themeGateHint" class="theme-gate__hint">← → — выбрать, Enter — подтвердить</p>
     </div>
   </div>
 </div>
@@ -401,7 +408,7 @@ const translations = {
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',
     projectsWindowTitle:'проекты.zip',
-    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по страницам, статьям и проектам',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Обо мне',suggestAboutDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
     suggestLifiTitle:'Гибридная сеть Wi-Fi/LiFi',suggestLifiDetail:'Оптическая сеть для музейного комплекса',suggestVpnTitle:'Self-hosted VPN-инфраструктура',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -410,7 +417,7 @@ const translations = {
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub',navMail:'contact me',navMailLabel:'Contact me',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',
     projectsWindowTitle:'projects.zip',
-    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',routeHome:'To home page',routeAbout:'About this',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
+    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',routeHome:'To home page',routeAbout:'About this',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search pages, articles, and projects',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindProject:'project',suggestAboutTitle:'About me',suggestAboutDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
     suggestLifiTitle:'Hybrid Wi-Fi/LiFi Network',suggestLifiDetail:'Optical network for a museum complex',suggestVpnTitle:'Self-hosted VPN Infrastructure',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -1406,6 +1413,7 @@ function burstWindow(rect){
 function closeWindow(windowElement){
   if(windowElement.classList.contains('is-popping') || windowElement.classList.contains('is-closed'))return;
   const animate = !reducedMotion.matches;
+  const hadFocus = windowElement.contains(document.activeElement);
   if(animate){
     burstWindow(windowElement.getBoundingClientRect());
     windowElement.classList.add('is-popping');
@@ -1418,6 +1426,10 @@ function closeWindow(windowElement){
   window.setTimeout(()=>{
     windowElement.classList.remove('is-closed');
     if(animate)windowElement.classList.add('is-returning');
+    // If the window was closed from the keyboard, focus comes back to its close button.
+    if(hadFocus && (document.activeElement === document.body || !document.activeElement)){
+      windowElement.querySelector('[data-window-action="close"]')?.focus({preventScroll:true});
+    }
   },windowReturnDelay);
 }
 
@@ -1434,7 +1446,14 @@ document.addEventListener('click',event=>{
     windowElement.classList.toggle('is-expanded');
     updateWindowButtons(windowElement);
   }else if(action === 'maximize'){
-    navigateToPage(windowElement.closest('#route-view') ? 'home' : windowElement.dataset.windowPage);
+    const page = windowElement.dataset.windowPage;
+    const goingHome = Boolean(windowElement.closest('#route-view'));
+    navigateToPage(goingHome ? 'home' : page);
+    // A keyboard press (click without pointer) keeps focus on the same button in the window that is now shown.
+    if(event.detail === 0){
+      const target = goingHome ? document.querySelector(`#home-details [data-window-page="${page}"]`) : routeContent.querySelector('.xp-window');
+      target?.querySelector('[data-window-action="maximize"]')?.focus();
+    }
   }else{
     closeWindow(windowElement);
   }
@@ -1810,6 +1829,15 @@ function applyTheme(theme,persist=false){
 
 themeToggle.addEventListener('click',()=>{
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark',true);
+});
+// Arrow keys move between the two themes; Enter or Space on the focused one confirms it.
+themeGate.addEventListener('keydown',event=>{
+  const step = {ArrowLeft:-1,ArrowUp:-1,ArrowRight:1,ArrowDown:1}[event.key];
+  if(!step)return;
+  event.preventDefault();
+  const choices = [...themeGate.querySelectorAll('[data-theme-choice]')];
+  const index = choices.indexOf(document.activeElement);
+  choices[index < 0 ? 0 : (index + step + choices.length) % choices.length].focus();
 });
 themeGate.querySelectorAll('[data-theme-choice]').forEach(button=>button.addEventListener('click',()=>{
   applyTheme(button.dataset.themeChoice,true);
