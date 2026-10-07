@@ -86,12 +86,32 @@ a{text-decoration:none}
 .route-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;padding:5px 10px;border:1px solid #ffffff;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.94),rgba(207,235,255,0.78));box-shadow:0 3px 9px rgba(20,70,140,0.18)}
 .route-home{flex:none;padding:5px 11px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 4px rgba(20,70,140,0.25);color:#0A2A52!important;font-size:15px;cursor:pointer}
 .route-path{min-width:0;overflow:hidden;color:#0B2545!important;font-size:14px;text-overflow:ellipsis;white-space:nowrap}
-.route-info-window{overflow:hidden;border:2px solid #ffffff;border-radius:10px;background:#ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)}
-.route-info-title{padding:8px 12px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8);color:#ffffff!important;font-size:18px}
-.route-info-body{display:flex;flex-direction:column;gap:14px;padding:22px;background:#ffffff;color:#0B2545!important;font-size:17px;line-height:1.6}
-.route-info-body p{margin:0}
-.route-info-link{align-self:flex-start;box-sizing:border-box;max-width:100%;overflow-wrap:anywhere;padding:8px 12px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF,#BFE0FB);box-shadow:0 2px 5px rgba(20,70,140,0.2);color:#0B2545!important;text-decoration:none}
-.route-info-link:hover{filter:brightness(1.04)}
+.xp-window{overflow:hidden;border:2px solid #ffffff;border-radius:10px;background:#ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)}
+.xp-window__bar{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
+.xp-window__title{flex:1;min-width:0;overflow:hidden;font-size:18px;letter-spacing:1px;text-overflow:ellipsis;white-space:nowrap}
+.xp-window__buttons{display:flex;flex:none;gap:4px}
+.xp-window__button{display:inline-flex;width:19px;height:17px;padding:0;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:3px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);box-shadow:inset 0 1px 0 rgba(255,255,255,0.8);cursor:pointer}
+.xp-window__button--close{border-color:#A82020;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
+.xp-window__button:hover{filter:brightness(1.1)}
+.xp-window__button:active{transform:translateY(1px)}
+.xp-window__button:focus-visible{outline:2px solid #1C5FC4;outline-offset:1px}
+.xp-window__button svg{display:block}
+.xp-window__collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease}
+.xp-window__clip{min-height:0;overflow:hidden}
+.xp-window.is-minimized .xp-window__collapse{grid-template-rows:0fr}
+.xp-window__body{padding:22px;background:#ffffff}
+.xp-window__text{display:flex;flex-direction:column;gap:14px;font-size:17px;line-height:1.75}
+.xp-window__text p{margin:0}
+.xp-window.is-popping{animation:window-pop .26s ease-in forwards}
+@keyframes window-pop{40%{transform:scale(1.05)}100%{transform:scale(1.12);opacity:0}}
+.xp-window.is-closed{visibility:hidden}
+.xp-window.is-returning{animation:window-return .55s cubic-bezier(.2,1.4,.4,1)}
+@keyframes window-return{from{transform:scale(0.6);opacity:0}}
+.visitor-stats{display:flex;flex-direction:column;margin:0;padding:0;list-style:none}
+.visitor-stats__row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:12px 2px;border-top:1px dotted #4FA8E8;font-size:17px}
+.visitor-stats__row:first-child{border-top:0}
+.visitor-stats__value{font-size:24px}
+@media(prefers-reduced-motion:reduce){.xp-window.is-popping,.xp-window.is-returning{animation:none}.xp-window__collapse{transition:none}}
 .scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='white'%3E%3Ccircle cx='14' cy='18' r='1.4' opacity='.75'/%3E%3Ccircle cx='47' cy='9' r='1' opacity='.5'/%3E%3Ccircle cx='79' cy='21' r='1.6' opacity='.8'/%3E%3Ccircle cx='28' cy='46' r='1' opacity='.55'/%3E%3Ccircle cx='62' cy='41' r='1.3' opacity='.7'/%3E%3Ccircle cx='90' cy='55' r='.9' opacity='.45'/%3E%3Ccircle cx='9' cy='77' r='1.1' opacity='.6'/%3E%3Ccircle cx='44' cy='82' r='1.5' opacity='.75'/%3E%3Ccircle cx='74' cy='73' r='1' opacity='.5'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='131' height='131'%3E%3Cg fill='white'%3E%3Ccircle cx='31' cy='64' r='1.2' opacity='.6'/%3E%3Ccircle cx='97' cy='29' r='.9' opacity='.5'/%3E%3Ccircle cx='112' cy='103' r='1.3' opacity='.65'/%3E%3Ccircle cx='58' cy='120' r='.9' opacity='.45'/%3E%3C/g%3E%3C/svg%3E"),var(--sky)}
 .scene canvas{position:absolute;top:0;left:0;display:block}
 #scene-canvas{width:100%;height:100%}
@@ -105,12 +125,17 @@ a{text-decoration:none}
 :root{--sky:linear-gradient(180deg,#EAF6FF 0%,#7FCDFB 45%,#2E7FE0 100%)}
 html[data-theme="dark"]{--sky:linear-gradient(180deg,#0A1030 0%,#18225E 45%,#352C7E 100%)}
 html[data-theme="dark"] body{background:#18225E}
-.counter-window{align-self:center;max-width:100%;overflow:hidden;border:2px solid #ffffff;border-radius:9px;box-shadow:0 6px 16px rgba(20,70,140,0.28)}
-.counter-window__bar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:4px 6px 4px 10px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
-.counter-window__bar .window-title{font-size:14px;letter-spacing:1px}
-.counter-window__close{display:inline-flex;flex:none;width:15px;height:13px;align-items:center;justify-content:center;border:1px solid #A82020;border-radius:2px;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
-.counter-window__body{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 18px;background:#ffffff}
+.counter-window{box-sizing:border-box;align-self:center;width:100%;max-width:360px;transition:max-width .45s cubic-bezier(.2,1.1,.4,1)}
+.counter-window.is-expanded{max-width:780px}
+.counter-window__body{padding:0 18px}
+.counter-window__part{display:grid;overflow:hidden;transition:grid-template-rows .4s ease}
+.counter-window__part>div{min-height:0}
+.counter-window__part--summary,.counter-window.is-expanded .counter-window__part--stats{grid-template-rows:1fr}
+.counter-window__part--stats,.counter-window.is-expanded .counter-window__part--summary{grid-template-rows:0fr}
+.counter-window__summary{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 0}
+.counter-window__stats{padding:8px 4px 10px}
 .counter-window__heart{flex:none}
+@media(prefers-reduced-motion:reduce){.counter-window,.counter-window__part{transition:none}}
 .theme-toggle{min-width:36px;padding:2px 6px}
 .theme-toggle svg{display:block}
 .theme-toggle__moon,html[data-theme="dark"] .theme-toggle__sun{display:none!important}
@@ -120,8 +145,6 @@ html.theme-pending .theme-gate{display:flex}
 html.theme-pending,html.theme-pending body{overflow:hidden}
 .theme-gate__window{width:min(440px,100%);overflow:hidden;border:2px solid #ffffff;border-radius:12px;box-shadow:0 14px 40px rgba(11,37,69,0.45);animation:gate-pop .35s cubic-bezier(.2,1.4,.4,1)}
 @keyframes gate-pop{from{opacity:0;transform:scale(0.9) translateY(10px)}}
-.theme-gate__bar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
-.theme-gate__bar .window-title{font-size:16px;letter-spacing:1px}
 .theme-gate__body{display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 20px 24px;background:#ffffff}
 .theme-gate__text{margin:0;font-size:15px;line-height:1.6;text-align:center}
 .theme-gate__choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
@@ -137,36 +160,28 @@ html[data-theme="dark"] body *{color:#E3EEFF!important}
 html[data-theme="dark"] .dock a [data-i18n],html[data-theme="dark"] .hero-greeting,html[data-theme="dark"] .visitor-count{color:#E3EEFF!important;-webkit-text-fill-color:#E3EEFF!important}
 html[data-theme="dark"] .hero-greeting{color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;text-shadow:0 1px 0 #05081E,0 2px 4px rgba(5,8,30,0.9),0 0 10px rgba(255,201,232,0.75),0 0 22px rgba(127,205,251,0.6)!important}
 html[data-theme="dark"] .language-toggle,html[data-theme="dark"] .language-toggle *,html[data-theme="dark"] .route-home,html[data-theme="dark"] .route-home *,html[data-theme="dark"] .theme-choice *{color:#0A2A52!important}
-html[data-theme="dark"] .xp-window,html[data-theme="dark"] .route-info-window,html[data-theme="dark"] .theme-gate__window{border-color:rgba(170,210,255,0.55)!important;box-shadow:0 10px 26px rgba(0,0,0,0.45)!important}
-html[data-theme="dark"] .xp-window__bar,html[data-theme="dark"] .route-info-title,html[data-theme="dark"] .theme-gate__bar{background:linear-gradient(180deg,#6F8FEA,#2A3C9A)!important}
-html[data-theme="dark"] .xp-window__body,html[data-theme="dark"] .route-info-window,html[data-theme="dark"] .route-info-body,html[data-theme="dark"] .theme-gate__body{background:#10183E!important}
-html[data-theme="dark"] .skill-tag{background:rgba(79,168,232,0.16)!important;border-color:#6FB6F0!important}
+html[data-theme="dark"] .xp-window{border-color:rgba(170,210,255,0.55)!important;box-shadow:0 10px 26px rgba(0,0,0,0.45)!important}
+html[data-theme="dark"] .xp-window__bar{background:linear-gradient(180deg,#6F8FEA,#2A3C9A)!important}
+html[data-theme="dark"] .xp-window,html[data-theme="dark"] .xp-window__body{background:#10183E!important}
 html[data-theme="dark"] .status-bar,html[data-theme="dark"] .route-toolbar{background:linear-gradient(180deg,rgba(52,70,140,0.9),rgba(22,32,82,0.65))!important;border-color:rgba(170,210,255,0.5)!important;box-shadow:0 2px 10px rgba(0,0,0,0.35)!important}
 html[data-theme="dark"] .path-search__input::placeholder{color:#9DB8DD}
 html[data-theme="dark"] .path-suggestions,html[data-theme="dark"] .language-menu{border-color:rgba(170,210,255,0.5);background:linear-gradient(180deg,rgba(36,50,112,0.98),rgba(20,30,78,0.98))}
 html[data-theme="dark"] .path-suggestion:hover,html[data-theme="dark"] .path-suggestion[aria-selected="true"],html[data-theme="dark"] .language-option:hover,html[data-theme="dark"] .language-option[aria-checked="true"]{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.45),rgba(42,60,154,0.45));box-shadow:none}
-html[data-theme="dark"] .path-suggestion__icon,html[data-theme="dark"] .route-info-link{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.4),rgba(42,60,154,0.55))}
+html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.4),rgba(42,60,154,0.55))}
 html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
-.bubble-counter{position:fixed;top:50%;right:16px;z-index:20;width:190px;overflow:hidden;border:2px solid #ffffff;border-radius:10px;box-shadow:0 8px 22px rgba(20,70,140,0.35);transform:translateY(-50%);transition:width .35s ease,right .35s ease,border-radius .35s ease,transform .4s ease}
+.bubble-counter{position:fixed;top:50%;right:16px;z-index:20;width:214px;overflow:hidden;border:2px solid #ffffff;border-radius:10px;box-shadow:0 8px 22px rgba(20,70,140,0.35);transform:translateY(-50%);transition:width .35s ease,right .35s ease,border-radius .35s ease,transform .4s ease}
 .bubble-counter[hidden]{display:none}
 .bubble-counter.is-entering{animation:counter-fly-in .65s cubic-bezier(.2,1.3,.4,1)}
 .bubble-counter.is-leaving{animation:counter-fly-out .35s ease-in forwards}
 @keyframes counter-fly-in{from{transform:translate(calc(100% + 40px),-50%)}}
 @keyframes counter-fly-out{to{transform:translate(calc(100% + 40px),-50%)}}
-.bubble-counter__bar{display:flex;align-items:center;gap:6px;padding:4px 5px 4px 8px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
 .bubble-counter__icon{flex:none}
-.bubble-counter__title{flex:1;min-width:0;overflow:hidden;font-size:14px;letter-spacing:1px;text-overflow:ellipsis;white-space:nowrap}
-.bubble-counter__buttons{display:flex;flex:none;gap:3px}
-.bubble-counter__button{display:inline-flex;width:17px;height:15px;padding:0;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);cursor:pointer}
-.bubble-counter__button--close{border-color:#A82020;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
-.bubble-counter__button:hover{filter:brightness(1.1)}
-.bubble-counter__button:active{transform:translateY(1px)}
-.bubble-counter__button:focus-visible{outline:2px solid #1C5FC4;outline-offset:1px}
+.bubble-counter__title{flex:1}
 .bubble-counter__restore-icon,.bubble-counter.is-minimized .bubble-counter__minimize-icon{display:none}
 .bubble-counter.is-minimized .bubble-counter__restore-icon{display:block}
 .bubble-counter__collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s ease}
 .bubble-counter__clip{min-height:0;overflow:hidden}
-.bubble-counter.is-minimized{right:0;width:196px;border-bottom-width:0;border-radius:10px 10px 0 0;transform:translateY(-50%) translateX(calc(50% - 12.5px)) rotate(-90deg)}
+.bubble-counter.is-minimized{right:0;width:236px;border-bottom-width:0;border-radius:10px 10px 0 0;transform:translateY(-50%) translateX(calc(50% - 15.5px)) rotate(-90deg)}
 .bubble-counter.is-minimized .bubble-counter__collapse{grid-template-rows:0fr}
 .bubble-counter__body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 14px 14px;background:#ffffff}
 .bubble-counter__label{font-size:13px;letter-spacing:0.3em}
@@ -178,8 +193,6 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 .bubble-counter__meter{position:relative;display:block;width:100%;height:12px;box-sizing:border-box;overflow:hidden;border:1px solid #2A5FA8;border-radius:6px;background:#EAF6FF;box-shadow:inset 0 1px 3px rgba(20,70,140,0.3)}
 .bubble-counter__fill{position:absolute;top:1px;bottom:1px;left:1px;width:0;border-radius:3px;background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0) 60%),repeating-linear-gradient(90deg,#4FA8E8 0 7px,transparent 7px 9px)}
 .bubble-counter__fill.is-low{background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0) 60%),repeating-linear-gradient(90deg,#FF7FB8 0 7px,transparent 7px 9px)}
-.bubble-counter__status{font-size:12px;opacity:0.75}
-.bubble-counter__status:empty{display:none}
 .bubble-counter.is-resetting .bubble-counter__body{animation:counter-shake .45s ease}
 .bubble-counter.is-resetting .bubble-counter__count{color:#E0559A!important}
 @keyframes counter-shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
@@ -275,77 +288,37 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     </div>
 
     <div class="home-details" id="home-details">
-    <div id="about" class="xp-window" style="border-radius:10px;overflow:hidden;border:2px solid #ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)">
-      <div class="xp-window__bar" style="background:linear-gradient(180deg,#CFEBFF,#4FA8E8);padding:6px 12px;display:flex;align-items:center;justify-content:space-between">
-        <span data-i18n="aboutWindowTitle" class="window-title" style="font-family:'VT323',monospace;font-size:18px;color:#ffffff;letter-spacing:1px">about_me.txt</span>
-        <div style="display:flex;gap:5px" aria-hidden="true">
-          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg></span>
-          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></span>
-          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#FF9A90,#D32F2F);border:1px solid #A82020;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></span>
-        </div>
+    <section id="about" class="xp-window" data-window-page="about" aria-labelledby="about-window-title">
+      <div class="xp-window__bar">
+        <span data-i18n="aboutWindowTitle" id="about-window-title" class="window-title xp-window__title">обо_мне.txt</span>
       </div>
-      <div class="xp-window__body" style="background:#ffffff;padding:26px 22px;display:flex;flex-direction:column;gap:16px">
-        <p data-i18n="aboutDescription" style="margin:0;font-size:17px;line-height:1.75">Бакалавр и магистр по направлению «Инфокоммуникационные технологии и системы связи» (БФУ им. И. Канта, Калининград). Работаю на пересечении сетевой инженерии и ИБ — от проектирования беспроводных сетей до обнаружения атак на них.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:9px">
-          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Linux / Kali</span>
-          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Python / Scapy</span>
-          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Wireshark / Nmap</span>
-          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Cisco / VLAN</span>
-          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">DNS / DHCP</span>
-          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Bash</span>
-        </div>
+      <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body xp-window__text">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div></div></div>
+    </section>
+
+    <section id="projects" class="xp-window" data-window-page="projects" aria-labelledby="projects-window-title">
+      <div class="xp-window__bar">
+        <span data-i18n="projectsWindowTitle" id="projects-window-title" class="window-title xp-window__title">проекты.zip</span>
       </div>
-    </div>
+      <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body xp-window__text">
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.</p>
+      </div></div></div>
+    </section>
 
-    <div id="projects" class="xp-window" style="border-radius:10px;overflow:hidden;border:2px solid #ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)">
-      <div class="xp-window__bar" style="background:linear-gradient(180deg,#CFEBFF,#4FA8E8);padding:6px 12px;display:flex;align-items:center;justify-content:space-between">
-        <span data-i18n="projectsWindowTitle" class="window-title" style="font-family:'VT323',monospace;font-size:18px;color:#ffffff;letter-spacing:1px">projects.zip</span>
-        <div style="display:flex;gap:5px" aria-hidden="true">
-          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg></span>
-          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></span>
-          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#FF9A90,#D32F2F);border:1px solid #A82020;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></span>
-        </div>
+    <section id="visitors" class="xp-window counter-window" aria-labelledby="counter-window-title">
+      <div class="xp-window__bar">
+        <span data-i18n="counterWindowTitle" id="counter-window-title" class="window-title xp-window__title">посетители.exe</span>
       </div>
-      <div class="xp-window__body" style="background:#ffffff;padding:8px 22px 6px">
-
-        <div id="project-wifi" style="display:flex;gap:18px;padding:20px 0;border-top:1px dotted #4FA8E8">
-          <div style="font-family:'VT323',monospace;font-size:22px;color:#4FA8E8;min-width:30px">01</div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
-            <h3 data-i18n="wifiTitle" style="margin:0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:18px;color:#0B2545">Детектор Wi-Fi-атак</h3>
-            <p data-i18n="wifiDescription" style="margin:0;font-size:16px;line-height:1.65">CLI-инструмент на Python и Scapy: обнаружение deauth/disassociation-атак, флуда PS-Poll и слабого шифрования в реальном времени. ВКР бакалавриата.</p>
-            <a href="https://github.com/EtoKekyes/diplom" style="font-family:'VT323',monospace;font-size:18px;color:#1C5FC4">GitHub →</a>
-          </div>
-        </div>
-
-        <div id="project-lifi" style="display:flex;gap:18px;padding:20px 0;border-top:1px dotted #4FA8E8">
-          <div style="font-family:'VT323',monospace;font-size:22px;color:#4FA8E8;min-width:30px">02</div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
-            <h3 data-i18n="lifiTitle" style="margin:0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:18px;color:#0B2545">Гибридная сеть Wi-Fi/LiFi</h3>
-            <p data-i18n="lifiDescription" style="margin:0;font-size:16px;line-height:1.65">Проектирование оптической сети для музейного комплекса: энергетический бюджет канала, моделирование в OptiSystem. Магистерская диссертация.</p>
-          </div>
-        </div>
-
-        <div id="project-vpn" style="display:flex;gap:18px;padding:20px 0 24px;border-top:1px dotted #4FA8E8">
-          <div style="font-family:'VT323',monospace;font-size:22px;color:#4FA8E8;min-width:30px">03</div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
-            <h3 data-i18n="vpnTitle" style="margin:0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:18px;color:#0B2545">Self-hosted VPN-инфраструктура</h3>
-            <p data-i18n="vpnDescription" style="margin:0;font-size:16px;line-height:1.65">Мультипротокольный сервер (AmneziaWG, Reality, Hysteria2) с панелью, доменом и DNS-фильтрацией. Поднято с нуля.</p>
-            <span data-i18n="vpnComingSoon" style="font-family:'VT323',monospace;font-size:18px;color:#0B2545;opacity:0.7">подробнее скоро на поддомене →</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <section class="xp-window counter-window" aria-labelledby="counter-window-title">
-      <div class="xp-window__bar counter-window__bar">
-        <span data-i18n="counterWindowTitle" id="counter-window-title" class="window-title">посетители.exe</span>
-        <span class="counter-window__close" aria-hidden="true"><svg width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></span>
-      </div>
-      <div class="xp-window__body counter-window__body">
-        <svg class="counter-window__heart twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 100 100"><path d="M50 91 13 55C-1 40 8 15 28 12c10-2 18 3 22 12 4-9 12-14 22-12 20 3 29 28 15 43Z" fill="#FFC9E8" stroke="#4FA8E8" stroke-width="6"/></svg>
-        <span data-i18n="footerNote" class="visitor-count" aria-live="polite">Посетителей за всё время: …</span>
-      </div>
+      <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body counter-window__body">
+        <div class="counter-window__part counter-window__part--summary"><div><div class="counter-window__summary">
+          <svg class="counter-window__heart twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 100 100"><path d="M50 91 13 55C-1 40 8 15 28 12c10-2 18 3 22 12 4-9 12-14 22-12 20 3 29 28 15 43Z" fill="#FFC9E8" stroke="#4FA8E8" stroke-width="6"/></svg>
+          <span data-i18n="footerNote" class="visitor-count" aria-live="polite">Посетителей за всё время: …</span>
+        </div></div></div>
+        <div class="counter-window__part counter-window__part--stats"><div><div class="counter-window__stats" id="visitor-stats-panel"></div></div></div>
+      </div></div></div>
     </section>
 
   </div>
@@ -362,10 +335,10 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
 <aside class="xp-window bubble-counter" id="bubble-counter" aria-labelledby="bubble-counter-title" hidden>
   <div class="xp-window__bar bubble-counter__bar">
     <svg class="bubble-counter__icon" aria-hidden="true" width="14" height="14" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5" fill="#CFEBFF" stroke="#ffffff" stroke-width="1.5"/><ellipse cx="7" cy="6.5" rx="2.6" ry="1.5" fill="#ffffff" transform="rotate(-35 7 6.5)"/></svg>
-    <span class="window-title bubble-counter__title" id="bubble-counter-title">пузыри.exe</span>
-    <div class="bubble-counter__buttons">
-      <button class="bubble-counter__button" id="bubble-counter-minimize" type="button" aria-label="Свернуть"><svg class="bubble-counter__minimize-icon" aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg><svg class="bubble-counter__restore-icon" aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></button>
-      <button class="bubble-counter__button bubble-counter__button--close" id="bubble-counter-close" type="button" aria-label="Закрыть"><svg aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></button>
+    <span class="window-title xp-window__title bubble-counter__title" id="bubble-counter-title">пузыри.exe</span>
+    <div class="xp-window__buttons">
+      <button class="xp-window__button" id="bubble-counter-minimize" type="button" aria-label="Свернуть"><svg class="bubble-counter__minimize-icon" aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg><svg class="bubble-counter__restore-icon" aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></button>
+      <button class="xp-window__button xp-window__button--close" id="bubble-counter-close" type="button" aria-label="Закрыть"><svg aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></button>
     </div>
   </div>
   <div class="bubble-counter__collapse">
@@ -374,18 +347,17 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         <span data-i18n="bubbleComboLabel" class="bubble-counter__label">комбо</span>
         <span class="bubble-counter__score"><span class="bubble-counter__count" id="bubble-counter-count">0</span><span class="bubble-counter__goal" id="bubble-counter-goal">/100</span></span>
         <span class="bubble-counter__meter" id="bubble-counter-meter" aria-hidden="true"><span class="bubble-counter__fill" id="bubble-counter-fill"></span></span>
-        <span class="bubble-counter__status" id="bubble-counter-status"></span>
       </div>
     </div>
   </div>
 </aside>
 <div class="theme-gate" id="theme-gate" role="dialog" aria-modal="true" aria-labelledby="theme-gate-title" aria-describedby="theme-gate-text">
-  <div class="theme-gate__window">
-    <div class="theme-gate__bar">
+  <div class="xp-window theme-gate__window">
+    <div class="xp-window__bar theme-gate__bar">
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>
-      <span data-i18n="themeGateTitle" id="theme-gate-title" class="window-title">выбор_темы.exe</span>
+      <span data-i18n="themeGateTitle" id="theme-gate-title" class="window-title xp-window__title">выбор_темы.exe</span>
     </div>
-    <div class="theme-gate__body">
+    <div class="xp-window__body theme-gate__body">
       <p data-i18n="themeGateText" id="theme-gate-text" class="theme-gate__text">Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.</p>
       <div class="theme-gate__choices">
         <button class="theme-choice" type="button" data-theme-choice="light">
@@ -428,25 +400,17 @@ const translations = {
   ru:{
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',
-    aboutDescription:'Бакалавр и магистр по направлению «Инфокоммуникационные технологии и системы связи» (БФУ им. И. Канта, Калининград). Работаю на пересечении сетевой инженерии и ИБ — от проектирования беспроводных сетей до обнаружения атак на них.',
-    projectsWindowTitle:'проекты.zip',wifiTitle:'Детектор Wi-Fi-атак',wifiDescription:'CLI-инструмент на Python и Scapy: обнаружение deauth/disassociation-атак, флуда PS-Poll и слабого шифрования в реальном времени. ВКР бакалавриата.',
-    lifiTitle:'Гибридная сеть Wi-Fi/LiFi',lifiDescription:'Проектирование оптической сети для музейного комплекса: энергетический бюджет канала, моделирование в OptiSystem. Магистерская диссертация.',
-    vpnTitle:'Self-hosted VPN-инфраструктура',vpnDescription:'Мультипротокольный сервер (AmneziaWG, Reality, Hysteria2) с панелью, доменом и DNS-фильтрацией. Поднято с нуля.',vpnComingSoon:'подробнее скоро на поддомене →',
-    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',bubbleCounterCooldown:'перезарядка',secondsShort:'с',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
-    githubPageDescription:'Мой профиль с исходным кодом и разработкой проектов.',githubProjectTitle:'Детектор Wi-Fi-атак',githubProjectDescription:'CLI-инструмент на Python и Scapy для обнаружения Wi-Fi-атак.',githubProfileLink:'Открыть профиль GitHub →',githubProjectLink:'Открыть репозиторий →',contactPageDescription:'Для связи по вопросам проектов и сотрудничества напишите мне.',contactEmailLink:'Написать письмо →',
+    projectsWindowTitle:'проекты.zip',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по страницам, статьям и проектам',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Обо мне',suggestAboutDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
     suggestLifiTitle:'Гибридная сеть Wi-Fi/LiFi',suggestLifiDetail:'Оптическая сеть для музейного комплекса',suggestVpnTitle:'Self-hosted VPN-инфраструктура',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
   },
   en:{
-    navAbout:'about me',navAboutLabel:'About me',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub',navMail:'contact me',navMailLabel:'Contact me',
+    navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub',navMail:'contact me',navMailLabel:'Contact me',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',
-    aboutDescription:'I hold bachelor’s and master’s degrees in Infocommunication Technologies and Communication Systems from Immanuel Kant Baltic Federal University. My work sits at the intersection of network engineering and information security, from wireless network design to attack detection.',
-    projectsWindowTitle:'projects.zip',wifiTitle:'Wi-Fi Attack Detector',wifiDescription:'A Python and Scapy CLI tool for real-time detection of deauthentication/disassociation attacks, PS-Poll floods, and weak encryption. Bachelor’s thesis.',
-    lifiTitle:'Hybrid Wi-Fi/LiFi Network',lifiDescription:'Optical network design for a museum complex, including link power budget and OptiSystem modeling. Master’s thesis.',
-    vpnTitle:'Self-hosted VPN Infrastructure',vpnDescription:'A multi-protocol server (AmneziaWG, Reality, Hysteria2) with a control panel, domain, and DNS filtering, built from scratch.',vpnComingSoon:'more details coming to a subdomain →',
-    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',bubbleCounterCooldown:'recharging',secondsShort:'s',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',routeHome:'Home',routeAbout:'About me',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
-    githubPageDescription:'My profile with project source code and development.',githubProjectTitle:'Wi-Fi Attack Detector',githubProjectDescription:'A Python and Scapy CLI tool for detecting Wi-Fi attacks.',githubProfileLink:'Open GitHub profile →',githubProjectLink:'Open repository →',contactPageDescription:'For project and collaboration inquiries, send me an email.',contactEmailLink:'Write an email →',
+    projectsWindowTitle:'projects.zip',
+    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',routeHome:'To home page',routeAbout:'About this',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search pages, articles, and projects',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindProject:'project',suggestAboutTitle:'About me',suggestAboutDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
     suggestLifiTitle:'Hybrid Wi-Fi/LiFi Network',suggestLifiDetail:'Optical network for a museum complex',suggestVpnTitle:'Self-hosted VPN Infrastructure',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -581,12 +545,12 @@ const popComboReward = 5;
 // Each pop keeps the combo chain alive for this long; the counter window shows up at 50.
 const comboTimeout = 3.125;
 const comboCounterAt = 50;
-// Every 100 combo (100, 200, 300...) sends a 0.7s stream of 200 floaters, like blowing soap bubbles.
+// Every 100 combo up to 900 sends a 0.7s stream of 200 floaters, like blowing soap bubbles,
+// aimed within a 120° fan around the inward normal of a random edge.
 const comboMilestone = 100;
-const bubbleStreamCooldown = 60000;
 const bubbleStreamDuration = 0.7;
 const bubbleStreamCount = 200;
-const bubbleStreamSpread = 80 * Math.PI / 180;
+const bubbleStreamSpread = 60 * Math.PI / 180;
 // At 1000 the counter window flies to the middle and bursts into bubbles over the whole page,
 // then the combo rests for 10s before it counts again.
 const comboFinale = 1000;
@@ -602,9 +566,7 @@ let recentPopTimes = [];
 let comboCount = 0;
 let comboTimeLeft = 0;
 let comboLockedUntil = 0;
-let streamPending = false;
 let bubbleStream = null;
-let lastBubbleStream = -Infinity;
 let burstFloaters = [];
 let burstPopEffects = [];
 let burstCanvasDirty = false;
@@ -944,13 +906,7 @@ function registerPop(){
     return;
   }
   if(comboCount % comboMilestone === 0){
-    streamPending = true;
     playCounterEffect('is-celebrating');
-  }
-  // During the cooldown a reached milestone waits, and its stream fires on the first pop after the cooldown.
-  if(streamPending && now - lastBubbleStream >= bubbleStreamCooldown){
-    streamPending = false;
-    lastBubbleStream = now;
     const point = pickEdgePoint();
     bubbleStream = {
       x:point.x,
@@ -980,7 +936,6 @@ const bubbleCounterValue = document.querySelector('#bubble-counter-count');
 const bubbleCounterGoal = document.querySelector('#bubble-counter-goal');
 const bubbleCounterMeter = document.querySelector('#bubble-counter-meter');
 const bubbleCounterFill = document.querySelector('#bubble-counter-fill');
-const bubbleCounterStatus = document.querySelector('#bubble-counter-status');
 const bubbleCounterMinimize = document.querySelector('#bubble-counter-minimize');
 const bubbleCounterClose = document.querySelector('#bubble-counter-close');
 let bubbleCounterState = 'hidden';
@@ -1002,8 +957,6 @@ function renderBubbleCounter(){
   bubbleCounterMinimize.title = bubbleCounterMinimize.getAttribute('aria-label');
   bubbleCounterClose.setAttribute('aria-label',copy.windowClose);
   bubbleCounterClose.title = copy.windowClose;
-  const cooldownLeft = Math.ceil((bubbleStreamCooldown - (performance.now() - lastBubbleStream)) / 1000);
-  bubbleCounterStatus.textContent = streamPending && cooldownLeft > 0 ? `${copy.bubbleCounterCooldown} ${cooldownLeft}${copy.secondsShort}` : '';
 }
 
 function bumpCounter(){
@@ -1030,7 +983,6 @@ function finishCombo(effectClass){
   // The number visibly rolls down to zero: a shake when the combo breaks before 100, a glow after it.
   const startCount = shownComboCount;
   comboCount = 0;
-  streamPending = false;
   stopCounterRoll();
   playCounterEffect(effectClass);
   const startTime = performance.now();
@@ -1065,7 +1017,6 @@ function updateCombo(delta){
   // The meter drops a whole block at a time, like the Windows XP loading bar.
   const remaining = comboTimeLeft / comboTimeout;
   setCounterMeter(Math.ceil(remaining * meterBlocks - 0.0001),remaining > 0 && remaining < 0.3);
-  if(streamPending)renderBubbleCounter();
 }
 
 function showBubbleCounter(){
@@ -1080,7 +1031,6 @@ function startCounterFinale(){
   bubbleCounterState = 'finale';
   comboCount = 0;
   comboTimeLeft = 0;
-  streamPending = false;
   comboLockedUntil = performance.now() + finaleDuration + comboRestAfterFinale;
   stopCounterRoll();
   window.clearTimeout(counterEffectTimer);
@@ -1389,36 +1339,164 @@ reducedMotion.addEventListener('change',()=>{
   startScene();
 });
 
-function createRouteWindow(titleText,blocks){
-  const panel = document.createElement('section');
-  panel.className = 'route-info-window';
-  const title = document.createElement('div');
-  title.className = 'route-info-title window-title';
-  title.textContent = titleText;
-  const body = document.createElement('div');
-  body.className = 'route-info-body';
+const routePages = ['home','about','projects','github','contact'];
+const windowReturnDelay = 2000;
+const windowIcons = {
+  minimize:'<svg aria-hidden="true" width="9" height="9" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg>',
+  restore:'<svg aria-hidden="true" width="9" height="9" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg>',
+  maximize:'<svg aria-hidden="true" width="9" height="9" viewBox="0 0 8 8"><rect x="0.5" y="0.5" width="7" height="7" fill="none" stroke="#2A4A6E" stroke-width="1"/><rect x="0.5" y="0.5" width="7" height="1.8" fill="#2A4A6E"/></svg>',
+  restoreDown:'<svg aria-hidden="true" width="9" height="9" viewBox="0 0 8 8"><rect x="2.5" y="0.5" width="5" height="5" fill="none" stroke="#2A4A6E" stroke-width="1"/><rect x="0.5" y="2.5" width="5" height="5" fill="#F2F8FF" stroke="#2A4A6E" stroke-width="1"/></svg>',
+  close:'<svg aria-hidden="true" width="9" height="9" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg>'
+};
+let visitorStats = null;
 
-  blocks.forEach(block=>{
-    const element = document.createElement(block.type);
-    element.textContent = block.text;
-    if(block.href){
-      element.href = block.href;
-      element.className = 'route-info-link';
-      if(block.href.startsWith('https://')){
-        element.target = '_self';
-        element.rel = 'noopener';
-      }
-    }
-    body.append(element);
+function updateWindowButtons(windowElement){
+  const copy = translations[currentLanguage];
+  const isMinimized = windowElement.classList.contains('is-minimized');
+  // On a page of its own, or expanded in place, the window is already full size, so the middle button restores it.
+  const isMaximized = Boolean(windowElement.closest('#route-view')) || windowElement.classList.contains('is-expanded');
+  const states = {
+    minimize:isMinimized ? ['restore',copy.windowRestore] : ['minimize',copy.windowMinimize],
+    maximize:isMaximized ? ['restoreDown',copy.windowRestoreDown] : ['maximize',copy.windowMaximize],
+    close:['close',copy.windowClose]
+  };
+  windowElement.querySelectorAll('[data-window-action]').forEach(button=>{
+    const [icon,label] = states[button.dataset.windowAction];
+    button.innerHTML = windowIcons[icon];
+    button.setAttribute('aria-label',label);
+    button.title = label;
   });
+}
 
-  panel.append(title,body);
+function addWindowButtons(windowElement){
+  const buttons = document.createElement('div');
+  buttons.className = 'xp-window__buttons';
+  for(const action of ['minimize','maximize','close']){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = action === 'close' ? 'xp-window__button xp-window__button--close' : 'xp-window__button';
+    button.dataset.windowAction = action;
+    buttons.append(button);
+  }
+  windowElement.querySelector('.xp-window__bar').append(buttons);
+  updateWindowButtons(windowElement);
+}
+
+function burstWindow(rect){
+  // The window bursts like a bubble: rings, droplets and glitter spread over its whole area.
+  const sprite = floaterSprites.bubble[0];
+  const columns = Math.max(2,Math.round(rect.width / 90));
+  const rows = Math.max(1,Math.round(rect.height / 90));
+  for(let row = 0;row < rows;row++){
+    for(let column = 0;column < columns;column++){
+      createPopEffect({
+        type:'bubble',
+        x:rect.left + (column + 0.5) / columns * rect.width + randomBetween(-12,12),
+        y:rect.top + (row + 0.5) / rows * rect.height + randomBetween(-10,10),
+        size:randomBetween(34,62),
+        sprite,
+        rotation:0,
+        opacity:0,
+        sparkly:true
+      },burstPopEffects);
+    }
+  }
+}
+
+function closeWindow(windowElement){
+  if(windowElement.classList.contains('is-popping') || windowElement.classList.contains('is-closed'))return;
+  const animate = !reducedMotion.matches;
+  if(animate){
+    burstWindow(windowElement.getBoundingClientRect());
+    windowElement.classList.add('is-popping');
+  }
+  // The window keeps its place while it is gone, so the page does not jump, and comes back after 2s.
+  window.setTimeout(()=>{
+    windowElement.classList.remove('is-popping');
+    windowElement.classList.add('is-closed');
+  },animate ? 260 : 0);
+  window.setTimeout(()=>{
+    windowElement.classList.remove('is-closed');
+    if(animate)windowElement.classList.add('is-returning');
+  },windowReturnDelay);
+}
+
+document.addEventListener('click',event=>{
+  const button = event.target.closest('[data-window-action]');
+  if(!button)return;
+  const windowElement = button.closest('.xp-window');
+  const action = button.dataset.windowAction;
+  if(action === 'minimize'){
+    windowElement.classList.toggle('is-minimized');
+    updateWindowButtons(windowElement);
+  }else if(action === 'maximize' && windowElement.classList.contains('counter-window')){
+    // The visitors window stays on the home page and simply widens to show the full statistics.
+    windowElement.classList.toggle('is-expanded');
+    updateWindowButtons(windowElement);
+  }else if(action === 'maximize'){
+    navigateToPage(windowElement.closest('#route-view') ? 'home' : windowElement.dataset.windowPage);
+  }else{
+    closeWindow(windowElement);
+  }
+});
+document.addEventListener('animationend',event=>{
+  if(event.target.classList.contains('xp-window'))event.target.classList.remove('is-returning');
+});
+
+function createRouteWindow(page,titleText,content){
+  const panel = document.createElement('section');
+  panel.className = 'xp-window';
+  panel.dataset.windowPage = page;
+  panel.setAttribute('aria-label',titleText);
+  const bar = document.createElement('div');
+  bar.className = 'xp-window__bar';
+  const title = document.createElement('span');
+  title.className = 'window-title xp-window__title';
+  title.textContent = titleText;
+  bar.append(title);
+  const collapse = document.createElement('div');
+  collapse.className = 'xp-window__collapse';
+  const clip = document.createElement('div');
+  clip.className = 'xp-window__clip';
+  const body = document.createElement('div');
+  body.className = 'xp-window__body';
+  if(content)body.append(content);
+  clip.append(body);
+  collapse.append(clip);
+  panel.append(bar,collapse);
+  addWindowButtons(panel);
   return panel;
 }
 
+function renderVisitorStats(root = document){
+  root.querySelectorAll('[data-visitor-stat]').forEach(element=>{
+    const value = visitorStats ? visitorStats[element.dataset.visitorStat] : null;
+    element.textContent = Number.isSafeInteger(value) ? value.toLocaleString(currentLanguage) : '…';
+  });
+}
+
+function createVisitorStats(){
+  const copy = translations[currentLanguage];
+  const list = document.createElement('ul');
+  list.className = 'visitor-stats';
+  for(const [stat,labelKey] of [['allTime','statsAllTime'],['year','statsYear'],['month','statsMonth']]){
+    const row = document.createElement('li');
+    row.className = 'visitor-stats__row';
+    const label = document.createElement('span');
+    label.className = 'visitor-stats__label';
+    label.textContent = copy[labelKey];
+    const value = document.createElement('span');
+    value.className = 'visitor-stats__value';
+    value.dataset.visitorStat = stat;
+    row.append(label,value);
+    list.append(row);
+  }
+  renderVisitorStats(list);
+  return list;
+}
+
 function renderRoute(page){
-  const validPages = ['home','about','projects','github','contact'];
-  currentPage = validPages.includes(page) ? page : 'home';
+  currentPage = routePages.includes(page) ? page : 'home';
   const isHome = currentPage === 'home';
   homeDetails.hidden = !isHome;
   routeView.hidden = isHome;
@@ -1431,26 +1509,20 @@ function renderRoute(page){
   routePath.textContent = `C:\\keril.art\\${currentPage}`;
   routeContent.replaceChildren();
 
+  let panel;
   if(currentPage === 'about' || currentPage === 'projects'){
-    const panel = document.getElementById(currentPage).cloneNode(true);
+    panel = document.getElementById(currentPage).cloneNode(true);
     panel.removeAttribute('id');
+    panel.removeAttribute('aria-labelledby');
+    panel.setAttribute('aria-label',copy[`${currentPage}WindowTitle`]);
     panel.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));
-    routeContent.append(panel);
-  }else if(currentPage === 'github'){
-    routeContent.append(createRouteWindow(copy.routeGithub,[
-      {type:'p',text:copy.githubPageDescription},
-      {type:'a',text:'github.com/EtoKekyes',href:'https://github.com/EtoKekyes'},
-      {type:'h3',text:copy.githubProjectTitle},
-      {type:'p',text:copy.githubProjectDescription},
-      {type:'a',text:copy.githubProjectLink,href:'https://github.com/EtoKekyes/diplom'}
-    ]));
+    panel.classList.remove('is-minimized','is-closed','is-popping','is-returning');
   }else{
-    routeContent.append(createRouteWindow(copy.routeContact,[
-      {type:'p',text:copy.contactPageDescription},
-      {type:'a',text:'theredcatnyashovich@gmail.com',href:'mailto:theredcatnyashovich@gmail.com'},
-      {type:'a',text:copy.contactEmailLink,href:'mailto:theredcatnyashovich@gmail.com'}
-    ]));
+    // Content is cleared for now and will be rewritten; the window stays as an empty shell.
+    panel = createRouteWindow(currentPage,currentPage === 'github' ? copy.routeGithub : copy.routeContact);
   }
+  routeContent.append(panel);
+  updateWindowButtons(panel);
 
   document.title = `${copy[`route${currentPage[0].toUpperCase()}${currentPage.slice(1)}`]} | keril.art`;
 }
@@ -1461,8 +1533,7 @@ function pageFromLocation(){
 }
 
 function navigateToPage(page){
-  const validPages = ['home','about','projects','github','contact'];
-  if(!validPages.includes(page))return;
+  if(!routePages.includes(page))return;
   const nextHash = page === 'home' ? '' : `#page=${page}`;
   if(location.hash !== nextHash){
     try{
@@ -1497,10 +1568,15 @@ async function fetchVisitorCount(){
     const data = await response.json();
     if(!Number.isSafeInteger(data.uniqueVisitorsAllTime) || data.uniqueVisitorsAllTime < 0)throw new Error('Invalid counter response');
     visitorsAllTime = data.uniqueVisitorsAllTime;
-    renderVisitorCount();
-  }catch(error){
-    renderVisitorCount();
-  }
+    const period = value=>Number.isSafeInteger(value) && value >= 0 ? value : null;
+    visitorStats = {
+      allTime:visitorsAllTime,
+      year:period(data.uniqueVisitorsPastYear),
+      month:period(data.uniqueVisitorsPastMonth)
+    };
+  }catch(error){}
+  renderVisitorCount();
+  renderVisitorStats();
 }
 
 function animateGreeting(text){
@@ -1552,6 +1628,8 @@ function applyLanguage(language,persist=false){
   }
   if(!suggestionsList.hidden)renderSuggestions();
   if(currentPage !== 'home')renderRoute(currentPage);
+  document.querySelectorAll('#home-details .xp-window').forEach(updateWindowButtons);
+  document.querySelector('#visitor-stats-panel').replaceChildren(createVisitorStats());
   renderBubbleCounter();
 }
 
@@ -1745,6 +1823,7 @@ if(document.documentElement.classList.contains('theme-pending')){
   pageShell.inert = true;
   themeGate.querySelector(`[data-theme-choice="${document.documentElement.dataset.theme}"]`).focus();
 }
+document.querySelectorAll('#home-details .xp-window').forEach(addWindowButtons);
 applyLanguage(getInitialLanguage());
 renderRoute(pageFromLocation());
 fetchVisitorCount();

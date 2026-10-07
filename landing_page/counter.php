@@ -97,51 +97,86 @@ $pageViews++;
 flock($log, LOCK_UN);
 fclose($log);
 
-// All-time uniques use a separate keyed hash that never rotates; each browser is stored once.
+// All-time list: one line per browser with a stable keyed hash and the dates of its first and
+// latest visit. A browser counts for the past month or year if its latest visit falls inside.
 $allTimeVisitorHash = hash_hmac('sha256', 'all-time:' . $visitorId, $secret);
-$allTimeLog = @fopen($dataDirectory . '/all-visitors.jsonl', 'c+');
-if ($allTimeLog === false) {
+$allTimePath = $dataDirectory . '/all-visitors.jsonl';
+$allTimeLock = @fopen($dataDirectory . '/all-visitors.lock', 'c');
+if ($allTimeLock === false) {
     respond(503, ['error' => 'counter_log_unavailable']);
 }
-if (!flock($allTimeLog, LOCK_EX)) {
-    fclose($allTimeLog);
+if (!flock($allTimeLock, LOCK_EX)) {
+    fclose($allTimeLock);
     respond(503, ['error' => 'counter_lock_unavailable']);
 }
 
-$allTimeVisitors = 0;
-$isKnownVisitor = false;
-rewind($allTimeLog);
-while (($line = fgets($allTimeLog)) !== false) {
-    $entry = json_decode($line, true);
-    if (is_array($entry) && isset($entry['visitor']) && is_string($entry['visitor'])
-        && preg_match('/\A[a-f0-9]{64}\z/D', $entry['visitor'])) {
-        $allTimeVisitors++;
-        if (hash_equals($entry['visitor'], $allTimeVisitorHash)) {
-            $isKnownVisitor = true;
+$allTimeVisitors = [];
+$allTimeContents = @file_get_contents($allTimePath);
+if ($allTimeContents !== false) {
+    foreach (explode("\n", $allTimeContents) as $line) {
+        $entry = json_decode($line, true);
+        if (!is_array($entry) || !isset($entry['visitor'], $entry['firstSeen']) || !is_string($entry['visitor'])
+            || !preg_match('/\A[a-f0-9]{64}\z/D', $entry['visitor'])
+            || !is_string($entry['firstSeen']) || !preg_match('/\A\d{4}-\d{2}-\d{2}\z/D', $entry['firstSeen'])) {
+            continue;
         }
+        $lastSeen = isset($entry['lastSeen']) && is_string($entry['lastSeen'])
+            && preg_match('/\A\d{4}-\d{2}-\d{2}\z/D', $entry['lastSeen']) ? $entry['lastSeen'] : $entry['firstSeen'];
+        $allTimeVisitors[$entry['visitor']] = ['firstSeen' => $entry['firstSeen'], 'lastSeen' => $lastSeen];
     }
 }
 
-if (!$isKnownVisitor) {
-    $allTimeEntry = json_encode([
-        'firstSeen' => $today,
-        'visitor' => $allTimeVisitorHash,
-    ], JSON_UNESCAPED_SLASHES);
-    $allTimeOffset = ftell($allTimeLog);
-    $allTimeLine = $allTimeEntry . "\n";
-    if ($allTimeEntry === false || $allTimeOffset === false || fseek($allTimeLog, 0, SEEK_END) !== 0
-        || fwrite($allTimeLog, $allTimeLine) !== strlen($allTimeLine) || !fflush($allTimeLog)) {
-        if ($allTimeOffset !== false) {
-            ftruncate($allTimeLog, $allTimeOffset);
+$allTimeChanged = false;
+if (!isset($allTimeVisitors[$allTimeVisitorHash])) {
+    $allTimeVisitors[$allTimeVisitorHash] = ['firstSeen' => $today, 'lastSeen' => $today];
+    $allTimeChanged = true;
+} elseif ($allTimeVisitors[$allTimeVisitorHash]['lastSeen'] !== $today) {
+    $allTimeVisitors[$allTimeVisitorHash]['lastSeen'] = $today;
+    $allTimeChanged = true;
+}
+
+// The list is rewritten at most once per browser per day, through a temporary file and an atomic rename.
+if ($allTimeChanged) {
+    $allTimeLines = '';
+    foreach ($allTimeVisitors as $hash => $dates) {
+        $allTimeLine = json_encode([
+            'firstSeen' => $dates['firstSeen'],
+            'lastSeen' => $dates['lastSeen'],
+            'visitor' => (string) $hash,
+        ], JSON_UNESCAPED_SLASHES);
+        if ($allTimeLine === false) {
+            flock($allTimeLock, LOCK_UN);
+            fclose($allTimeLock);
+            respond(503, ['error' => 'counter_log_write_failed']);
         }
-        flock($allTimeLog, LOCK_UN);
-        fclose($allTimeLog);
+        $allTimeLines .= $allTimeLine . "\n";
+    }
+    $temporaryPath = $allTimePath . '.tmp';
+    if (@file_put_contents($temporaryPath, $allTimeLines) !== strlen($allTimeLines)
+        || !@rename($temporaryPath, $allTimePath)) {
+        @unlink($temporaryPath);
+        flock($allTimeLock, LOCK_UN);
+        fclose($allTimeLock);
         respond(503, ['error' => 'counter_log_write_failed']);
     }
-    $allTimeVisitors++;
 }
-flock($allTimeLog, LOCK_UN);
-fclose($allTimeLog);
+
+// Periods are rolling and include today: 30 and 365 days.
+$periodStarts = [
+    'month' => gmdate('Y-m-d', time() - 29 * 86400),
+    'year' => gmdate('Y-m-d', time() - 364 * 86400),
+];
+$periodVisitors = ['month' => 0, 'year' => 0];
+foreach ($allTimeVisitors as $dates) {
+    foreach ($periodStarts as $period => $start) {
+        if ($dates['lastSeen'] >= $start) {
+            $periodVisitors[$period]++;
+        }
+    }
+}
+$allTimeVisitorCount = count($allTimeVisitors);
+flock($allTimeLock, LOCK_UN);
+fclose($allTimeLock);
 
 $retentionDate = gmdate('Y-m-d', time() - 90 * 86400);
 foreach (glob($dataDirectory . '/visitors-*.jsonl') ?: [] as $oldLogPath) {
@@ -155,5 +190,7 @@ respond(200, [
     'date' => $today,
     'uniqueVisitorsToday' => count($uniqueVisitors),
     'pageViewsToday' => $pageViews,
-    'uniqueVisitorsAllTime' => $allTimeVisitors,
+    'uniqueVisitorsAllTime' => $allTimeVisitorCount,
+    'uniqueVisitorsPastMonth' => $periodVisitors['month'],
+    'uniqueVisitorsPastYear' => $periodVisitors['year'],
 ]);
