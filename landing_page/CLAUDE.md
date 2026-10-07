@@ -90,7 +90,10 @@
   Новые блоки должны выглядеть нормально в обеих темах
 - клавиатура: всё функциональное доступно по Tab, фокус везде показан одним
   розовым контуром `outline:3px solid #FFC9E8` (`:focus-visible`; у поиска
-  контур рисуется на `.status-bar`). Новые кнопки и ссылки должны получать
+  контур рисуется на `.status-bar` и только в клавиатурном режиме —
+  класс `html.is-keyboard-nav` ставится по Tab и снимается любым нажатием
+  мыши/пальца). Tab закрывает открытые подсказки поиска и меню языка.
+  Новые кнопки и ссылки должны получать
   этот же контур, без синих/своих вариантов. После закрытия окна с
   клавиатуры фокус возвращается на его кнопку, после "на весь экран" —
   на кнопку окна открывшейся страницы
@@ -156,67 +159,90 @@ find-and-replace, если нужно поменять цвет везде).
 
 ## Деплой на VPS (keril.art)
 На сервере, где уже поднят 3x-ui/VPN-стек (см. vpn-guide.md), сайт
-обслуживается через nginx, а счётчик — через PHP-FPM.
+обслуживается через nginx, а счётчик — через PHP-FPM. Готовый
+защищённый конфиг nginx лежит в репозитории: `deploy/nginx/keril.art.conf`.
 
+На сайт выкладываются три файла:
 ```bash
-scp index.html counter.php vpnuser@ВАШ_IP:/var/www/keril.art/
+scp index.html counter.php robots.txt vpnuser@ВАШ_IP:/var/www/keril.art/
+scp ../deploy/nginx/keril.art.conf vpnuser@ВАШ_IP:/tmp/keril.art.conf
 ```
 
 На сервере (один раз):
 ```bash
 sudo apt install php-fpm
-ls /run/php/
+ls /run/php/                      # имя сокета PHP-FPM для конфига
 sudo install -d -o www-data -g www-data -m 0750 /var/lib/keril.art/counter
 sudo install -d -o root -g www-data -m 0750 /etc/keril.art
 openssl rand -hex 32 | sudo tee /etc/keril.art/counter-secret >/dev/null
 sudo chown root:www-data /etc/keril.art/counter-secret
 sudo chmod 0640 /etc/keril.art/counter-secret
 sudo mkdir -p /var/www/keril.art
-sudo nano /etc/nginx/sites-available/keril.art
-```
-```nginx
-server {
-    listen 80;
-    server_name keril.art www.keril.art;
-    root /var/www/keril.art;
-    index index.html;
-
-    location ~ \.php$ {
-      try_files $uri =404;
-      include snippets/fastcgi-php.conf;
-      fastcgi_pass unix:/run/php/php8.4-fpm.sock;
-    }
-}
-```
-```bash
+sudo mv /tmp/keril.art.conf /etc/nginx/sites-available/keril.art
+sudo nano /etc/nginx/sites-available/keril.art   # проверить php8.4-fpm.sock
 sudo ln -s /etc/nginx/sites-available/keril.art /etc/nginx/sites-enabled/
+sudo certbot certonly --webroot -w /var/www/keril.art -d keril.art -d www.keril.art
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d keril.art -d www.keril.art
 ```
-(Порт 80/443 должны быть открыты в `ufw` и свободны от других сервисов
-— проверить, что certbot ещё не занял их под другой домен.)
+`listen 443` в конфиге ждёт сертификат: если его ещё нет, сначала временно
+запусти только блок на 80 порту (или `certbot --nginx`) и после выпуска
+добавь `ssl_certificate`/`ssl_certificate_key` в блок 443. Порты 80/443
+должны быть открыты в `ufw` и свободны от других сервисов (проверить, что
+VPN-стек их не занимает). Директива `listen ... ssl http2` выбрана ради
+совместимости с nginx 1.24 (Ubuntu 24.04); на 1.25+ она даёт только
+предупреждение.
 
-В nginx-примере замени `php8.4-fpm.sock` на сокет, который показала
-команда `ls /run/php/`. После изменения конфигурации проверь её
-(`nginx -t`) и перезагрузи nginx. При следующих обновлениях копируй оба
-файла:
-```bash
-scp index.html counter.php vpnuser@ВАШ_IP:/var/www/keril.art/
-```
+### Защита (что где)
+- nginx (`deploy/nginx/keril.art.conf`): HTTP → HTTPS, HSTS, CSP,
+  `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`,
+  `server_tokens off`; только GET/HEAD/POST; исполняется только
+  `counter.php`, прочие `.php` и скрытые файлы (`.git`, `.env`) — 404,
+  кроме `.well-known` для certbot; лимиты на IP: страницы 10 запросов/с
+  (всплеск 40), счётчик 30/мин (всплеск 10), 20 соединений, ответ 429.
+- `index.html`: тот же CSP через `<meta>`, на случай если сайт открыт без
+  этого конфига.
+- `robots.txt` запрещает честным ботам трогать `counter.php`.
+- `counter.php`: см. ниже.
 
-Счётчик на сайте показывает уникальные браузеры за всё время
-(`uniqueVisitorsAllTime`), а развёрнутое окно посетителей — ещё за
-последние 30 и 365 дней (`uniqueVisitorsPastMonth`/`PastYear`). Их
-список — `all-visitors.jsonl` в `/var/lib/keril.art/counter/`: по одной
+### Счётчик и cookie
+Внизу сайта баннер "cookies.exe" (`#cookie-banner`) с кнопками
+"Принять"/"Отказаться"; выбор хранится в `localStorage`
+(`keril-art-cookies`), изменить его можно ссылкой "настройки cookie"
+(`#cookie-settings`). Пока выбора нет или выбран отказ, сайт только
+читает статистику (`GET counter.php`) — cookie не ставится, визит не
+считается. После "Принять" — `POST counter.php` с заголовком
+`X-Keril-Counter: 1`. Отказ после согласия — `POST counter.php?action=forget`:
+запись этого браузера удаляется, cookie стирается.
+
+Как `counter.php` защищается от ботов и накрутки:
+- визит засчитывается только когда браузер вернул cookie из прошлого
+  ответа (первый POST ставит cookie и отвечает `needsConfirmation`,
+  страница сразу повторяет запрос) — клиенты без cookie не считаются;
+- запись только POST'ом с заголовком `X-Keril-Counter: 1` и, если браузер
+  их прислал, с совпадающими `Origin` и `Sec-Fetch-Site: same-origin`,
+  иначе 403; другие методы — 405;
+- User-Agent с признаками ботов/скриптов (bot, crawl, headless, curl,
+  python и т.п.) или пустой — не считается (сам UA не сохраняется);
+- список не растёт больше 500 000 записей (`KERIL_COUNTER_MAX_VISITORS`).
+
+Хранение: `all-visitors.jsonl` в `/var/lib/keril.art/counter/` — по одной
 строке на браузер (постоянный HMAC-хэш cookie, даты первого и последнего
-визита); браузер входит в период, если последний визит попадает в него.
-Файл перезаписывается раз в день на браузер через `.tmp` + атомарный
-`rename` под блокировкой `all-visitors.lock`; он не удаляется, отсчёт
-идёт с момента выкладки. Дополнительно каждый просмотр
-логируется в дневные `visitors-ГГГГ-ММ-ДД.jsonl` (API также отдаёт
-`uniqueVisitorsToday`), они автоматически удаляются через 90 дней.
-IP-адрес, User-Agent и Referer не сохраняются; используется случайная
-HttpOnly/Secure cookie, в журналы попадают только её HMAC-хэши.
+визита). Файл перезаписывается не чаще раза в день на браузер через
+`.tmp` + атомарный `rename` под блокировкой `all-visitors.lock`.
+Статистика для GET берётся из маленького `stats-cache.json`, который
+обновляется раз в день или при изменении списка. Ответ: уникальные
+браузеры за всё время (`uniqueVisitorsAllTime`) и за последние 30 и
+365 дней (`uniqueVisitorsPastMonth`/`PastYear`): браузер входит в
+период, если последний визит попадает в него. Дневные журналы
+просмотров прошлых версий больше не пишутся и удаляются через 90 дней.
+IP-адрес, User-Agent и Referer не сохраняются; cookie случайная,
+HttpOnly/Secure/SameSite=Strict, в файлах только её HMAC-хэш.
+
+### Как проверить локально
+PHP и nginx на этой машине не установлены; для проверок использовались
+официальные сборки во временной папке: `php -S` (или `php-cgi -b`) с
+переменными `KERIL_COUNTER_SECRET_FILE` и `KERIL_COUNTER_DATA_DIR`,
+указывающими на тестовые секрет и папку, и `nginx -t` для конфига.
 
 ## Пет-проекты на поддоменах (план, не реализовано)
 Каждый пет-проект — свой поддомен (`project1.keril.art` и т.п.),

@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 // Apply the theme before the first paint; without a saved choice the theme picker blocks the site.
@@ -115,6 +116,21 @@ a{text-decoration:none}
 .scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='white'%3E%3Ccircle cx='14' cy='18' r='1.4' opacity='.75'/%3E%3Ccircle cx='47' cy='9' r='1' opacity='.5'/%3E%3Ccircle cx='79' cy='21' r='1.6' opacity='.8'/%3E%3Ccircle cx='28' cy='46' r='1' opacity='.55'/%3E%3Ccircle cx='62' cy='41' r='1.3' opacity='.7'/%3E%3Ccircle cx='90' cy='55' r='.9' opacity='.45'/%3E%3Ccircle cx='9' cy='77' r='1.1' opacity='.6'/%3E%3Ccircle cx='44' cy='82' r='1.5' opacity='.75'/%3E%3Ccircle cx='74' cy='73' r='1' opacity='.5'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='131' height='131'%3E%3Cg fill='white'%3E%3Ccircle cx='31' cy='64' r='1.2' opacity='.6'/%3E%3Ccircle cx='97' cy='29' r='.9' opacity='.5'/%3E%3Ccircle cx='112' cy='103' r='1.3' opacity='.65'/%3E%3Ccircle cx='58' cy='120' r='.9' opacity='.45'/%3E%3C/g%3E%3C/svg%3E"),var(--sky)}
 .scene canvas{position:absolute;top:0;left:0;display:block}
 #scene-canvas{width:100%;height:100%}
+.cookie-banner{position:fixed;left:50%;bottom:16px;z-index:36;width:min(560px,calc(100% - 32px));box-sizing:border-box;transform:translateX(-50%);box-shadow:0 12px 30px rgba(11,37,69,0.35);animation:cookie-rise .45s cubic-bezier(.2,1.2,.4,1)}
+.cookie-banner[hidden],html.theme-pending .cookie-banner{display:none}
+@keyframes cookie-rise{from{transform:translate(-50%,120%);opacity:0}}
+.cookie-banner__icon{flex:none}
+.cookie-banner__body{display:flex;flex-direction:column;gap:14px;padding:16px 18px}
+.cookie-banner__text{margin:0;font-size:14px;line-height:1.6}
+.cookie-banner__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}
+.xp-button{padding:7px 18px;border:1px solid #2A5FA8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-size:15px;cursor:pointer}
+.xp-button--secondary{border-color:#7FA7D4;background:linear-gradient(180deg,#ffffff,#DCEBF7)}
+.xp-button:hover{filter:brightness(1.06)}
+.xp-button:active{transform:translateY(1px)}
+html[data-theme="dark"] .xp-button{color:#0A2A52!important}
+.page-shell .cookie-settings.cookie-settings{display:block;margin:-20px auto 0;padding:2px 8px;border:0;border-radius:6px;background:none;color:#ffffff!important;font-size:12px;letter-spacing:0.08em;text-decoration:underline;text-shadow:0 1px 2px rgba(11,37,69,0.8);cursor:pointer}
+@media(prefers-reduced-motion:reduce){.cookie-banner{animation:none}}
+@media(max-width:480px){.cookie-banner{bottom:10px;width:calc(100% - 20px)}.cookie-banner__body{gap:10px;padding:12px 14px}.cookie-banner__text{font-size:12px;line-height:1.5}.cookie-banner__actions{flex-wrap:nowrap}.cookie-banner__actions .xp-button{flex:1;padding:7px 8px;font-size:14px}}
 .signature{display:flex;align-items:center;justify-content:center;gap:12px}
 .signature__text{display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 12px;margin:0}
 .signature__made,.signature__name{font-size:14px;letter-spacing:0.3em;color:#ffffff!important;text-shadow:0 1px 1px rgba(11,37,69,0.85),0 2px 6px rgba(11,37,69,0.55),0 0 10px rgba(127,205,251,0.6)}
@@ -157,7 +173,9 @@ html.theme-pending,html.theme-pending body{overflow:hidden}
 :focus-visible{outline:3px solid #FFC9E8;outline-offset:3px}
 .dock a:focus-visible,.route-home:focus-visible{border-radius:8px;outline:3px solid #FFC9E8;outline-offset:3px}
 .path-suggestion:focus-visible{outline:3px solid #FFC9E8;outline-offset:-3px}
-.status-bar:has(.path-search__input:focus-visible){outline:3px solid #FFC9E8;outline-offset:3px}
+/* A text field counts as focus-visible even after a mouse click, so the search bar outline is keyboard-only. */
+.path-search__input:focus-visible{outline:none}
+html.is-keyboard-nav .status-bar:has(.path-search__input:focus){outline:3px solid #FFC9E8;outline-offset:3px}
 .theme-choice__preview{display:grid;width:100%;height:64px;box-sizing:border-box;place-items:center;border:2px solid #ffffff;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(20,70,140,0.25)}
 .theme-choice__preview--light{background:radial-gradient(circle,rgba(255,255,255,0.9) 0 1px,transparent 1.6px) 0 0/14px 14px,linear-gradient(180deg,#EAF6FF,#7FCDFB 55%,#2E7FE0)}
 .theme-choice__preview--dark{background:radial-gradient(circle,rgba(255,255,255,0.9) 0 1px,transparent 1.6px) 0 0/14px 14px,linear-gradient(180deg,#0A1030,#18225E 55%,#352C7E)}
@@ -334,6 +352,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
       <p class="signature__text"><span class="signature__made">made by</span><span class="signature__name">Keril<sup>3</sup></span></p>
       <svg class="signature__star twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="animation-delay:1.6s"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
     </footer>
+    <button class="cookie-settings" id="cookie-settings" type="button" data-i18n="cookieSettings">настройки cookie</button>
   </div>
 
 </div>
@@ -357,6 +376,19 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     </div>
   </div>
 </aside>
+<section class="xp-window cookie-banner" id="cookie-banner" aria-labelledby="cookie-banner-title" hidden>
+  <div class="xp-window__bar">
+    <svg class="cookie-banner__icon" aria-hidden="true" width="16" height="16" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5" fill="#F6D8A8" stroke="#C99A5B" stroke-width="1.4"/><g fill="#8A5A2B"><circle cx="7" cy="7" r="1.3"/><circle cx="12.5" cy="8" r="1.1"/><circle cx="8.5" cy="12.5" r="1.2"/><circle cx="13" cy="13" r="0.9"/></g></svg>
+    <span data-i18n="cookieTitle" id="cookie-banner-title" class="window-title xp-window__title">cookies.exe</span>
+  </div>
+  <div class="xp-window__body cookie-banner__body">
+    <p data-i18n="cookieText" class="cookie-banner__text">Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы, трекеров и передачи третьим лицам. Без согласия посещение просто не учитывается.</p>
+    <div class="cookie-banner__actions">
+      <button class="xp-button" id="cookie-accept" type="button" data-i18n="cookieAccept">Принять</button>
+      <button class="xp-button xp-button--secondary" id="cookie-decline" type="button" data-i18n="cookieDecline">Отказаться</button>
+    </div>
+  </div>
+</section>
 <div class="theme-gate" id="theme-gate" role="dialog" aria-modal="true" aria-labelledby="theme-gate-title" aria-describedby="theme-gate-text">
   <div class="xp-window theme-gate__window">
     <div class="xp-window__bar theme-gate__bar">
@@ -408,7 +440,7 @@ const translations = {
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',
     projectsWindowTitle:'проекты.zip',
-    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы, трекеров и передачи третьим лицам. Без согласия посещение просто не учитывается.',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по страницам, статьям и проектам',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Обо мне',suggestAboutDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
     suggestLifiTitle:'Гибридная сеть Wi-Fi/LiFi',suggestLifiDetail:'Оптическая сеть для музейного комплекса',suggestVpnTitle:'Self-hosted VPN-инфраструктура',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -417,7 +449,7 @@ const translations = {
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub',navMail:'contact me',navMailLabel:'Contact me',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',
     projectsWindowTitle:'projects.zip',
-    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',routeHome:'To home page',routeAbout:'About this',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
+    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers, nothing shared with third parties. Without consent your visit is simply not counted.',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search pages, articles, and projects',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindProject:'project',suggestAboutTitle:'About me',suggestAboutDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
     suggestLifiTitle:'Hybrid Wi-Fi/LiFi Network',suggestLifiDetail:'Optical network for a museum complex',suggestVpnTitle:'Self-hosted VPN Infrastructure',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -1576,15 +1608,67 @@ function syncRouteWithLocation(){
 window.addEventListener('popstate',syncRouteWithLocation);
 window.addEventListener('hashchange',syncRouteWithLocation);
 
+const cookieBanner = document.querySelector('#cookie-banner');
+const cookieSettingsButton = document.querySelector('#cookie-settings');
+// Kept in memory as well, so the choice still applies for this visit when storage is blocked.
+let cookieConsent = null;
+
+function getCookieConsent(){
+  try{
+    const consent = localStorage.getItem('keril-art-cookies');
+    if(consent === 'accepted' || consent === 'declined')return consent;
+  }catch(error){}
+  return cookieConsent;
+}
+
+function setCookieConsent(consent){
+  const previous = getCookieConsent();
+  cookieConsent = consent;
+  try{localStorage.setItem('keril-art-cookies',consent)}catch(error){}
+  const hadFocus = cookieBanner.contains(document.activeElement);
+  cookieBanner.hidden = true;
+  if(hadFocus)cookieSettingsButton.focus();
+  // Declining after an earlier "accept" deletes the cookie and this browser's record on the server.
+  if(consent === 'declined' && previous === 'accepted' && window.location.protocol !== 'file:'){
+    requestCounter('POST','forget').catch(()=>{}).finally(fetchVisitorCount);
+  }else if(consent === 'accepted'){
+    fetchVisitorCount();
+  }
+}
+
+document.querySelector('#cookie-accept').addEventListener('click',()=>setCookieConsent('accepted'));
+document.querySelector('#cookie-decline').addEventListener('click',()=>setCookieConsent('declined'));
+cookieSettingsButton.addEventListener('click',()=>{
+  cookieBanner.hidden = false;
+  document.querySelector('#cookie-accept').focus();
+});
+cookieBanner.hidden = getCookieConsent() !== null;
+
+async function requestCounter(method,action){
+  const url = action ? `counter.php?action=${action}` : 'counter.php';
+  const options = {method,cache:'no-store',credentials:'same-origin'};
+  // The custom header tells counter.php the request comes from this page; GET never records anything.
+  if(method === 'POST')options.headers = {'X-Keril-Counter':'1'};
+  const response = await fetch(url,options);
+  if(!response.ok)throw new Error('Counter unavailable');
+  return response.json();
+}
+
 async function fetchVisitorCount(){
   if(window.location.protocol === 'file:'){
     renderVisitorCount();
     return;
   }
   try{
-    const response = await fetch('counter.php',{cache:'no-store',credentials:'same-origin'});
-    if(!response.ok)throw new Error('Counter unavailable');
-    const data = await response.json();
+    // Without consent the counter is only read. With consent the first response sets the cookie,
+    // and the visit is counted on a second request that sends it back.
+    let data;
+    if(getCookieConsent() === 'accepted'){
+      data = await requestCounter('POST');
+      if(data.needsConfirmation)data = await requestCounter('POST');
+    }else{
+      data = await requestCounter('GET');
+    }
     if(!Number.isSafeInteger(data.uniqueVisitorsAllTime) || data.uniqueVisitorsAllTime < 0)throw new Error('Invalid counter response');
     visitorsAllTime = data.uniqueVisitorsAllTime;
     const period = value=>Number.isSafeInteger(value) && value >= 0 ? value : null;
@@ -1770,8 +1854,19 @@ searchForm.addEventListener('submit',event=>{
   if(matchingItems.length)selectSuggestion(activeSuggestionIndex < 0 ? 0 : activeSuggestionIndex);
 });
 document.addEventListener('pointerdown',event=>{
+  document.documentElement.classList.remove('is-keyboard-nav');
   if(!searchForm.contains(event.target))closeSuggestions();
   if(!languageSwitcher.contains(event.target))setLanguageMenuOpen(false);
+});
+// Tab closes any open dropdown so focus moves straight on to the next control.
+document.addEventListener('keydown',event=>{
+  if(event.key !== 'Tab')return;
+  document.documentElement.classList.add('is-keyboard-nav');
+  if(searchForm.contains(event.target))closeSuggestions();
+  if(languageSwitcher.contains(event.target))setLanguageMenuOpen(false);
+},true);
+searchForm.addEventListener('focusout',event=>{
+  if(!searchForm.contains(event.relatedTarget))closeSuggestions();
 });
 searchInput.addEventListener('blur',()=>{
   if(!searchInput.value){
