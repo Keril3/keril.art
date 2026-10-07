@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 // Apply the theme before the first paint; without a saved choice the theme picker blocks the site.
@@ -117,11 +117,14 @@ a{text-decoration:none}
 .scene canvas{position:absolute;top:0;left:0;display:block}
 #scene-canvas{width:100%;height:100%}
 .cookie-banner{position:fixed;left:50%;bottom:16px;z-index:36;width:min(560px,calc(100% - 32px));box-sizing:border-box;transform:translateX(-50%);box-shadow:0 12px 30px rgba(11,37,69,0.35);animation:cookie-rise .45s cubic-bezier(.2,1.2,.4,1)}
+.turnstile-slot{position:fixed;left:50%;bottom:16px;z-index:37;transform:translateX(-50%)}
 .cookie-banner[hidden],html.theme-pending .cookie-banner{display:none}
 @keyframes cookie-rise{from{transform:translate(-50%,120%);opacity:0}}
 .cookie-banner__icon{flex:none}
 .cookie-banner__body{display:flex;flex-direction:column;gap:14px;padding:16px 18px}
 .cookie-banner__text{margin:0;font-size:14px;line-height:1.6}
+.cookie-banner__link{color:#1C5FC4;text-decoration:underline;text-underline-offset:3px}
+html[data-theme="dark"] .cookie-banner__link{color:#9CCBFF}
 .cookie-banner__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}
 .xp-button{padding:7px 18px;border:1px solid #2A5FA8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-size:15px;cursor:pointer}
 .xp-button--secondary{border-color:#7FA7D4;background:linear-gradient(180deg,#ffffff,#DCEBF7)}
@@ -387,13 +390,15 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     </div>
   </div>
 </aside>
+<div class="turnstile-slot" id="turnstile-slot"></div>
 <section class="xp-window cookie-banner" id="cookie-banner" aria-labelledby="cookie-banner-title" hidden>
   <div class="xp-window__bar">
     <svg class="cookie-banner__icon" aria-hidden="true" width="16" height="16" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5" fill="#F6D8A8" stroke="#C99A5B" stroke-width="1.4"/><g fill="#8A5A2B"><circle cx="7" cy="7" r="1.3"/><circle cx="12.5" cy="8" r="1.1"/><circle cx="8.5" cy="12.5" r="1.2"/><circle cx="13" cy="13" r="0.9"/></g></svg>
     <span data-i18n="cookieTitle" id="cookie-banner-title" class="window-title xp-window__title">cookies.exe</span>
   </div>
   <div class="xp-window__body cookie-banner__body">
-    <p data-i18n="cookieText" class="cookie-banner__text">Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы, трекеров и передачи третьим лицам. Без согласия посещение просто не учитывается.</p>
+    <p data-i18n="cookieText" class="cookie-banner__text">Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.</p>
+    <p class="cookie-banner__text"><a class="cookie-banner__link" href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer" data-i18n="cookiePrivacy">Политика конфиденциальности Cloudflare Turnstile ↗</a></p>
     <div class="cookie-banner__actions">
       <button class="xp-button" id="cookie-accept" type="button" data-i18n="cookieAccept">Принять</button>
       <button class="xp-button xp-button--secondary" id="cookie-decline" type="button" data-i18n="cookieDecline">Отказаться</button>
@@ -451,7 +456,7 @@ const translations = {
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub — откроется в новой вкладке',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',aboutSiteWindowTitle:'об_этом.txt',
     projectsWindowTitle:'проекты.zip',
-    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы, трекеров и передачи третьим лицам. Без согласия посещение просто не учитывается.',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по страницам, статьям и проектам',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Об этом',suggestAboutDetail:'Зачем этот сайт и чем я занимаюсь',suggestMeTitle:'Обо мне',suggestMeDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
     suggestLifiTitle:'Гибридная сеть Wi-Fi/LiFi',suggestLifiDetail:'Оптическая сеть для музейного комплекса',suggestVpnTitle:'Self-hosted VPN-инфраструктура',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -460,7 +465,7 @@ const translations = {
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',aboutSiteWindowTitle:'about_this.txt',
     projectsWindowTitle:'projects.zip',
-    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers, nothing shared with third parties. Without consent your visit is simply not counted.',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
+    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search pages, articles, and projects',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindProject:'project',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for and why I do this',suggestMeTitle:'About me',suggestMeDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
     suggestLifiTitle:'Hybrid Wi-Fi/LiFi Network',suggestLifiDetail:'Optical network for a museum complex',suggestVpnTitle:'Self-hosted VPN Infrastructure',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
@@ -1660,11 +1665,75 @@ cookieSettingsButton.addEventListener('click',()=>{
 });
 cookieBanner.hidden = getCookieConsent() !== null;
 
-async function requestCounter(method,action){
+// Cloudflare Turnstile confirms that a counted visit comes from a person. Its script loads only after
+// cookies are accepted. The site key is public (an empty key makes the page skip Turnstile).
+const TURNSTILE_SITE_KEY = '0x4AAAAAAFQvpZreNguww6DT';
+const TURNSTILE_TIMEOUT = 10000;
+let turnstileLoading = null;
+let turnstileWidget = null;
+let turnstileSettle = null;
+
+function loadTurnstile(){
+  if(!turnstileLoading){
+    turnstileLoading = new Promise((resolve,reject)=>{
+      window.onTurnstileLoad = ()=>resolve(window.turnstile);
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+      script.onerror = reject;
+      document.head.append(script);
+    }).catch(error=>{
+      turnstileLoading = null;
+      throw error;
+    });
+  }
+  return turnstileLoading;
+}
+
+// Resolves with a fresh single-use token, or null when Turnstile is off, blocked or fails:
+// the visit is then simply not counted, and the numbers are still shown.
+async function getTurnstileToken(){
+  if(!TURNSTILE_SITE_KEY)return null;
+  let timeout;
+  const timedOut = new Promise(resolve=>{timeout = window.setTimeout(()=>resolve(null),TURNSTILE_TIMEOUT)});
+  const token = loadTurnstile().then(turnstile=>new Promise(resolve=>{
+    turnstileSettle = resolve;
+    if(turnstileWidget === null){
+      turnstileWidget = turnstile.render('#turnstile-slot',{
+        sitekey:TURNSTILE_SITE_KEY,
+        action:'visit',
+        execution:'execute',
+        appearance:'interaction-only',
+        theme:document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+        callback:value=>{if(turnstileSettle)turnstileSettle(value)},
+        'error-callback':()=>{
+          if(turnstileSettle)turnstileSettle(null);
+          return true;
+        }
+      });
+    }else{
+      turnstile.reset(turnstileWidget);
+    }
+    turnstile.execute(turnstileWidget);
+  }));
+  try{
+    return await Promise.race([token,timedOut]);
+  }catch(error){
+    return null;
+  }finally{
+    window.clearTimeout(timeout);
+    turnstileSettle = null;
+  }
+}
+
+async function requestCounter(method,action,turnstileToken){
   const url = action ? `counter.php?action=${action}` : 'counter.php';
   const options = {method,cache:'no-store',credentials:'same-origin'};
   // The custom header tells counter.php the request comes from this page; GET never records anything.
-  if(method === 'POST')options.headers = {'X-Keril-Counter':'1'};
+  // The Turnstile token goes in a header too: it is longer than the body size nginx allows here.
+  if(method === 'POST'){
+    options.headers = {'X-Keril-Counter':'1'};
+    if(turnstileToken)options.headers['X-Keril-Turnstile'] = turnstileToken;
+  }
   const response = await fetch(url,options);
   if(!response.ok)throw new Error('Counter unavailable');
   return response.json();
@@ -1675,16 +1744,21 @@ async function fetchVisitorCount(){
     renderVisitorCount();
     return;
   }
+  // The numbers are read right away, so they do not wait for Turnstile.
+  await loadVisitorStats(()=>requestCounter('GET'));
+  if(getCookieConsent() !== 'accepted')return;
+  // With consent the first response sets the cookie, and the visit is counted on a second request
+  // that sends it back. counter.php checks the Turnstile token only on the request that counts.
+  const turnstileToken = await getTurnstileToken();
+  await loadVisitorStats(async()=>{
+    const data = await requestCounter('POST',null,turnstileToken);
+    return data.needsConfirmation ? requestCounter('POST',null,turnstileToken) : data;
+  });
+}
+
+async function loadVisitorStats(request){
   try{
-    // Without consent the counter is only read. With consent the first response sets the cookie,
-    // and the visit is counted on a second request that sends it back.
-    let data;
-    if(getCookieConsent() === 'accepted'){
-      data = await requestCounter('POST');
-      if(data.needsConfirmation)data = await requestCounter('POST');
-    }else{
-      data = await requestCounter('GET');
-    }
+    const data = await request();
     if(!Number.isSafeInteger(data.uniqueVisitorsAllTime) || data.uniqueVisitorsAllTime < 0)throw new Error('Invalid counter response');
     visitorsAllTime = data.uniqueVisitorsAllTime;
     const period = value=>Number.isSafeInteger(value) && value >= 0 ? value : null;

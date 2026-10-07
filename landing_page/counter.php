@@ -6,11 +6,14 @@ declare(strict_types=1);
 //   POST                        record a visit (only after the visitor accepted cookies on the page)
 //   POST ?action=forget         delete this browser's record and its cookie (cookies declined later)
 // A visit is recorded only when the browser sends back the cookie set by an earlier response,
-// so clients that ignore cookies (most bots) are never counted.
+// so clients that ignore cookies (most bots) are never counted. When /etc/keril.art/turnstile-secret exists,
+// that request also needs a Cloudflare Turnstile token in the X-Keril-Turnstile header.
 
 const VISITOR_COOKIE = 'keril_visitor';
 const VISITOR_COOKIE_TTL = 31536000;
 const REQUEST_HEADER = 'HTTP_X_KERIL_COUNTER';
+const TURNSTILE_HEADER = 'HTTP_X_KERIL_TURNSTILE';
+const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const BOT_USER_AGENT_PATTERN = '/bot|crawl|spider|slurp|archiv|scrap|fetch|headless|phantom|selenium|puppeteer|playwright'
     . '|python|curl|wget|httpclient|okhttp|java\/|go-http|libwww|monitor|uptime|preview|facebookexternalhit|embedly/i';
 
@@ -106,6 +109,26 @@ function statsPayload(array $stats, array $extra = []): array
     ] + $extra;
 }
 
+/** Asks Cloudflare whether the token is genuine and unused, and was issued on this site for a visit. */
+function turnstilePassed(string $secret, mixed $token, string $host): bool
+{
+    if (!is_string($token) || $token === '' || strlen($token) > 2048) {
+        return false;
+    }
+    $context = stream_context_create(['http' => [
+        'method' => 'POST',
+        'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+        'content' => http_build_query(['secret' => $secret, 'response' => $token]),
+        'timeout' => 5,
+        'ignore_errors' => true,
+    ]]);
+    $result = json_decode((string) @file_get_contents(TURNSTILE_VERIFY_URL, false, $context), true);
+    $hostname = strtolower((string) preg_replace('/:\d+\z/D', '', $host));
+    return is_array($result) && ($result['success'] ?? false) === true
+        && ($result['action'] ?? null) === 'visit'
+        && ($result['hostname'] ?? null) === $hostname;
+}
+
 function setVisitorCookie(string $value, int $expires): void
 {
     setcookie(VISITOR_COOKIE, $value, [
@@ -193,6 +216,17 @@ if ($action === 'visit' && !$hasValidCookie && !$isBot) {
     }
 }
 
+// With a Turnstile secret on the server, a visit is counted only with a token from the widget on the page.
+// The check waits for Cloudflare, so it runs before taking the lock.
+$passedTurnstile = true;
+if ($action === 'visit' && $hasValidCookie && !$isBot) {
+    $turnstileSecret = @file_get_contents(getenv('KERIL_TURNSTILE_SECRET_FILE') ?: '/etc/keril.art/turnstile-secret');
+    $turnstileSecret = $turnstileSecret === false ? '' : trim($turnstileSecret);
+    if ($turnstileSecret !== '') {
+        $passedTurnstile = turnstilePassed($turnstileSecret, $_SERVER[TURNSTILE_HEADER] ?? '', $_SERVER['HTTP_HOST'] ?? '');
+    }
+}
+
 if (!flock($lock, LOCK_EX)) {
     respond(503, ['error' => 'counter_lock_unavailable']);
 }
@@ -206,7 +240,7 @@ if ($action === 'forget') {
         unset($visitors[$visitorHash]);
         $changed = true;
     }
-} elseif ($visitorHash !== null && !$isBot) {
+} elseif ($visitorHash !== null && !$isBot && $passedTurnstile) {
     if (isset($visitors[$visitorHash])) {
         $counted = true;
         if ($visitors[$visitorHash]['lastSeen'] !== $today) {

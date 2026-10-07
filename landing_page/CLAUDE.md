@@ -205,7 +205,10 @@ VLESS+Reality, Hysteria2, VLESS+TLS) и AdGuard Home — их настройки
   права `0640`);
 - папка данных `/var/lib/keril.art/counter` (владелец `www-data`, `0750`);
 - в server-блоке nginx на `127.0.0.1:8444` — обработка `/counter.php`
-  через `php8.1-fpm.sock` и строка `error_page 404 /404.html;`.
+  через `php8.1-fpm.sock` и строка `error_page 404 /404.html;`;
+- для Cloudflare Turnstile — секретный ключ виджета в
+  `/etc/keril.art/turnstile-secret` (`root:www-data`, `0640`). Без этого
+  файла `counter.php` считает визиты без проверки Turnstile.
 
 ### Защита (что где)
 - `index.html`: CSP через `<meta>`, работает без правок nginx.
@@ -238,7 +241,21 @@ VLESS+Reality, Hysteria2, VLESS+TLS) и AdGuard Home — их настройки
   иначе 403; другие методы — 405;
 - User-Agent с признаками ботов/скриптов (bot, crawl, headless, curl,
   python и т.п.) или пустой — не считается (сам UA не сохраняется);
-- список не растёт больше 500 000 записей (`KERIL_COUNTER_MAX_VISITORS`).
+- список не растёт больше 500 000 записей (`KERIL_COUNTER_MAX_VISITORS`);
+- Cloudflare Turnstile (невидимый виджет): после "Принять" страница
+  грузит скрипт `challenges.cloudflare.com` (до согласия — никогда),
+  получает одноразовый токен с `action: 'visit'` и шлёт его в заголовке
+  `X-Keril-Turnstile` (в теле нельзя: nginx пускает тело до 1 КБ, токен
+  длиннее). `counter.php` проверяет токен через `siteverify` (success,
+  action, hostname) только на том запросе, который считает визит, и до
+  блокировки файла. Публичный ключ — константа `TURNSTILE_SITE_KEY` в
+  `index.html`, секрет — `/etc/keril.art/turnstile-secret`
+  (`KERIL_TURNSTILE_SECRET_FILE`). Ключи нужны оба: только секрет — никто
+  не засчитывается, только публичный ключ — токен игнорируется. Если
+  Turnstile не загрузился или не ответил за 10 с (например, Cloudflare
+  замедлен у провайдера), визит просто не засчитывается, цифры всё равно
+  показываются (страница сначала читает их GET-запросом). CSP страницы
+  разрешает `challenges.cloudflare.com` в `script-src` и `frame-src`.
 
 Хранение: `all-visitors.jsonl` в `/var/lib/keril.art/counter/` — по одной
 строке на браузер (постоянный HMAC-хэш cookie, даты первого и последнего
