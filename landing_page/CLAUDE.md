@@ -157,52 +157,55 @@ find-and-replace, если нужно поменять цвет везде).
 
 Плохо: "сделай сайт лучше" — слишком общо, непонятно что менять.
 
-## Деплой на VPS (keril.art)
-На сервере, где уже поднят 3x-ui/VPN-стек (см. vpn-guide.md), сайт
-обслуживается через nginx, а счётчик — через PHP-FPM. Готовый
-защищённый конфиг nginx лежит в репозитории: `deploy/nginx/keril.art.conf`.
+## Хостинг и деплой (keril.art)
 
-На сайт выкладываются три файла:
-```bash
-scp index.html counter.php robots.txt vpnuser@ВАШ_IP:/var/www/keril.art/
-scp ../deploy/nginx/keril.art.conf vpnuser@ВАШ_IP:/tmp/keril.art.conf
-```
+### Как устроен сервер
+VPS VeeSP (Ubuntu 22.04, IP 195.135.253.220, nginx 1.18, PHP 8.1), домен
+на Namecheap, A-записи `@`, `www`, `vpn` указывают на этот IP. На том же
+сервере работает личный VPN владельца (AmneziaWG + панель 3x-ui с Xray:
+VLESS+Reality, Hysteria2, VLESS+TLS) и AdGuard Home — их настройки трогать
+нельзя.
 
-На сервере (один раз):
-```bash
-sudo apt install php-fpm
-ls /run/php/                      # имя сокета PHP-FPM для конфига
-sudo install -d -o www-data -g www-data -m 0750 /var/lib/keril.art/counter
-sudo install -d -o root -g www-data -m 0750 /etc/keril.art
-openssl rand -hex 32 | sudo tee /etc/keril.art/counter-secret >/dev/null
-sudo chown root:www-data /etc/keril.art/counter-secret
-sudo chmod 0640 /etc/keril.art/counter-secret
-sudo mkdir -p /var/www/keril.art
-sudo mv /tmp/keril.art.conf /etc/nginx/sites-available/keril.art
-sudo nano /etc/nginx/sites-available/keril.art   # проверить php8.4-fpm.sock
-sudo ln -s /etc/nginx/sites-available/keril.art /etc/nginx/sites-enabled/
-sudo certbot certonly --webroot -w /var/www/keril.art -d keril.art -d www.keril.art
-sudo nginx -t && sudo systemctl reload nginx
-```
-`listen 443` в конфиге ждёт сертификат: если его ещё нет, сначала временно
-запусти только блок на 80 порту (или `certbot --nginx`) и после выпуска
-добавь `ssl_certificate`/`ssl_certificate_key` в блок 443. Порты 80/443
-должны быть открыты в `ufw` и свободны от других сервисов (проверить, что
-VPN-стек их не занимает). Директива `listen ... ssl http2` выбрана ради
-совместимости с nginx 1.24 (Ubuntu 24.04); на 1.25+ она даёт только
-предупреждение.
+- Файлы сайта лежат в `/var/www/keril.art/`, раздаёт nginx.
+- nginx слушает порт 80 (HTTP) и `127.0.0.1:8444` (HTTPS, только внутри
+  сервера).
+- Порт 443/tcp занят Xray (Reality). В Reality-инбаунде dest =
+  `127.0.0.1:8444`, SNI = `keril.art`, `www.keril.art`: обычные посетители
+  на 443 пересылаются Xray на nginx, поэтому https://keril.art работает на
+  обычном 443.
+- Из-за этого все HTTPS-запросы приходят в nginx с `127.0.0.1`. Лимиты по
+  IP (`limit_req`/`limit_conn` по `$binary_remote_addr`) там бесполезны и
+  вредны: они превратятся в один общий лимит на всех посетителей.
+- Сертификаты Let's Encrypt выпускает certbot в режиме webroot
+  (`-w /var/www/keril.art`): порт 80 занят nginx, standalone не работает.
+
+### Правила работы с сервером
+- Работать только с локальными файлами проекта. К серверу по SSH не
+  подключаться и `scp` не запускать: на живой сайт выкладывает владелец.
+- Не предлагать менять порты 80/443, настройки nginx, Xray или 3x-ui без
+  явной просьбы.
+
+### Выкладка
+Владелец копирует изменённые файлы в `/var/www/keril.art/`: `index.html`,
+`counter.php`, `robots.txt`. Перезапускать при этом ничего не нужно. Для
+`counter.php` на сервере один раз должны быть подготовлены:
+- секрет `/etc/keril.art/counter-secret` (64 hex-символа, `root:www-data`,
+  права `0640`);
+- папка данных `/var/lib/keril.art/counter` (владелец `www-data`, `0750`);
+- в server-блоке nginx на `127.0.0.1:8444` — обработка `/counter.php`
+  через `php8.1-fpm.sock`.
 
 ### Защита (что где)
-- nginx (`deploy/nginx/keril.art.conf`): HTTP → HTTPS, HSTS, CSP,
-  `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`,
-  `server_tokens off`; только GET/HEAD/POST; исполняется только
-  `counter.php`, прочие `.php` и скрытые файлы (`.git`, `.env`) — 404,
-  кроме `.well-known` для certbot; лимиты на IP: страницы 10 запросов/с
-  (всплеск 40), счётчик 30/мин (всплеск 10), 20 соединений, ответ 429.
-- `index.html`: тот же CSP через `<meta>`, на случай если сайт открыт без
-  этого конфига.
+- `index.html`: CSP через `<meta>`, работает без правок nginx.
 - `robots.txt` запрещает честным ботам трогать `counter.php`.
-- `counter.php`: см. ниже.
+- `counter.php`: защита от ботов и накрутки (см. ниже), тоже работает без
+  правок nginx.
+- `deploy/nginx/keril.art.conf` — только справочный пример server-блока
+  на `127.0.0.1:8444` под эту схему: заголовки безопасности (HSTS, CSP,
+  `X-Frame-Options`, `nosniff` и др.), только GET/HEAD/POST, исполняется
+  только `counter.php`, скрытые файлы — 404 (кроме `.well-known`), общий
+  потолок 20 запросов/с на `counter.php` вместо лимитов по IP. Применять
+  ли его — решает владелец, сверив с рабочим конфигом.
 
 ### Счётчик и cookie
 Внизу сайта баннер "cookies.exe" (`#cookie-banner`) с кнопками
@@ -246,8 +249,11 @@ PHP и nginx на этой машине не установлены; для пр
 
 ## Пет-проекты на поддоменах (план, не реализовано)
 Каждый пет-проект — свой поддомен (`project1.keril.art` и т.п.),
-свой отдельный `index.html`/набор файлов, свой `server {}` блок в
-nginx и своя папка в `/var/www/`. Общий стиль (палитра, шрифты,
+свой отдельный `index.html`/набор файлов и своя папка в `/var/www/`.
+Серверную часть делает владелец вместе с ассистентом (не в рамках правок
+этого сайта): A-запись в Namecheap, отдельный server-блок nginx, который
+тоже слушает `127.0.0.1:8444 ssl` (nginx выбирает сертификат по SNI), и
+сертификат через `certbot --webroot`. Общий стиль (палитра, шрифты,
 XP-кнопки) стоит унести в происходящий от этого файла шаблон, когда
 появится второй проект — но пока рано абстрагировать, делай каждый
 поддомен отдельным файлом.
