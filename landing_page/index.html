@@ -1,0 +1,1753 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+// Apply the theme before the first paint; without a saved choice the theme picker blocks the site.
+(function(){
+  var root = document.documentElement;
+  var theme = null;
+  try{theme = localStorage.getItem('keril-art-theme')}catch(error){}
+  if(theme !== 'light' && theme !== 'dark'){
+    root.classList.add('theme-pending');
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  root.dataset.theme = theme;
+  root.style.colorScheme = theme;
+})();
+</script>
+<title>keril.art</title>
+
+<style>
+@font-face{font-family:'Monocraft';src:url('https://cdn.jsdelivr.net/gh/IdreesInc/Monocraft@v4.2.1/dist/Monocraft-ttf/Monocraft.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+html{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar{display:none;width:0;height:0}
+body{margin:0;min-height:100vh;background:#7FCDFB}
+body,body *{font-family:'Monocraft',monospace!important;font-weight:400!important;color:#000000!important}
+a{text-decoration:none}
+.xpbtn{transition:filter .1s ease, transform .1s ease}
+.xpbtn:hover{filter:brightness(1.06)}
+.xpbtn:active{transform:translateY(1px)}
+.dock a{transition:transform .15s ease}
+.dock a:hover{transform:translateY(-3px)}
+.dock a [data-i18n],.hero-greeting,.visitor-count{color:#000000!important;background:none!important;background-clip:border-box!important;-webkit-background-clip:border-box!important;-webkit-text-fill-color:#000000!important;-webkit-text-stroke:0!important;paint-order:normal;text-shadow:none!important}
+.dock a [data-i18n]{font-size:20px!important}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.caret{animation:blink 1s steps(1) infinite}
+@keyframes twinkle{0%,100%{opacity:0.3;transform:scale(0.9)}50%{opacity:0.9;transform:scale(1.15)}}
+.twinkle{animation:twinkle 3.2s ease-in-out infinite}
+.sheenbox{position:relative;overflow:hidden}
+.sheenbox::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.75),transparent);transform:skewX(-20deg);animation:sheen 4.5s ease-in-out infinite}
+@keyframes sheen{0%{left:-60%}60%{left:140%}100%{left:140%}}
+.xpicon{display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .15s ease}
+.xpicon:hover{transform:translateY(-3px)}
+.path-search{position:relative;display:flex;align-items:center;gap:5px;flex:1;min-width:0}
+.path-search__root,.path-search__separator{flex:none;font-family:'Anonymous Pro',monospace;font-size:15px;font-weight:700;color:#0B2545;letter-spacing:0}
+.path-search__caret{flex:none;font-family:'Anonymous Pro',monospace;font-size:15px;font-weight:700;color:#1C5FC4;line-height:1}
+.path-search__caret[hidden]{display:none}
+.path-search__separator[hidden]{display:none}
+.path-search__input{flex:1;min-width:60px;width:100%;padding:2px 0;border:0;outline:0;background:transparent;font-family:'Anonymous Pro',monospace;font-size:15px;color:#0B2545}
+.path-search__input::placeholder{color:#527795;opacity:0.8}
+.path-search__input::-webkit-search-cancel-button{cursor:pointer}
+.path-suggestions{position:absolute;top:calc(100% + 10px);left:0;z-index:5;width:min(440px,calc(100vw - 64px));max-height:min(360px,60vh);overflow:auto;padding:6px;border:1px solid #ffffff;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(232,246,255,0.98));box-shadow:0 10px 28px rgba(20,70,140,0.3);backdrop-filter:blur(10px)}
+.path-suggestions[hidden]{display:none}
+.path-suggestion{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:8px;background:transparent;text-align:left;color:#0B2545;cursor:pointer}
+.path-suggestion:hover,.path-suggestion[aria-selected="true"]{background:linear-gradient(180deg,#ffffff,#CFEBFF);box-shadow:inset 0 0 0 1px #9BCDF1}
+.path-suggestion__icon{display:grid;flex:none;width:30px;height:30px;place-items:center;border:1px solid #9BCDF1;border-radius:7px;background:linear-gradient(180deg,#ffffff,#BFE0FB);font-family:'VT323',monospace;font-size:17px;color:#1C5FC4}
+.path-suggestion__copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}
+.path-suggestion__title{font-family:'VT323',monospace;font-size:18px;line-height:1.1}
+.path-suggestion__detail{overflow:hidden;font-family:'VT323',monospace;font-size:14px;line-height:1.1;color:#527795;text-overflow:ellipsis;white-space:nowrap}
+.path-suggestion__kind{flex:none;font-family:'VT323',monospace;font-size:14px;color:#1C5FC4}
+.path-suggestions__empty{padding:12px;font-family:'VT323',monospace;font-size:17px;color:#527795}
+.path-suggestion__title,.path-suggestion__detail,.path-suggestion__kind,.path-suggestions__empty{font-family:'Anonymous Pro',monospace}
+.language-toggle{display:inline-flex;flex:none;align-items:center;justify-content:center;gap:4px;min-width:48px;height:28px;padding:2px 8px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-family:'VT323',monospace;font-size:15px;color:#0A2A52;cursor:pointer}
+.language-toggle:hover{filter:brightness(1.06)}
+.language-toggle:active{transform:translateY(1px);box-shadow:inset 0 1px 3px rgba(20,70,140,0.3)}
+.language-toggle:focus-visible{outline:2px solid #1C5FC4;outline-offset:2px}
+.language-switcher{position:relative;flex:none}
+.language-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:6;min-width:140px;padding:5px;border:1px solid #ffffff;border-radius:7px;background:linear-gradient(180deg,#F4FAFF,#BFE0FB);box-shadow:0 6px 16px rgba(20,70,140,0.32),inset 0 1px 0 #ffffff}
+.language-menu[hidden]{display:none}
+.language-option{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:7px 9px;border:1px solid transparent;border-radius:4px;background:transparent;font-family:'VT323',monospace;font-size:17px;color:#0A2A52;text-align:left;cursor:pointer}
+.language-option:hover,.language-option[aria-checked="true"]{border-color:#8EBDE8;background:linear-gradient(180deg,#ffffff,#D8ECFC)}
+.language-option__check{color:#1C5FC4}
+.language-option:focus-visible{outline:2px solid #1C5FC4;outline-offset:-2px}
+.hero-greeting{max-width:100%;min-height:2.8em;line-height:1.4;letter-spacing:0.12em!important;white-space:pre-line;font-size:28px!important}
+.hero-greeting::after{content:"_";display:inline-block;margin-left:2px;animation:blink 1s steps(1) infinite}
+.hero-greeting.is-complete::after{display:none}
+@media(min-width:700px){.hero-actions{gap:38px!important}.hero-actions .xpicon .sheenbox{width:92px!important;height:92px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 9px 18px rgba(20,70,140,0.42)!important}}
+@media(min-width:700px){.dock svg{width:45px;height:45px;filter:drop-shadow(0 2px 2px rgba(20,70,140,0.28))}}
+.visitor-count{font-size:15px}
+.window-title{color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;-webkit-text-stroke:0.75px #000000!important;paint-order:stroke fill;text-shadow:0 1px 1px rgba(0,0,0,0.35)}
+.route-view{display:flex;flex-direction:column;gap:14px;min-width:0}
+.route-view[hidden],.home-details[hidden]{display:none}
+.home-details{display:flex;flex-direction:column;gap:32px}
+.dock{flex-wrap:wrap}
+.route-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;padding:5px 10px;border:1px solid #ffffff;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.94),rgba(207,235,255,0.78));box-shadow:0 3px 9px rgba(20,70,140,0.18)}
+.route-home{flex:none;padding:5px 11px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 4px rgba(20,70,140,0.25);color:#0A2A52!important;font-size:15px;cursor:pointer}
+.route-path{min-width:0;overflow:hidden;color:#0B2545!important;font-size:14px;text-overflow:ellipsis;white-space:nowrap}
+.route-info-window{overflow:hidden;border:2px solid #ffffff;border-radius:10px;background:#ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)}
+.route-info-title{padding:8px 12px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8);color:#ffffff!important;font-size:18px}
+.route-info-body{display:flex;flex-direction:column;gap:14px;padding:22px;background:#ffffff;color:#0B2545!important;font-size:17px;line-height:1.6}
+.route-info-body p{margin:0}
+.route-info-link{align-self:flex-start;box-sizing:border-box;max-width:100%;overflow-wrap:anywhere;padding:8px 12px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF,#BFE0FB);box-shadow:0 2px 5px rgba(20,70,140,0.2);color:#0B2545!important;text-decoration:none}
+.route-info-link:hover{filter:brightness(1.04)}
+.scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='white'%3E%3Ccircle cx='14' cy='18' r='1.4' opacity='.75'/%3E%3Ccircle cx='47' cy='9' r='1' opacity='.5'/%3E%3Ccircle cx='79' cy='21' r='1.6' opacity='.8'/%3E%3Ccircle cx='28' cy='46' r='1' opacity='.55'/%3E%3Ccircle cx='62' cy='41' r='1.3' opacity='.7'/%3E%3Ccircle cx='90' cy='55' r='.9' opacity='.45'/%3E%3Ccircle cx='9' cy='77' r='1.1' opacity='.6'/%3E%3Ccircle cx='44' cy='82' r='1.5' opacity='.75'/%3E%3Ccircle cx='74' cy='73' r='1' opacity='.5'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='131' height='131'%3E%3Cg fill='white'%3E%3Ccircle cx='31' cy='64' r='1.2' opacity='.6'/%3E%3Ccircle cx='97' cy='29' r='.9' opacity='.5'/%3E%3Ccircle cx='112' cy='103' r='1.3' opacity='.65'/%3E%3Ccircle cx='58' cy='120' r='.9' opacity='.45'/%3E%3C/g%3E%3C/svg%3E"),var(--sky)}
+.scene canvas{position:absolute;top:0;left:0;display:block}
+#scene-canvas{width:100%;height:100%}
+.signature{display:flex;align-items:center;justify-content:center;gap:12px}
+.signature__text{display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 12px;margin:0}
+.signature__made,.signature__name{font-size:14px;letter-spacing:0.3em;color:#ffffff!important;text-shadow:0 1px 1px rgba(11,37,69,0.85),0 2px 6px rgba(11,37,69,0.55),0 0 10px rgba(127,205,251,0.6)}
+.signature__name sup{margin-left:1px;font-size:0.7em;line-height:0;vertical-align:super}
+.signature .signature__name sup{color:#ffffff!important}
+.signature__star{flex:none;filter:drop-shadow(0 0 4px rgba(255,255,255,0.9))}
+@media(max-width:480px){.signature__made,.signature__name{font-size:12px}}
+:root{--sky:linear-gradient(180deg,#EAF6FF 0%,#7FCDFB 45%,#2E7FE0 100%)}
+html[data-theme="dark"]{--sky:linear-gradient(180deg,#0A1030 0%,#18225E 45%,#352C7E 100%)}
+html[data-theme="dark"] body{background:#18225E}
+.counter-window{align-self:center;max-width:100%;overflow:hidden;border:2px solid #ffffff;border-radius:9px;box-shadow:0 6px 16px rgba(20,70,140,0.28)}
+.counter-window__bar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:4px 6px 4px 10px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
+.counter-window__bar .window-title{font-size:14px;letter-spacing:1px}
+.counter-window__close{display:inline-flex;flex:none;width:15px;height:13px;align-items:center;justify-content:center;border:1px solid #A82020;border-radius:2px;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
+.counter-window__body{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 18px;background:#ffffff}
+.counter-window__heart{flex:none}
+.theme-toggle{min-width:36px;padding:2px 6px}
+.theme-toggle svg{display:block}
+.theme-toggle__moon,html[data-theme="dark"] .theme-toggle__sun{display:none!important}
+html[data-theme="dark"] .theme-toggle__moon{display:block!important}
+.theme-gate{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;box-sizing:border-box;padding:16px;background:rgba(11,37,69,0.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html.theme-pending .theme-gate{display:flex}
+html.theme-pending,html.theme-pending body{overflow:hidden}
+.theme-gate__window{width:min(440px,100%);overflow:hidden;border:2px solid #ffffff;border-radius:12px;box-shadow:0 14px 40px rgba(11,37,69,0.45);animation:gate-pop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes gate-pop{from{opacity:0;transform:scale(0.9) translateY(10px)}}
+.theme-gate__bar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
+.theme-gate__bar .window-title{font-size:16px;letter-spacing:1px}
+.theme-gate__body{display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 20px 24px;background:#ffffff}
+.theme-gate__text{margin:0;font-size:15px;line-height:1.6;text-align:center}
+.theme-gate__choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+.theme-choice{display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px 10px 12px;border:1px solid #2A5FA8;border-radius:10px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 3px 8px rgba(20,70,140,0.3);font-size:16px;cursor:pointer;transition:transform .12s ease,filter .12s ease}
+.theme-choice:hover{filter:brightness(1.06);transform:translateY(-2px)}
+.theme-choice:active{transform:translateY(1px)}
+.theme-choice:focus-visible{outline:3px solid #FFC9E8;outline-offset:3px}
+.theme-choice__preview{display:grid;width:100%;height:64px;box-sizing:border-box;place-items:center;border:2px solid #ffffff;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(20,70,140,0.25)}
+.theme-choice__preview--light{background:radial-gradient(circle,rgba(255,255,255,0.9) 0 1px,transparent 1.6px) 0 0/14px 14px,linear-gradient(180deg,#EAF6FF,#7FCDFB 55%,#2E7FE0)}
+.theme-choice__preview--dark{background:radial-gradient(circle,rgba(255,255,255,0.9) 0 1px,transparent 1.6px) 0 0/14px 14px,linear-gradient(180deg,#0A1030,#18225E 55%,#352C7E)}
+@media(prefers-reduced-motion:reduce){.theme-gate__window{animation:none}}
+html[data-theme="dark"] body *{color:#E3EEFF!important}
+html[data-theme="dark"] .dock a [data-i18n],html[data-theme="dark"] .hero-greeting,html[data-theme="dark"] .visitor-count{color:#E3EEFF!important;-webkit-text-fill-color:#E3EEFF!important}
+html[data-theme="dark"] .hero-greeting{color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;text-shadow:0 1px 0 #05081E,0 2px 4px rgba(5,8,30,0.9),0 0 10px rgba(255,201,232,0.75),0 0 22px rgba(127,205,251,0.6)!important}
+html[data-theme="dark"] .language-toggle,html[data-theme="dark"] .language-toggle *,html[data-theme="dark"] .route-home,html[data-theme="dark"] .route-home *,html[data-theme="dark"] .theme-choice *{color:#0A2A52!important}
+html[data-theme="dark"] .xp-window,html[data-theme="dark"] .route-info-window,html[data-theme="dark"] .theme-gate__window{border-color:rgba(170,210,255,0.55)!important;box-shadow:0 10px 26px rgba(0,0,0,0.45)!important}
+html[data-theme="dark"] .xp-window__bar,html[data-theme="dark"] .route-info-title,html[data-theme="dark"] .theme-gate__bar{background:linear-gradient(180deg,#6F8FEA,#2A3C9A)!important}
+html[data-theme="dark"] .xp-window__body,html[data-theme="dark"] .route-info-window,html[data-theme="dark"] .route-info-body,html[data-theme="dark"] .theme-gate__body{background:#10183E!important}
+html[data-theme="dark"] .skill-tag{background:rgba(79,168,232,0.16)!important;border-color:#6FB6F0!important}
+html[data-theme="dark"] .status-bar,html[data-theme="dark"] .route-toolbar{background:linear-gradient(180deg,rgba(52,70,140,0.9),rgba(22,32,82,0.65))!important;border-color:rgba(170,210,255,0.5)!important;box-shadow:0 2px 10px rgba(0,0,0,0.35)!important}
+html[data-theme="dark"] .path-search__input::placeholder{color:#9DB8DD}
+html[data-theme="dark"] .path-suggestions,html[data-theme="dark"] .language-menu{border-color:rgba(170,210,255,0.5);background:linear-gradient(180deg,rgba(36,50,112,0.98),rgba(20,30,78,0.98))}
+html[data-theme="dark"] .path-suggestion:hover,html[data-theme="dark"] .path-suggestion[aria-selected="true"],html[data-theme="dark"] .language-option:hover,html[data-theme="dark"] .language-option[aria-checked="true"]{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.45),rgba(42,60,154,0.45));box-shadow:none}
+html[data-theme="dark"] .path-suggestion__icon,html[data-theme="dark"] .route-info-link{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.4),rgba(42,60,154,0.55))}
+html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
+.bubble-counter{position:fixed;top:50%;right:16px;z-index:20;width:190px;overflow:hidden;border:2px solid #ffffff;border-radius:10px;box-shadow:0 8px 22px rgba(20,70,140,0.35);transform:translateY(-50%);transition:width .35s ease,right .35s ease,border-radius .35s ease,transform .4s ease}
+.bubble-counter[hidden]{display:none}
+.bubble-counter.is-entering{animation:counter-fly-in .65s cubic-bezier(.2,1.3,.4,1)}
+.bubble-counter.is-leaving{animation:counter-fly-out .35s ease-in forwards}
+@keyframes counter-fly-in{from{transform:translate(calc(100% + 40px),-50%)}}
+@keyframes counter-fly-out{to{transform:translate(calc(100% + 40px),-50%)}}
+.bubble-counter__bar{display:flex;align-items:center;gap:6px;padding:4px 5px 4px 8px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
+.bubble-counter__icon{flex:none}
+.bubble-counter__title{flex:1;min-width:0;overflow:hidden;font-size:14px;letter-spacing:1px;text-overflow:ellipsis;white-space:nowrap}
+.bubble-counter__buttons{display:flex;flex:none;gap:3px}
+.bubble-counter__button{display:inline-flex;width:17px;height:15px;padding:0;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);cursor:pointer}
+.bubble-counter__button--close{border-color:#A82020;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
+.bubble-counter__button:hover{filter:brightness(1.1)}
+.bubble-counter__button:active{transform:translateY(1px)}
+.bubble-counter__button:focus-visible{outline:2px solid #1C5FC4;outline-offset:1px}
+.bubble-counter__restore-icon,.bubble-counter.is-minimized .bubble-counter__minimize-icon{display:none}
+.bubble-counter.is-minimized .bubble-counter__restore-icon{display:block}
+.bubble-counter__collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s ease}
+.bubble-counter__clip{min-height:0;overflow:hidden}
+.bubble-counter.is-minimized{right:0;width:196px;border-bottom-width:0;border-radius:10px 10px 0 0;transform:translateY(-50%) translateX(calc(50% - 12.5px)) rotate(-90deg)}
+.bubble-counter.is-minimized .bubble-counter__collapse{grid-template-rows:0fr}
+.bubble-counter__body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 14px 14px;background:#ffffff}
+.bubble-counter__label{font-size:13px;letter-spacing:0.3em}
+.bubble-counter__score{display:flex;align-items:baseline;gap:2px}
+.bubble-counter__count{display:inline-block;min-width:1.2em;font-size:34px;line-height:1;text-align:right}
+.bubble-counter__count.is-bumping{animation:count-bump .25s ease-out}
+@keyframes count-bump{from{transform:scale(1.35)}}
+.bubble-counter__goal{font-size:14px;opacity:0.6}
+.bubble-counter__meter{position:relative;display:block;width:100%;height:12px;box-sizing:border-box;overflow:hidden;border:1px solid #2A5FA8;border-radius:6px;background:#EAF6FF;box-shadow:inset 0 1px 3px rgba(20,70,140,0.3)}
+.bubble-counter__fill{position:absolute;top:1px;bottom:1px;left:1px;width:0;border-radius:3px;background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0) 60%),repeating-linear-gradient(90deg,#4FA8E8 0 7px,transparent 7px 9px)}
+.bubble-counter__fill.is-low{background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0) 60%),repeating-linear-gradient(90deg,#FF7FB8 0 7px,transparent 7px 9px)}
+.bubble-counter__status{font-size:12px;opacity:0.75}
+.bubble-counter__status:empty{display:none}
+.bubble-counter.is-resetting .bubble-counter__body{animation:counter-shake .45s ease}
+.bubble-counter.is-resetting .bubble-counter__count{color:#E0559A!important}
+@keyframes counter-shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.bubble-counter.is-celebrating{animation:counter-glow 1.1s ease}
+.bubble-counter.is-celebrating .bubble-counter__count{animation:count-celebrate .6s ease}
+@keyframes counter-glow{30%{box-shadow:0 0 0 3px #FFC9E8,0 0 26px 8px rgba(255,201,232,0.9),0 0 46px 14px rgba(127,205,251,0.7)}}
+@keyframes count-celebrate{40%{transform:scale(1.5) rotate(-6deg)}}
+.bubble-counter.no-transition,.bubble-counter.no-transition *{transition:none!important}
+.bubble-counter.is-finale{z-index:40;pointer-events:none;animation:counter-finale 2s cubic-bezier(.45,0,.3,1) forwards}
+@keyframes counter-finale{
+  0%{transform:translateY(-50%)}
+  35%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.35);box-shadow:0 0 0 3px #FFC9E8,0 0 24px 8px rgba(255,201,232,0.8)}
+  45%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.3) rotate(-2deg)}
+  53%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.37) rotate(2deg)}
+  61%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.32) rotate(-3deg);box-shadow:0 0 0 3px #FFC9E8,0 0 34px 12px rgba(255,201,232,0.9)}
+  68%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.42) rotate(4deg)}
+  75%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.36) rotate(-5deg)}
+  81%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.5) rotate(5deg)}
+  86%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.44);opacity:1;box-shadow:0 0 0 4px #ffffff,0 0 50px 20px rgba(255,201,232,1)}
+  100%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(2.4);opacity:0;box-shadow:0 0 0 3px #ffffff,0 0 80px 40px rgba(255,255,255,0.9)}
+}
+.burst-canvas{position:fixed;inset:0;z-index:30;display:block;width:100%;height:100%;pointer-events:none}
+html[data-theme="dark"] .bubble-counter__meter{border-color:#6F8FEA;background:rgba(5,10,36,0.8)}
+html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{color:#FF8FC8!important}
+@media(max-width:480px){.bubble-counter{right:8px;width:160px}.bubble-counter__count{font-size:28px}}
+@media(prefers-reduced-motion:reduce){.bubble-counter,.bubble-counter *{animation:none!important;transition:none!important}}
+@media(max-width:480px){.status-bar{flex-wrap:wrap;justify-content:space-between;border-radius:14px!important}.path-search{order:3;flex-basis:100%}.path-suggestions{width:100%}.dock{gap:24px!important}.dock a [data-i18n]{font-size:18px!important}.hero-greeting{font-size:20px!important;letter-spacing:0.06em!important}}
+</style>
+
+</head>
+<body>
+<div class="scene" aria-hidden="true"><canvas id="water-canvas"></canvas><canvas id="scene-canvas"></canvas></div>
+<div class="page-shell" style="position:relative;z-index:1;width:100%;min-height:100vh;box-sizing:border-box;color:#0B2545">
+  <div style="position:relative;max-width:780px;margin:0 auto;padding:40px 20px 56px;display:flex;flex-direction:column;gap:32px">
+
+    <div class="status-bar" style="display:flex;align-items:center;gap:12px;padding:6px 14px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));border:1px solid #ffffff;box-shadow:0 2px 8px rgba(20,70,140,0.2)">
+      <form class="path-search" role="search" autocomplete="off">
+        <span class="path-search__root">C:\keril.art</span>
+        <span class="path-search__caret caret" aria-hidden="true">_</span>
+        <span class="path-search__separator" aria-hidden="true" hidden>\</span>
+        <input class="path-search__input" id="site-search" type="search" placeholder="поиск по сайту" spellcheck="false" aria-label="Поиск по страницам и проектам" aria-autocomplete="list" aria-controls="path-suggestions" aria-expanded="false">
+        <div class="path-suggestions" id="path-suggestions" role="listbox" aria-label="Результаты поиска" hidden></div>
+      </form>
+      <span style="flex:none;font-family:'VT323',monospace;font-size:14px;color:#0B2545;opacity:0.7">online</span>
+        <button class="language-toggle theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Тёмная тема" data-i18n-aria-label="themeToggleLabel">
+          <svg class="theme-toggle__sun" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><g stroke="#ffffff" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></g></svg>
+          <svg class="theme-toggle__moon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 13.4A7.2 7.2 0 0 1 15.5 3.2Z" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5" stroke-linejoin="round"/><path d="M18.5 4.5l.5 1.4 1.4.5-1.4.5-.5 1.4-.5-1.4-1.4-.5 1.4-.5Z" fill="#FFC9E8"/></svg>
+        </button>
+        <div class="language-switcher" id="language-switcher">
+          <button class="language-toggle" id="language-toggle" type="button" aria-label="Выбрать язык" title="Выбрать язык" aria-haspopup="menu" aria-expanded="false" aria-controls="language-menu"><span id="language-target" aria-hidden="true">RU</span><span aria-hidden="true">▾</span></button>
+          <div class="language-menu" id="language-menu" role="menu" aria-label="Язык сайта" hidden>
+            <button class="language-option" type="button" role="menuitemradio" data-language="ru" aria-checked="true"><span>Русский</span><span class="language-option__check" aria-hidden="true">✓</span></button>
+            <button class="language-option" type="button" role="menuitemradio" data-language="en" aria-checked="false"><span>English</span><span class="language-option__check" aria-hidden="true"></span></button>
+          </div>
+        </div>
+    </div>
+
+    <div class="dock" style="display:flex;justify-content:center;gap:42px;padding:4px 0">
+      <a href="#page=about" data-route-page="about" aria-label="Об этом" data-i18n-aria-label="navAboutLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <svg width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="9" width="20" height="14" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M5 9 L10 9 L12 6 L18 6 L20 9" fill="none" stroke="#1C5FC4" stroke-width="1.5"/></svg>
+        <span data-i18n="navAbout" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">обо мне</span>
+      </a>
+      <a href="#page=projects" data-route-page="projects" aria-label="Проекты" data-i18n-aria-label="navProjectsLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><ellipse cx="15" cy="15" rx="11" ry="4.5" fill="none" stroke="#1C5FC4" stroke-width="1"/><line x1="15" y1="4" x2="15" y2="26" stroke="#1C5FC4" stroke-width="1"/></svg>
+        <span data-i18n="navProjects" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">проекты</span>
+      </a>
+      <a href="#page=github" data-route-page="github" aria-label="GitHub" data-i18n-aria-label="navGithubLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.08c-3.1.67-3.75-1.32-3.75-1.32-.5-1.28-1.22-1.62-1.22-1.62-1-.68.08-.67.08-.67 1.1.08 1.68 1.12 1.68 1.12.97 1.66 2.54 1.18 3.16.9.1-.7.38-1.18.69-1.45-2.48-.28-5.09-1.24-5.09-5.53 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.06-1.14 3.06-1.14.6 1.53.22 2.67.1 2.95.72.78 1.15 1.77 1.15 2.99 0 4.3-2.61 5.25-5.1 5.52.4.35.74 1.03.74 2.08v3.05c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span data-i18n="navGithub" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">github</span>
+      </a>
+      <a href="#page=contact" data-route-page="contact" aria-label="Связаться со мной" data-i18n-aria-label="navMailLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="4" width="16" height="12" rx="1" fill="none" stroke="#1C5FC4" stroke-width="1.5"/><rect x="2" y="16" width="14" height="10" rx="1" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/></svg>
+        <span data-i18n="navMail" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">почта</span>
+      </a>
+    </div>
+
+    <div style="position:relative;padding:0 8px;text-align:center">
+      <svg class="twinkle" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="position:absolute;z-index:0;top:10px;left:4%;animation-delay:0s">
+        <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/>
+      </svg>
+      <svg class="twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position:absolute;z-index:0;top:70px;right:6%;animation-delay:1.1s">
+        <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/>
+      </svg>
+      <div data-i18n="heroGreeting" class="hero-greeting" style="position:relative;font-size:16px;color:#0B2545;opacity:0.85">CONNECTION ESTABLISHED.\nWELCOME</div>
+    </div>
+
+    <div id="route-view" class="route-view" hidden>
+      <div class="route-toolbar">
+        <button class="route-home" id="route-home" type="button">← <span data-i18n="routeHome">На главную</span></button>
+        <span class="route-path" id="route-path"></span>
+      </div>
+      <div id="route-content"></div>
+    </div>
+
+    <div class="home-details" id="home-details">
+    <div id="about" class="xp-window" style="border-radius:10px;overflow:hidden;border:2px solid #ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)">
+      <div class="xp-window__bar" style="background:linear-gradient(180deg,#CFEBFF,#4FA8E8);padding:6px 12px;display:flex;align-items:center;justify-content:space-between">
+        <span data-i18n="aboutWindowTitle" class="window-title" style="font-family:'VT323',monospace;font-size:18px;color:#ffffff;letter-spacing:1px">about_me.txt</span>
+        <div style="display:flex;gap:5px" aria-hidden="true">
+          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg></span>
+          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></span>
+          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#FF9A90,#D32F2F);border:1px solid #A82020;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></span>
+        </div>
+      </div>
+      <div class="xp-window__body" style="background:#ffffff;padding:26px 22px;display:flex;flex-direction:column;gap:16px">
+        <p data-i18n="aboutDescription" style="margin:0;font-size:17px;line-height:1.75">Бакалавр и магистр по направлению «Инфокоммуникационные технологии и системы связи» (БФУ им. И. Канта, Калининград). Работаю на пересечении сетевой инженерии и ИБ — от проектирования беспроводных сетей до обнаружения атак на них.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:9px">
+          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Linux / Kali</span>
+          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Python / Scapy</span>
+          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Wireshark / Nmap</span>
+          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Cisco / VLAN</span>
+          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">DNS / DHCP</span>
+          <span class="skill-tag" style="font-family:'VT323',monospace;font-size:17px;background:#eaf6ff;border:1px solid #4FA8E8;color:#0B2545;padding:5px 14px;border-radius:999px">Bash</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="projects" class="xp-window" style="border-radius:10px;overflow:hidden;border:2px solid #ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)">
+      <div class="xp-window__bar" style="background:linear-gradient(180deg,#CFEBFF,#4FA8E8);padding:6px 12px;display:flex;align-items:center;justify-content:space-between">
+        <span data-i18n="projectsWindowTitle" class="window-title" style="font-family:'VT323',monospace;font-size:18px;color:#ffffff;letter-spacing:1px">projects.zip</span>
+        <div style="display:flex;gap:5px" aria-hidden="true">
+          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg></span>
+          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);border:1px solid #5A86B8;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></span>
+          <span style="width:17px;height:14px;border-radius:2px;background:linear-gradient(180deg,#FF9A90,#D32F2F);border:1px solid #A82020;display:inline-flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></span>
+        </div>
+      </div>
+      <div class="xp-window__body" style="background:#ffffff;padding:8px 22px 6px">
+
+        <div id="project-wifi" style="display:flex;gap:18px;padding:20px 0;border-top:1px dotted #4FA8E8">
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#4FA8E8;min-width:30px">01</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+            <h3 data-i18n="wifiTitle" style="margin:0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:18px;color:#0B2545">Детектор Wi-Fi-атак</h3>
+            <p data-i18n="wifiDescription" style="margin:0;font-size:16px;line-height:1.65">CLI-инструмент на Python и Scapy: обнаружение deauth/disassociation-атак, флуда PS-Poll и слабого шифрования в реальном времени. ВКР бакалавриата.</p>
+            <a href="https://github.com/EtoKekyes/diplom" style="font-family:'VT323',monospace;font-size:18px;color:#1C5FC4">GitHub →</a>
+          </div>
+        </div>
+
+        <div id="project-lifi" style="display:flex;gap:18px;padding:20px 0;border-top:1px dotted #4FA8E8">
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#4FA8E8;min-width:30px">02</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+            <h3 data-i18n="lifiTitle" style="margin:0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:18px;color:#0B2545">Гибридная сеть Wi-Fi/LiFi</h3>
+            <p data-i18n="lifiDescription" style="margin:0;font-size:16px;line-height:1.65">Проектирование оптической сети для музейного комплекса: энергетический бюджет канала, моделирование в OptiSystem. Магистерская диссертация.</p>
+          </div>
+        </div>
+
+        <div id="project-vpn" style="display:flex;gap:18px;padding:20px 0 24px;border-top:1px dotted #4FA8E8">
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#4FA8E8;min-width:30px">03</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+            <h3 data-i18n="vpnTitle" style="margin:0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:18px;color:#0B2545">Self-hosted VPN-инфраструктура</h3>
+            <p data-i18n="vpnDescription" style="margin:0;font-size:16px;line-height:1.65">Мультипротокольный сервер (AmneziaWG, Reality, Hysteria2) с панелью, доменом и DNS-фильтрацией. Поднято с нуля.</p>
+            <span data-i18n="vpnComingSoon" style="font-family:'VT323',monospace;font-size:18px;color:#0B2545;opacity:0.7">подробнее скоро на поддомене →</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <section class="xp-window counter-window" aria-labelledby="counter-window-title">
+      <div class="xp-window__bar counter-window__bar">
+        <span data-i18n="counterWindowTitle" id="counter-window-title" class="window-title">посетители.exe</span>
+        <span class="counter-window__close" aria-hidden="true"><svg width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></span>
+      </div>
+      <div class="xp-window__body counter-window__body">
+        <svg class="counter-window__heart twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 100 100"><path d="M50 91 13 55C-1 40 8 15 28 12c10-2 18 3 22 12 4-9 12-14 22-12 20 3 29 28 15 43Z" fill="#FFC9E8" stroke="#4FA8E8" stroke-width="6"/></svg>
+        <span data-i18n="footerNote" class="visitor-count" aria-live="polite">Посетителей за всё время: …</span>
+      </div>
+    </section>
+
+  </div>
+
+    <footer class="signature">
+      <svg class="signature__star twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
+      <p class="signature__text"><span class="signature__made">made by</span><span class="signature__name">Keril<sup>3</sup></span></p>
+      <svg class="signature__star twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="animation-delay:1.6s"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
+    </footer>
+  </div>
+
+</div>
+<canvas class="burst-canvas" id="burst-canvas" aria-hidden="true"></canvas>
+<aside class="xp-window bubble-counter" id="bubble-counter" aria-labelledby="bubble-counter-title" hidden>
+  <div class="xp-window__bar bubble-counter__bar">
+    <svg class="bubble-counter__icon" aria-hidden="true" width="14" height="14" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5" fill="#CFEBFF" stroke="#ffffff" stroke-width="1.5"/><ellipse cx="7" cy="6.5" rx="2.6" ry="1.5" fill="#ffffff" transform="rotate(-35 7 6.5)"/></svg>
+    <span class="window-title bubble-counter__title" id="bubble-counter-title">пузыри.exe</span>
+    <div class="bubble-counter__buttons">
+      <button class="bubble-counter__button" id="bubble-counter-minimize" type="button" aria-label="Свернуть"><svg class="bubble-counter__minimize-icon" aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg><svg class="bubble-counter__restore-icon" aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><rect x="1" y="1" width="6" height="6" fill="none" stroke="#2A4A6E" stroke-width="1"/></svg></button>
+      <button class="bubble-counter__button bubble-counter__button--close" id="bubble-counter-close" type="button" aria-label="Закрыть"><svg aria-hidden="true" width="8" height="8" viewBox="0 0 8 8"><line x1="1" y1="1" x2="7" y2="7" stroke="#ffffff" stroke-width="1.4"/><line x1="7" y1="1" x2="1" y2="7" stroke="#ffffff" stroke-width="1.4"/></svg></button>
+    </div>
+  </div>
+  <div class="bubble-counter__collapse">
+    <div class="bubble-counter__clip">
+      <div class="xp-window__body bubble-counter__body">
+        <span data-i18n="bubbleComboLabel" class="bubble-counter__label">комбо</span>
+        <span class="bubble-counter__score"><span class="bubble-counter__count" id="bubble-counter-count">0</span><span class="bubble-counter__goal" id="bubble-counter-goal">/100</span></span>
+        <span class="bubble-counter__meter" id="bubble-counter-meter" aria-hidden="true"><span class="bubble-counter__fill" id="bubble-counter-fill"></span></span>
+        <span class="bubble-counter__status" id="bubble-counter-status"></span>
+      </div>
+    </div>
+  </div>
+</aside>
+<div class="theme-gate" id="theme-gate" role="dialog" aria-modal="true" aria-labelledby="theme-gate-title" aria-describedby="theme-gate-text">
+  <div class="theme-gate__window">
+    <div class="theme-gate__bar">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>
+      <span data-i18n="themeGateTitle" id="theme-gate-title" class="window-title">выбор_темы.exe</span>
+    </div>
+    <div class="theme-gate__body">
+      <p data-i18n="themeGateText" id="theme-gate-text" class="theme-gate__text">Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.</p>
+      <div class="theme-gate__choices">
+        <button class="theme-choice" type="button" data-theme-choice="light">
+          <span class="theme-choice__preview theme-choice__preview--light" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><g stroke="#ffffff" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></g></svg></span>
+          <span data-i18n="themeLight">Светлая</span>
+        </button>
+        <button class="theme-choice" type="button" data-theme-choice="dark">
+          <span class="theme-choice__preview theme-choice__preview--dark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 13.4A7.2 7.2 0 0 1 15.5 3.2Z" fill="#ffffff" stroke="#9FC3E8" stroke-width="1.5" stroke-linejoin="round"/><path d="M18.5 4.5l.5 1.4 1.4.5-1.4.5-.5 1.4-.5-1.4-1.4-.5 1.4-.5Z" fill="#FFC9E8"/></svg></span>
+          <span data-i18n="themeDark">Тёмная</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const searchForm = document.querySelector('.path-search');
+const searchInput = document.querySelector('#site-search');
+const searchSeparator = document.querySelector('.path-search__separator');
+const suggestionsList = document.querySelector('#path-suggestions');
+const languageToggle = document.querySelector('#language-toggle');
+const languageTarget = document.querySelector('#language-target');
+const languageSwitcher = document.querySelector('#language-switcher');
+const languageMenu = document.querySelector('#language-menu');
+const languageOptions = [...languageMenu.querySelectorAll('.language-option')];
+const routeView = document.querySelector('#route-view');
+const routePath = document.querySelector('#route-path');
+const routeContent = document.querySelector('#route-content');
+const homeDetails = document.querySelector('#home-details');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const heroGreeting = document.querySelector('.hero-greeting');
+const visitorCount = document.querySelector('.visitor-count');
+const pageShell = document.querySelector('.page-shell');
+const themeToggle = document.querySelector('#theme-toggle');
+const themeGate = document.querySelector('#theme-gate');
+let currentPage = 'home';
+let greetingStartTimeout;
+let greetingTypingInterval;
+let visitorsAllTime = null;
+const translations = {
+  ru:{
+    navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
+    heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',
+    aboutDescription:'Бакалавр и магистр по направлению «Инфокоммуникационные технологии и системы связи» (БФУ им. И. Канта, Калининград). Работаю на пересечении сетевой инженерии и ИБ — от проектирования беспроводных сетей до обнаружения атак на них.',
+    projectsWindowTitle:'проекты.zip',wifiTitle:'Детектор Wi-Fi-атак',wifiDescription:'CLI-инструмент на Python и Scapy: обнаружение deauth/disassociation-атак, флуда PS-Poll и слабого шифрования в реальном времени. ВКР бакалавриата.',
+    lifiTitle:'Гибридная сеть Wi-Fi/LiFi',lifiDescription:'Проектирование оптической сети для музейного комплекса: энергетический бюджет канала, моделирование в OptiSystem. Магистерская диссертация.',
+    vpnTitle:'Self-hosted VPN-инфраструктура',vpnDescription:'Мультипротокольный сервер (AmneziaWG, Reality, Hysteria2) с панелью, доменом и DNS-фильтрацией. Поднято с нуля.',vpnComingSoon:'подробнее скоро на поддомене →',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',bubbleCounterCooldown:'перезарядка',secondsShort:'с',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeGithub:'GitHub',routeContact:'Связаться со мной',
+    githubPageDescription:'Мой профиль с исходным кодом и разработкой проектов.',githubProjectTitle:'Детектор Wi-Fi-атак',githubProjectDescription:'CLI-инструмент на Python и Scapy для обнаружения Wi-Fi-атак.',githubProfileLink:'Открыть профиль GitHub →',githubProjectLink:'Открыть репозиторий →',contactPageDescription:'Для связи по вопросам проектов и сотрудничества напишите мне.',contactEmailLink:'Написать письмо →',
+    searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по страницам, статьям и проектам',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
+    kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Обо мне',suggestAboutDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
+    suggestLifiTitle:'Гибридная сеть Wi-Fi/LiFi',suggestLifiDetail:'Оптическая сеть для музейного комплекса',suggestVpnTitle:'Self-hosted VPN-инфраструктура',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
+  },
+  en:{
+    navAbout:'about me',navAboutLabel:'About me',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub',navMail:'contact me',navMailLabel:'Contact me',
+    heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',
+    aboutDescription:'I hold bachelor’s and master’s degrees in Infocommunication Technologies and Communication Systems from Immanuel Kant Baltic Federal University. My work sits at the intersection of network engineering and information security, from wireless network design to attack detection.',
+    projectsWindowTitle:'projects.zip',wifiTitle:'Wi-Fi Attack Detector',wifiDescription:'A Python and Scapy CLI tool for real-time detection of deauthentication/disassociation attacks, PS-Poll floods, and weak encryption. Bachelor’s thesis.',
+    lifiTitle:'Hybrid Wi-Fi/LiFi Network',lifiDescription:'Optical network design for a museum complex, including link power budget and OptiSystem modeling. Master’s thesis.',
+    vpnTitle:'Self-hosted VPN Infrastructure',vpnDescription:'A multi-protocol server (AmneziaWG, Reality, Hysteria2) with a control panel, domain, and DNS filtering, built from scratch.',vpnComingSoon:'more details coming to a subdomain →',
+    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',bubbleCounterCooldown:'recharging',secondsShort:'s',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',routeHome:'Home',routeAbout:'About me',routeProjects:'Projects',routeGithub:'GitHub',routeContact:'Contact me',
+    githubPageDescription:'My profile with project source code and development.',githubProjectTitle:'Wi-Fi Attack Detector',githubProjectDescription:'A Python and Scapy CLI tool for detecting Wi-Fi attacks.',githubProfileLink:'Open GitHub profile →',githubProjectLink:'Open repository →',contactPageDescription:'For project and collaboration inquiries, send me an email.',contactEmailLink:'Write an email →',
+    searchPlaceholder:'search this site',searchLabel:'Search pages, articles, and projects',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
+    kindPage:'page',kindProject:'project',suggestAboutTitle:'About me',suggestAboutDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
+    suggestLifiTitle:'Hybrid Wi-Fi/LiFi Network',suggestLifiDetail:'Optical network for a museum complex',suggestVpnTitle:'Self-hosted VPN Infrastructure',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
+  }
+};
+let currentLanguage = 'ru';
+const searchItems = [
+  {target:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about обо мне education образование связь безопасность сеть'},
+  {target:'project-wifi',path:'projects\\wifi-detector',titleKey:'suggestWifiTitle',detailKey:'suggestWifiDetail',kindKey:'kindProject',keywords:'wifi wi-fi атаки security безопасность scapy python диплом detector детектор'},
+  {target:'project-lifi',path:'projects\\wifi-lifi',titleKey:'suggestLifiTitle',detailKey:'suggestLifiDetail',kindKey:'kindProject',keywords:'lifi лифи wifi wi-fi оптическая сеть музей optical'},
+  {target:'project-vpn',path:'projects\\vpn',titleKey:'suggestVpnTitle',detailKey:'suggestVpnDetail',kindKey:'kindProject',keywords:'vpn впн amneziawg reality hysteria2 dns сервер'}
+];
+let activeSuggestionIndex = -1;
+let matchingItems = [];
+
+function getInitialLanguage(){
+  try{
+    const savedLanguage = localStorage.getItem('keril-art-language');
+    if(savedLanguage === 'ru' || savedLanguage === 'en')return savedLanguage;
+  }catch(error){}
+  const browserLanguage = (navigator.languages?.[0] || navigator.language || 'ru').toLowerCase();
+  return browserLanguage.startsWith('en') ? 'en' : 'ru';
+}
+
+function renderVisitorCount(){
+  const count = visitorsAllTime === null ? '…' : visitorsAllTime.toLocaleString(currentLanguage);
+  visitorCount.textContent = `${translations[currentLanguage].footerNote}: ${count}`;
+}
+
+function randomBetween(minimum,maximum){
+  return minimum + Math.random() * (maximum - minimum);
+}
+
+const starPath = new Path2D('M50 2 61 37 98 50 61 63 50 98 39 63 2 50 39 37Z');
+const heartPath = new Path2D('M50 91 13 55C-1 40 8 15 28 12c10-2 18 3 22 12 4-9 12-14 22-12 20 3 29 28 15 43Z');
+const spriteResolution = 80;
+const spriteShapeSize = 70;
+
+function createSprite(draw){
+  const canvas = document.createElement('canvas');
+  canvas.width = spriteResolution;
+  canvas.height = spriteResolution;
+  draw(canvas.getContext('2d'),spriteResolution / 2);
+  return canvas;
+}
+
+function drawSpritePath(context,path,fill){
+  const offset = (spriteResolution - spriteShapeSize) / 2;
+  context.translate(offset,offset);
+  context.scale(spriteShapeSize / 100,spriteShapeSize / 100);
+  context.shadowColor = 'rgba(255,255,255,0.85)';
+  context.shadowBlur = 6;
+  context.fillStyle = fill;
+  context.fill(path);
+  context.shadowBlur = 0;
+  context.strokeStyle = '#4FA8E8';
+  context.lineWidth = 3;
+  context.lineJoin = 'round';
+  context.stroke(path);
+}
+
+function createFloaterSprites(){
+  const bubble = createSprite((context,center)=>{
+    const radius = spriteShapeSize / 2 - 1;
+    const gradient = context.createRadialGradient(center - 11,center - 13,2,center,center,radius);
+    gradient.addColorStop(0,'#ffffff');
+    gradient.addColorStop(0.23,'#F1FBFF');
+    gradient.addColorStop(0.56,'rgba(184,230,255,0.85)');
+    gradient.addColorStop(1,'rgba(116,188,235,0.9)');
+    context.beginPath();
+    context.arc(center,center,radius,0,Math.PI * 2);
+    context.fillStyle = gradient;
+    context.fill();
+    context.strokeStyle = 'rgba(255,255,255,0.9)';
+    context.lineWidth = 2.5;
+    context.stroke();
+    context.beginPath();
+    context.ellipse(center - 12,center - 14,8,4.5,-0.6,0,Math.PI * 2);
+    context.fillStyle = 'rgba(255,255,255,0.95)';
+    context.fill();
+  });
+  const dot = createSprite((context,center)=>{
+    const radius = spriteShapeSize / 2;
+    const gradient = context.createRadialGradient(center,center,0,center,center,radius);
+    gradient.addColorStop(0,'rgba(255,255,255,1)');
+    gradient.addColorStop(0.35,'rgba(255,255,255,0.95)');
+    gradient.addColorStop(0.6,'rgba(229,247,255,0.55)');
+    gradient.addColorStop(1,'rgba(255,255,255,0)');
+    context.beginPath();
+    context.arc(center,center,radius,0,Math.PI * 2);
+    context.fillStyle = gradient;
+    context.fill();
+  });
+  return {
+    bubble:[bubble],
+    star:['#ffffff','#CFEBFF','#7FCDFB'].map(fill=>createSprite(context=>drawSpritePath(context,starPath,fill))),
+    heart:['#FFC9E8','#FFC9E8','#ffffff'].map(fill=>createSprite(context=>drawSpritePath(context,heartPath,fill))),
+    dot:[dot]
+  };
+}
+
+const sceneCanvas = document.querySelector('#scene-canvas');
+const sceneContext = sceneCanvas.getContext('2d');
+const waterCanvas = document.querySelector('#water-canvas');
+const waterContext = waterCanvas.getContext('2d');
+const floaterSprites = createFloaterSprites();
+const floaterKinds = [{type:'bubble',weight:0.24},{type:'star',weight:0.24},{type:'heart',weight:0.2},{type:'dot',weight:0.32}];
+// One floater per this many square pixels of viewport, so density matches on any screen size.
+const floaterArea = 6000;
+const waterCellSize = 4;
+const waterDamping = 0.935;
+const waterBrush = Array.from({length:25},(_,index)=>Math.exp(-(((index % 5) - 2) ** 2 + (Math.floor(index / 5) - 2) ** 2) / 1.1));
+const waterStep = 1 / 60;
+let sceneWidth = 0;
+let sceneHeight = 0;
+let scenePixelRatio = 1;
+let floaters = [];
+let floaterTarget = 0;
+let sceneFrame = 0;
+let previousSceneTime = 0;
+let scenePointer = null;
+let water = null;
+let waterIsActive = false;
+let lastWaterDisturbance = -Infinity;
+let waterTimeRemainder = 0;
+// Chance that a floater pops when the cursor tip crosses it; rolled once per touch.
+const floaterPopChance = 0.4;
+// Three pops within 0.3s bring five new floaters in from the edges.
+const popComboCount = 3;
+const popComboWindow = 300;
+const popComboReward = 5;
+// Each pop keeps the combo chain alive for this long; the counter window shows up at 50.
+const comboTimeout = 3.125;
+const comboCounterAt = 50;
+// Every 100 combo (100, 200, 300...) sends a 0.7s stream of 200 floaters, like blowing soap bubbles.
+const comboMilestone = 100;
+const bubbleStreamCooldown = 60000;
+const bubbleStreamDuration = 0.7;
+const bubbleStreamCount = 200;
+const bubbleStreamSpread = 80 * Math.PI / 180;
+// At 1000 the counter window flies to the middle and bursts into bubbles over the whole page,
+// then the combo rests for 10s before it counts again.
+const comboFinale = 1000;
+const finaleDuration = 2000;
+const comboRestAfterFinale = 10000;
+const finaleBurstArea = 1500;
+const finaleBurstMax = 900;
+// Extra floaters from quick-pop bonuses may exceed the usual count by this much; the stream gets its own allowance on top.
+const extraFloaterLimit = 220;
+const burstCanvas = document.querySelector('#burst-canvas');
+const burstContext = burstCanvas.getContext('2d');
+let recentPopTimes = [];
+let comboCount = 0;
+let comboTimeLeft = 0;
+let comboLockedUntil = 0;
+let streamPending = false;
+let bubbleStream = null;
+let lastBubbleStream = -Infinity;
+let burstFloaters = [];
+let burstPopEffects = [];
+let burstCanvasDirty = false;
+// After the finale the screen stays empty for a moment, then floaters fly back in over a few seconds.
+let refillPausedUntil = 0;
+let refillGradualUntil = 0;
+let refillCredit = 0;
+const popRingDuration = 0.5;
+const sparkleDuration = 1;
+const sparkleColors = ['#ffffff','#ffffff','#FFC9E8','#CFEBFF'];
+const popColors = {bubble:['#ffffff','#CFEBFF','#7FCDFB'],star:['#ffffff','#7FCDFB','#CFEBFF'],heart:['#FFC9E8','#ffffff','#FFC9E8'],dot:['#ffffff','#EAF6FF']};
+let popEffects = [];
+
+function pickFloaterType(){
+  let roll = Math.random();
+  for(const kind of floaterKinds){
+    roll -= kind.weight;
+    if(roll <= 0)return kind.type;
+  }
+  return 'dot';
+}
+
+function pickSpawnEdge(){
+  const roll = Math.random() * (sceneWidth + sceneHeight) * 2;
+  if(roll < sceneWidth)return 'top';
+  if(roll < sceneWidth * 2)return 'bottom';
+  return roll < sceneWidth * 2 + sceneHeight ? 'left' : 'right';
+}
+
+function createFloater(edge,type = pickFloaterType()){
+  const variants = floaterSprites[type];
+  // Squaring the roll keeps most floaters small so the scene does not get crowded.
+  const size = 5 + 30 * Math.random() ** 2;
+  const speed = randomBetween(8,22);
+  let heading = randomBetween(0,Math.PI * 2);
+  let x = randomBetween(0,sceneWidth);
+  let y = randomBetween(0,sceneHeight);
+  const outside = size / 2 + 2;
+  const inward = randomBetween(-1,1);
+  if(edge === 'left'){
+    x = -outside;
+    heading = inward;
+  }else if(edge === 'right'){
+    x = sceneWidth + outside;
+    heading = Math.PI + inward;
+  }else if(edge === 'top'){
+    y = -outside;
+    heading = Math.PI / 2 + inward;
+  }else if(edge === 'bottom'){
+    y = sceneHeight + outside;
+    heading = -Math.PI / 2 + inward;
+  }
+  return {
+    type,
+    sprite:variants[Math.floor(Math.random() * variants.length)],
+    size,
+    x,
+    y,
+    vx:Math.cos(heading) * speed,
+    vy:Math.sin(heading) * speed,
+    baseSpeed:speed,
+    mass:0.6 + size / 25,
+    opacity:randomBetween(0.6,0.95),
+    rotation:type === 'star' || type === 'heart' ? randomBetween(-0.5,0.5) : 0,
+    spin:type === 'star' ? randomBetween(-0.35,0.35) : type === 'heart' ? randomBetween(-0.12,0.12) : 0,
+    phase:randomBetween(0,Math.PI * 2)
+  };
+}
+
+function resetWater(){
+  const columns = Math.ceil(sceneWidth / waterCellSize) + 1;
+  const rows = Math.ceil(sceneHeight / waterCellSize) + 1;
+  // The low-resolution grid is stretched by CSS, which smooths the waves for free.
+  waterCanvas.width = columns;
+  waterCanvas.height = rows;
+  waterCanvas.style.width = `${columns * waterCellSize}px`;
+  waterCanvas.style.height = `${rows * waterCellSize}px`;
+  const image = waterContext.createImageData(columns,rows);
+  water = {
+    columns,
+    rows,
+    current:new Float32Array(columns * rows),
+    previous:new Float32Array(columns * rows),
+    image,
+    pixels:new Uint32Array(image.data.buffer)
+  };
+  waterIsActive = false;
+}
+
+function calmWater(){
+  water.current.fill(0);
+  water.previous.fill(0);
+  water.pixels.fill(0);
+  waterContext.putImageData(water.image,0,0);
+  waterIsActive = false;
+}
+
+function resizeScene(){
+  sceneWidth = window.innerWidth;
+  sceneHeight = window.innerHeight;
+  scenePixelRatio = Math.min(window.devicePixelRatio || 1,2);
+  sceneCanvas.width = Math.round(sceneWidth * scenePixelRatio);
+  sceneCanvas.height = Math.round(sceneHeight * scenePixelRatio);
+  burstCanvas.width = sceneCanvas.width;
+  burstCanvas.height = sceneCanvas.height;
+  burstCanvasDirty = true;
+  floaterTarget = Math.max(40,Math.min(300,Math.round(sceneWidth * sceneHeight / floaterArea)));
+  resetWater();
+  if(reducedMotion.matches)drawScene();
+}
+
+function disturbWater(x,y,amount){
+  const column = Math.floor(x / waterCellSize);
+  const row = Math.floor(y / waterCellSize);
+  if(column < 2 || row < 2 || column > water.columns - 3 || row > water.rows - 3)return;
+  // A soft round brush avoids the checkerboard noise a single-cell impulse produces.
+  for(let offsetY = -2;offsetY <= 2;offsetY++){
+    for(let offsetX = -2;offsetX <= 2;offsetX++){
+      water.current[(row + offsetY) * water.columns + column + offsetX] -= amount * waterBrush[(offsetY + 2) * 5 + offsetX + 2];
+    }
+  }
+}
+
+function disturbWaterAlong(fromX,fromY,toX,toY,speed){
+  // A stick dragged through water pushes every cell it passes, which builds the V-shaped wake.
+  const distance = Math.hypot(toX - fromX,toY - fromY);
+  const steps = Math.max(1,Math.ceil(distance / (waterCellSize * 0.75)));
+  const amount = 1 + Math.min(speed,1600) / 1600 * 1.6;
+  for(let step = 1;step <= steps;step++){
+    const progress = step / steps;
+    disturbWater(fromX + (toX - fromX) * progress,fromY + (toY - fromY) * progress,amount);
+  }
+  lastWaterDisturbance = performance.now();
+  waterIsActive = true;
+}
+
+function stepWater(){
+  const {columns,rows,current,previous} = water;
+  for(let row = 1;row < rows - 1;row++){
+    let index = row * columns + 1;
+    for(let column = 1;column < columns - 1;column++,index++){
+      previous[index] = ((current[index - 1] + current[index + 1] + current[index - columns] + current[index + columns]) * 0.5 - previous[index]) * waterDamping;
+    }
+  }
+  water.current = previous;
+  water.previous = current;
+}
+
+function renderWater(){
+  const {columns,rows,current,pixels} = water;
+  pixels.fill(0);
+  for(let row = 1;row < rows - 1;row++){
+    let index = row * columns + 1;
+    for(let column = 1;column < columns - 1;column++,index++){
+      // Light comes from the upper left: slopes facing it glint white, the far sides darken.
+      const light = (current[index - 1] - current[index + 1] + current[index - columns] - current[index + columns]) * 16;
+      if(light > 2){
+        pixels[index] = ((Math.min(170,light) << 24) | 0xFFFFFF) >>> 0;
+      }else if(light < -2){
+        pixels[index] = ((Math.min(70,-light * 0.5) << 24) | (196 << 16) | (95 << 8) | 28) >>> 0;
+      }
+    }
+  }
+  waterContext.putImageData(water.image,0,0);
+}
+
+function waterSlopeAt(x,y){
+  const column = Math.floor(x / waterCellSize);
+  const row = Math.floor(y / waterCellSize);
+  if(column < 1 || row < 1 || column > water.columns - 2 || row > water.rows - 2)return null;
+  const index = row * water.columns + column;
+  return {
+    x:water.current[index + 1] - water.current[index - 1],
+    y:water.current[index + water.columns] - water.current[index - water.columns]
+  };
+}
+
+function updateFloaters(delta,now){
+  const pointerIsRecent = scenePointer && now - scenePointer.time < 600;
+  if(scenePointer && now - scenePointer.time > 50){
+    const restingDecay = Math.exp(-10 * delta);
+    scenePointer.vx *= restingDecay;
+    scenePointer.vy *= restingDecay;
+  }
+
+  const survivors = [];
+  for(const floater of floaters){
+    // The finale's shock wave pops every floater as it passes.
+    if(floater.popAt && now >= floater.popAt){
+      popFloater(floater,false);
+      continue;
+    }
+    // Cursor and waves may not speed a floater past 80px/s, but launched floaters keep their head start.
+    const speedLimit = Math.max(80,Math.hypot(floater.vx,floater.vy));
+    if(pointerIsRecent){
+      const dx = floater.x - scenePointer.x;
+      const dy = floater.y - scenePointer.y;
+      const distance = Math.hypot(dx,dy);
+      const reach = 90 + floater.size;
+      if(distance > 0.001 && distance < reach){
+        // Nearby floaters are nudged aside and slightly along the cursor's path, then keep the new heading.
+        const falloff = (1 - distance / reach) ** 2;
+        floater.vx += (dx / distance * 240 + scenePointer.vx * 0.25) * falloff / floater.mass * delta;
+        floater.vy += (dy / distance * 240 + scenePointer.vy * 0.25) * falloff / floater.mass * delta;
+      }
+    }
+    if(waterIsActive){
+      const slope = waterSlopeAt(floater.x,floater.y);
+      if(slope){
+        floater.vx -= slope.x * 3 / floater.mass * delta * 60;
+        floater.vy -= slope.y * 3 / floater.mass * delta * 60;
+      }
+    }
+
+    let speed = Math.hypot(floater.vx,floater.vy);
+    if(speed > speedLimit){
+      floater.vx *= speedLimit / speed;
+      floater.vy *= speedLimit / speed;
+      speed = speedLimit;
+    }
+    if(speed > 0.001){
+      const relaxedSpeed = speed + (floater.baseSpeed - speed) * Math.min(1,delta * 1.4);
+      const turn = Math.sin(now / 3000 + floater.phase) * 0.22 * delta;
+      const cos = Math.cos(turn);
+      const sin = Math.sin(turn);
+      const scale = relaxedSpeed / speed;
+      const vx = (floater.vx * cos - floater.vy * sin) * scale;
+      floater.vy = (floater.vx * sin + floater.vy * cos) * scale;
+      floater.vx = vx;
+    }
+    floater.x += floater.vx * delta;
+    floater.y += floater.vy * delta;
+    floater.rotation += floater.spin * delta;
+
+    const margin = floater.size / 2 + 4;
+    const isOutside = floater.x < -margin || floater.x > sceneWidth + margin || floater.y < -margin || floater.y > sceneHeight + margin;
+    if(!isOutside && !floater.popped)survivors.push(floater);
+  }
+
+  // Floaters that drift off-screen are replaced from a random edge, keeping the count steady.
+  if(now >= refillGradualUntil){
+    while(survivors.length < floaterTarget)survivors.push(createFloater(pickSpawnEdge()));
+  }else if(now >= refillPausedUntil){
+    refillCredit += delta * floaterTarget / ((refillGradualUntil - refillPausedUntil) / 1000);
+    while(refillCredit >= 1 && survivors.length < floaterTarget){
+      refillCredit--;
+      const point = pickEdgePoint();
+      survivors.push(aimFloater(createFloater(),point.x,point.y,point.normal + randomBetween(-0.9,0.9),randomBetween(90,220)));
+    }
+  }
+  floaters = survivors;
+}
+
+function drawFloaters(context = sceneContext,list = floaters){
+  const spriteScale = spriteResolution / spriteShapeSize;
+  for(const floater of list){
+    const drawSize = floater.size * spriteScale;
+    context.globalAlpha = floater.opacity;
+    if(floater.rotation){
+      context.setTransform(scenePixelRatio,0,0,scenePixelRatio,floater.x * scenePixelRatio,floater.y * scenePixelRatio);
+      context.rotate(floater.rotation);
+      context.drawImage(floater.sprite,-drawSize / 2,-drawSize / 2,drawSize,drawSize);
+      context.setTransform(scenePixelRatio,0,0,scenePixelRatio,0,0);
+    }else{
+      context.drawImage(floater.sprite,floater.x - drawSize / 2,floater.y - drawSize / 2,drawSize,drawSize);
+    }
+  }
+  context.globalAlpha = 1;
+}
+
+function distanceToSegmentSquared(pointX,pointY,startX,startY,endX,endY){
+  const segmentX = endX - startX;
+  const segmentY = endY - startY;
+  const lengthSquared = segmentX * segmentX + segmentY * segmentY;
+  const progress = lengthSquared ? Math.max(0,Math.min(1,((pointX - startX) * segmentX + (pointY - startY) * segmentY) / lengthSquared)) : 0;
+  const offsetX = startX + segmentX * progress - pointX;
+  const offsetY = startY + segmentY * progress - pointY;
+  return offsetX * offsetX + offsetY * offsetY;
+}
+
+function checkFloaterPops(fromX,fromY,toX,toY){
+  for(const floater of [...floaters,...burstFloaters]){
+    const radius = floater.size * 0.45;
+    const isTouched = distanceToSegmentSquared(floater.x,floater.y,fromX,fromY,toX,toY) <= radius * radius;
+    if(isTouched && !floater.touched && !floater.popped && Math.random() < floaterPopChance)popFloater(floater);
+    floater.touched = isTouched;
+  }
+}
+
+function pickEdgePoint(){
+  const edge = pickSpawnEdge();
+  const along = Math.random();
+  if(edge === 'left')return {x:0,y:along * sceneHeight,normal:0};
+  if(edge === 'right')return {x:sceneWidth,y:along * sceneHeight,normal:Math.PI};
+  if(edge === 'top')return {x:along * sceneWidth,y:0,normal:Math.PI / 2};
+  return {x:along * sceneWidth,y:sceneHeight,normal:-Math.PI / 2};
+}
+
+function aimFloater(floater,x,y,heading,speed){
+  // Start just outside the window edge so the floater flies in.
+  const outside = floater.size / 2 + 2;
+  floater.x = x - Math.cos(heading) * outside;
+  floater.y = y - Math.sin(heading) * outside;
+  floater.vx = Math.cos(heading) * speed;
+  floater.vy = Math.sin(heading) * speed;
+  return floater;
+}
+
+function launchFloater(x,y,heading,speed,limit = floaterTarget + extraFloaterLimit,type){
+  if(floaters.length >= limit || performance.now() < refillPausedUntil)return null;
+  const floater = aimFloater(createFloater(undefined,type),x,y,heading,speed);
+  floaters.push(floater);
+  return floater;
+}
+
+function registerPop(){
+  const now = performance.now();
+  recentPopTimes = recentPopTimes.filter(time=>now - time <= popComboWindow);
+  recentPopTimes.push(now);
+  if(recentPopTimes.length >= popComboCount){
+    recentPopTimes = [];
+    for(let index = 0;index < popComboReward;index++){
+      const point = pickEdgePoint();
+      launchFloater(point.x,point.y,point.normal + randomBetween(-0.8,0.8),randomBetween(90,160));
+    }
+  }
+
+  // After the 1000 finale the combo rests for a while before it counts again.
+  if(bubbleCounterState === 'finale' || now < comboLockedUntil)return;
+  comboCount++;
+  comboTimeLeft = comboTimeout;
+  stopCounterRoll();
+  if(comboCount === comboCounterAt && bubbleCounterState === 'hidden')showBubbleCounter();
+  bumpCounter();
+  if(comboCount >= comboFinale){
+    startCounterFinale();
+    return;
+  }
+  if(comboCount % comboMilestone === 0){
+    streamPending = true;
+    playCounterEffect('is-celebrating');
+  }
+  // During the cooldown a reached milestone waits, and its stream fires on the first pop after the cooldown.
+  if(streamPending && now - lastBubbleStream >= bubbleStreamCooldown){
+    streamPending = false;
+    lastBubbleStream = now;
+    const point = pickEdgePoint();
+    bubbleStream = {
+      x:point.x,
+      y:point.y,
+      heading:point.normal + randomBetween(-bubbleStreamSpread,bubbleStreamSpread),
+      remaining:bubbleStreamCount,
+      emitRemainder:0
+    };
+  }
+  renderBubbleCounter();
+}
+
+function updateBubbleStream(delta){
+  if(!bubbleStream)return;
+  bubbleStream.emitRemainder += delta * bubbleStreamCount / bubbleStreamDuration;
+  while(bubbleStream.emitRemainder >= 1 && bubbleStream.remaining > 0){
+    bubbleStream.emitRemainder -= 1;
+    bubbleStream.remaining--;
+    launchFloater(bubbleStream.x + randomBetween(-6,6),bubbleStream.y + randomBetween(-6,6),bubbleStream.heading + randomBetween(-0.2,0.2),randomBetween(385,735),floaterTarget + extraFloaterLimit + bubbleStreamCount);
+  }
+  if(bubbleStream.remaining <= 0)bubbleStream = null;
+}
+
+const bubbleCounter = document.querySelector('#bubble-counter');
+const bubbleCounterTitle = document.querySelector('#bubble-counter-title');
+const bubbleCounterValue = document.querySelector('#bubble-counter-count');
+const bubbleCounterGoal = document.querySelector('#bubble-counter-goal');
+const bubbleCounterMeter = document.querySelector('#bubble-counter-meter');
+const bubbleCounterFill = document.querySelector('#bubble-counter-fill');
+const bubbleCounterStatus = document.querySelector('#bubble-counter-status');
+const bubbleCounterMinimize = document.querySelector('#bubble-counter-minimize');
+const bubbleCounterClose = document.querySelector('#bubble-counter-close');
+let bubbleCounterState = 'hidden';
+let shownComboCount = 0;
+let counterRollTimer = 0;
+let counterEffectTimer = 0;
+let meterBlocks = 0;
+let shownMeterBlocks = -1;
+
+function renderBubbleCounter(){
+  const copy = translations[currentLanguage];
+  const isMinimized = bubbleCounterState === 'minimized';
+  bubbleCounterTitle.textContent = isMinimized ? `${copy.bubbleCounterShort}: ${shownComboCount}` : copy.bubbleCounterTitle;
+  bubbleCounterValue.textContent = shownComboCount;
+  // The goal moves to the next hundred once a milestone is passed: 100/100, then 101/200.
+  const goal = bubbleCounterState === 'finale' ? comboFinale : Math.max(comboMilestone,Math.ceil(comboCount / comboMilestone) * comboMilestone);
+  bubbleCounterGoal.textContent = `/${goal}`;
+  bubbleCounterMinimize.setAttribute('aria-label',isMinimized ? copy.windowRestore : copy.windowMinimize);
+  bubbleCounterMinimize.title = bubbleCounterMinimize.getAttribute('aria-label');
+  bubbleCounterClose.setAttribute('aria-label',copy.windowClose);
+  bubbleCounterClose.title = copy.windowClose;
+  const cooldownLeft = Math.ceil((bubbleStreamCooldown - (performance.now() - lastBubbleStream)) / 1000);
+  bubbleCounterStatus.textContent = streamPending && cooldownLeft > 0 ? `${copy.bubbleCounterCooldown} ${cooldownLeft}${copy.secondsShort}` : '';
+}
+
+function bumpCounter(){
+  shownComboCount = comboCount;
+  bubbleCounterValue.classList.remove('is-bumping');
+  void bubbleCounterValue.offsetWidth;
+  bubbleCounterValue.classList.add('is-bumping');
+}
+
+function playCounterEffect(effectClass){
+  window.clearTimeout(counterEffectTimer);
+  bubbleCounter.classList.remove('is-resetting','is-celebrating');
+  void bubbleCounter.offsetWidth;
+  bubbleCounter.classList.add(effectClass);
+  counterEffectTimer = window.setTimeout(()=>bubbleCounter.classList.remove(effectClass),1100);
+}
+
+function stopCounterRoll(){
+  window.clearInterval(counterRollTimer);
+  bubbleCounter.classList.remove('is-resetting');
+}
+
+function finishCombo(effectClass){
+  // The number visibly rolls down to zero: a shake when the combo breaks before 100, a glow after it.
+  const startCount = shownComboCount;
+  comboCount = 0;
+  streamPending = false;
+  stopCounterRoll();
+  playCounterEffect(effectClass);
+  const startTime = performance.now();
+  const rollDelay = effectClass === 'is-celebrating' ? 450 : 150;
+  counterRollTimer = window.setInterval(()=>{
+    const progress = Math.min(1,Math.max(0,(performance.now() - startTime - rollDelay) / 550));
+    shownComboCount = Math.round(startCount * (1 - progress));
+    renderBubbleCounter();
+    if(progress >= 1)window.clearInterval(counterRollTimer);
+  },30);
+}
+
+function measureCounterMeter(){
+  // Each block of the XP-style meter is 7px wide with a 2px gap.
+  meterBlocks = Math.floor(bubbleCounterMeter.clientWidth / 9);
+  shownMeterBlocks = -1;
+}
+
+function setCounterMeter(blocks,isLow){
+  if(blocks === shownMeterBlocks)return;
+  shownMeterBlocks = blocks;
+  bubbleCounterFill.style.width = blocks ? `${blocks * 9 - 2}px` : '0px';
+  bubbleCounterFill.classList.toggle('is-low',isLow);
+}
+
+function updateCombo(delta){
+  if(comboTimeLeft > 0){
+    comboTimeLeft = Math.max(0,comboTimeLeft - delta);
+    if(comboTimeLeft === 0 && comboCount > 0)finishCombo(comboCount < comboMilestone ? 'is-resetting' : 'is-celebrating');
+  }
+  if(bubbleCounterState === 'hidden' || bubbleCounterState === 'finale')return;
+  // The meter drops a whole block at a time, like the Windows XP loading bar.
+  const remaining = comboTimeLeft / comboTimeout;
+  setCounterMeter(Math.ceil(remaining * meterBlocks - 0.0001),remaining > 0 && remaining < 0.3);
+  if(streamPending)renderBubbleCounter();
+}
+
+function showBubbleCounter(){
+  bubbleCounterState = 'open';
+  bubbleCounter.hidden = false;
+  bubbleCounter.classList.remove('is-minimized','is-leaving');
+  bubbleCounter.classList.add('is-entering');
+  measureCounterMeter();
+}
+
+function startCounterFinale(){
+  bubbleCounterState = 'finale';
+  comboCount = 0;
+  comboTimeLeft = 0;
+  streamPending = false;
+  comboLockedUntil = performance.now() + finaleDuration + comboRestAfterFinale;
+  stopCounterRoll();
+  window.clearTimeout(counterEffectTimer);
+  shownComboCount = comboFinale;
+  bubbleCounter.hidden = false;
+  bubbleCounter.classList.add('no-transition');
+  bubbleCounter.classList.remove('is-minimized','is-entering','is-leaving','is-celebrating','is-resetting');
+  measureCounterMeter();
+  setCounterMeter(meterBlocks,false);
+  renderBubbleCounter();
+  // The window flies from its place at the side to the middle of the screen before it bursts.
+  const rect = bubbleCounter.getBoundingClientRect();
+  bubbleCounter.style.setProperty('--to-center-x',`${sceneWidth / 2 - (rect.left + rect.width / 2)}px`);
+  bubbleCounter.style.setProperty('--to-center-y',`${sceneHeight / 2 - (rect.top + rect.height / 2)}px`);
+  bubbleCounter.classList.add('is-finale');
+  window.setTimeout(()=>explodeCounter(sceneWidth / 2,sceneHeight / 2),finaleDuration * 0.86);
+}
+
+function explodeCounter(x,y){
+  const bubbleSprite = floaterSprites.bubble[0];
+  createPopEffect({type:'bubble',x,y,size:240,sprite:bubbleSprite,rotation:0,opacity:0,sparkly:true},burstPopEffects);
+  for(let index = 0;index < 10;index++){
+    const angle = index / 10 * Math.PI * 2;
+    createPopEffect({type:'bubble',x:x + Math.cos(angle) * 80,y:y + Math.sin(angle) * 50,size:randomBetween(30,60),sprite:bubbleSprite,rotation:0,opacity:0.9,sparkly:true},burstPopEffects);
+  }
+  const now = performance.now();
+  // The shock wave clears every background floater on its way out, and nothing new arrives
+  // until the burst bubbles are gone; then floaters fly back in during the combo rest.
+  const waveSpeed = 1.4;
+  for(const floater of floaters){
+    floater.popAt = now + Math.hypot(floater.x - x,floater.y - y) / waveSpeed;
+    floater.sparkly = true;
+  }
+  bubbleStream = null;
+  refillPausedUntil = now + 4600;
+  refillGradualUntil = refillPausedUntil + 4000;
+  refillCredit = 0;
+  // Bubbles scatter evenly over the whole page above the content, then pop one by one.
+  const count = Math.min(finaleBurstMax,Math.round(sceneWidth * sceneHeight / finaleBurstArea));
+  const reach = Math.hypot(sceneWidth,sceneHeight) / 2;
+  for(let index = 0;index < count;index++){
+    const floater = createFloater(undefined,Math.random() < 0.7 ? 'bubble' : undefined);
+    const heading = randomBetween(0,Math.PI * 2);
+    const speed = floater.baseSpeed + reach * Math.sqrt(Math.random()) * 1.4;
+    floater.x = x + randomBetween(-20,20);
+    floater.y = y + randomBetween(-12,12);
+    floater.vx = Math.cos(heading) * speed;
+    floater.vy = Math.sin(heading) * speed;
+    floater.isBurst = true;
+    floater.sparkly = true;
+    floater.expiresAt = now + randomBetween(1800,4500);
+    burstFloaters.push(floater);
+  }
+}
+
+function updateBurstFloaters(delta,now){
+  if(!burstFloaters.length)return;
+  const relax = Math.min(1,delta * 1.4);
+  burstFloaters = burstFloaters.filter(floater=>{
+    if(floater.popped)return false;
+    if(now >= floater.expiresAt){
+      popFloater(floater,false);
+      return false;
+    }
+    const speed = Math.hypot(floater.vx,floater.vy);
+    if(speed > 0.001){
+      const scale = (speed + (floater.baseSpeed - speed) * relax) / speed;
+      floater.vx *= scale;
+      floater.vy *= scale;
+    }
+    floater.x += floater.vx * delta;
+    floater.y += floater.vy * delta;
+    floater.rotation += floater.spin * delta;
+    const margin = floater.size / 2 + 4;
+    return floater.x > -margin && floater.x < sceneWidth + margin && floater.y > -margin && floater.y < sceneHeight + margin;
+  });
+}
+
+function drawBurstLayer(){
+  if(!burstFloaters.length && !burstPopEffects.length && !burstCanvasDirty)return;
+  burstContext.setTransform(scenePixelRatio,0,0,scenePixelRatio,0,0);
+  burstContext.clearRect(0,0,sceneWidth,sceneHeight);
+  drawFloaters(burstContext,burstFloaters);
+  drawPopEffects(burstContext,burstPopEffects);
+  burstCanvasDirty = burstFloaters.length > 0 || burstPopEffects.length > 0;
+}
+
+bubbleCounter.addEventListener('animationend',event=>{
+  if(event.target !== bubbleCounter)return;
+  bubbleCounter.classList.remove('is-entering');
+  if(bubbleCounter.classList.contains('is-leaving') || bubbleCounter.classList.contains('is-finale')){
+    bubbleCounter.classList.remove('is-leaving','is-minimized','is-finale','no-transition');
+    bubbleCounter.hidden = true;
+    bubbleCounterState = 'hidden';
+    shownComboCount = 0;
+    renderBubbleCounter();
+  }
+});
+bubbleCounterMinimize.addEventListener('click',()=>{
+  if(bubbleCounterState !== 'open' && bubbleCounterState !== 'minimized')return;
+  bubbleCounterState = bubbleCounterState === 'minimized' ? 'open' : 'minimized';
+  bubbleCounter.classList.toggle('is-minimized',bubbleCounterState === 'minimized');
+  renderBubbleCounter();
+});
+bubbleCounterClose.addEventListener('click',()=>{
+  if(bubbleCounterState !== 'open' && bubbleCounterState !== 'minimized')return;
+  bubbleCounterState = 'closing';
+  bubbleCounter.classList.add('is-leaving');
+});
+window.addEventListener('resize',()=>{
+  if(!bubbleCounter.hidden)measureCounterMeter();
+});
+
+function createPopEffect(floater,list = popEffects){
+  const colors = popColors[floater.type];
+  // Finale pops shed fewer droplets but add twinkling glitter that drifts down.
+  const count = floater.sparkly ? 4 + Math.round(floater.size / 10) : 6 + Math.round(floater.size / 6);
+  const sparkleCount = floater.sparkly ? 5 + Math.round(floater.size / 4) : 0;
+  list.push({
+    x:floater.x,
+    y:floater.y,
+    size:floater.size,
+    sprite:floater.sprite,
+    rotation:floater.rotation,
+    opacity:floater.opacity,
+    life:0,
+    duration:sparkleCount ? sparkleDuration : popRingDuration,
+    particles:Array.from({length:count},(_,index)=>({
+      angle:index / count * Math.PI * 2 + randomBetween(-0.3,0.3),
+      distance:randomBetween(0.7,1.3) * (10 + floater.size * 0.9),
+      size:randomBetween(1,1.6 + floater.size / 14),
+      color:colors[Math.floor(Math.random() * colors.length)]
+    })),
+    sparkles:Array.from({length:sparkleCount},()=>({
+      angle:randomBetween(0,Math.PI * 2),
+      distance:randomBetween(0.6,1.4) * (18 + floater.size * 1.5),
+      size:randomBetween(2.6,5.2),
+      color:sparkleColors[Math.floor(Math.random() * sparkleColors.length)],
+      phase:randomBetween(0,Math.PI * 2)
+    }))
+  });
+}
+
+function drawSparkle(context,x,y,size){
+  context.beginPath();
+  context.moveTo(x,y - size);
+  context.quadraticCurveTo(x,y,x + size,y);
+  context.quadraticCurveTo(x,y,x,y + size);
+  context.quadraticCurveTo(x,y,x - size,y);
+  context.quadraticCurveTo(x,y,x,y - size);
+  context.fill();
+}
+
+function popFloater(floater,counts = true){
+  floater.popped = true;
+  if(counts)registerPop();
+  createPopEffect(floater,floater.isBurst ? burstPopEffects : popEffects);
+}
+
+function updatePopEffects(delta){
+  burstPopEffects = burstPopEffects.filter(effect=>{
+    effect.life += delta;
+    return effect.life < effect.duration;
+  });
+  popEffects = popEffects.filter(effect=>{
+    effect.life += delta;
+    return effect.life < effect.duration;
+  });
+}
+
+function drawPopEffects(context = sceneContext,list = popEffects){
+  const spriteScale = spriteResolution / spriteShapeSize;
+  for(const effect of list){
+    if(effect.sparkles.length){
+      const sparkleProgress = effect.life / effect.duration;
+      const sparkleEase = 1 - (1 - sparkleProgress) ** 3;
+      for(const sparkle of effect.sparkles){
+        context.globalAlpha = Math.max(0,(1 - sparkleProgress) * (0.55 + 0.45 * Math.sin(effect.life * 28 + sparkle.phase)));
+        context.fillStyle = sparkle.color;
+        drawSparkle(
+          context,
+          effect.x + Math.cos(sparkle.angle) * sparkle.distance * sparkleEase,
+          effect.y + Math.sin(sparkle.angle) * sparkle.distance * sparkleEase + 16 * sparkleProgress * sparkleProgress,
+          sparkle.size * (1 - sparkleProgress * 0.4)
+        );
+      }
+    }
+    if(effect.life >= popRingDuration)continue;
+    const progress = effect.life / popRingDuration;
+    const easeOut = 1 - (1 - progress) ** 3;
+    const fade = 1 - progress;
+
+    // The shape swells and vanishes in the first moments of the pop.
+    if(progress < 0.3){
+      const flash = progress / 0.3;
+      const drawSize = effect.size * spriteScale * (1 + flash * 0.35);
+      context.globalAlpha = effect.opacity * (1 - flash);
+      context.setTransform(scenePixelRatio,0,0,scenePixelRatio,effect.x * scenePixelRatio,effect.y * scenePixelRatio);
+      context.rotate(effect.rotation);
+      context.drawImage(effect.sprite,-drawSize / 2,-drawSize / 2,drawSize,drawSize);
+      context.setTransform(scenePixelRatio,0,0,scenePixelRatio,0,0);
+    }
+
+    context.globalAlpha = fade * 0.9;
+    context.beginPath();
+    context.arc(effect.x,effect.y,effect.size / 2 * (1 + easeOut * 1.3),0,Math.PI * 2);
+    context.strokeStyle = '#ffffff';
+    context.lineWidth = 1.5 * fade + 0.3;
+    context.stroke();
+
+    for(const particle of effect.particles){
+      context.globalAlpha = fade;
+      context.beginPath();
+      context.arc(effect.x + Math.cos(particle.angle) * particle.distance * easeOut,effect.y + Math.sin(particle.angle) * particle.distance * easeOut,particle.size * (1 - progress * 0.5),0,Math.PI * 2);
+      context.fillStyle = particle.color;
+      context.fill();
+      context.strokeStyle = 'rgba(79,168,232,0.7)';
+      context.lineWidth = 0.6;
+      context.stroke();
+    }
+  }
+  context.globalAlpha = 1;
+}
+
+function drawScene(){
+  sceneContext.setTransform(scenePixelRatio,0,0,scenePixelRatio,0,0);
+  sceneContext.clearRect(0,0,sceneWidth,sceneHeight);
+  if(waterIsActive)renderWater();
+  drawFloaters();
+  drawPopEffects();
+  drawBurstLayer();
+}
+
+function animateScene(time){
+  const now = performance.now();
+  const delta = previousSceneTime ? Math.min((time - previousSceneTime) / 1000,0.05) : 0;
+  previousSceneTime = time;
+
+  if(waterIsActive){
+    waterTimeRemainder += delta;
+    let steps = 0;
+    while(waterTimeRemainder >= waterStep && steps < 3){
+      stepWater();
+      waterTimeRemainder -= waterStep;
+      steps++;
+    }
+    if(steps === 3)waterTimeRemainder = 0;
+    if(now - lastWaterDisturbance > 4000)calmWater();
+  }
+
+  updateFloaters(delta,now);
+  updatePopEffects(delta);
+  updateBubbleStream(delta);
+  updateCombo(delta);
+  updateBurstFloaters(delta,now);
+  drawScene();
+  sceneFrame = requestAnimationFrame(animateScene);
+}
+
+function startScene(){
+  cancelAnimationFrame(sceneFrame);
+  previousSceneTime = 0;
+  if(reducedMotion.matches){
+    drawScene();
+    return;
+  }
+  sceneFrame = requestAnimationFrame(animateScene);
+}
+
+function initializeScene(){
+  resizeScene();
+  floaters = Array.from({length:floaterTarget},()=>createFloater());
+  startScene();
+}
+
+document.addEventListener('pointermove',event=>{
+  if(reducedMotion.matches)return;
+  const now = performance.now();
+  const x = event.clientX;
+  const y = event.clientY;
+  let vx = 0;
+  let vy = 0;
+  if(scenePointer && now - scenePointer.time < 120){
+    const elapsed = Math.max((now - scenePointer.time) / 1000,0.004);
+    vx = scenePointer.vx * 0.5 + (x - scenePointer.x) / elapsed * 0.5;
+    vy = scenePointer.vy * 0.5 + (y - scenePointer.y) / elapsed * 0.5;
+    disturbWaterAlong(scenePointer.x,scenePointer.y,x,y,Math.hypot(vx,vy));
+  }
+  checkFloaterPops(scenePointer ? scenePointer.x : x,scenePointer ? scenePointer.y : y,x,y);
+  scenePointer = {x,y,vx,vy,time:now};
+},{passive:true});
+
+document.addEventListener('pointerout',event=>{
+  if(!event.relatedTarget)scenePointer = null;
+});
+window.addEventListener('blur',()=>{scenePointer = null});
+window.addEventListener('resize',resizeScene);
+reducedMotion.addEventListener('change',()=>{
+  scenePointer = null;
+  popEffects = [];
+  bubbleStream = null;
+  burstFloaters = [];
+  burstPopEffects = [];
+  burstCanvasDirty = true;
+  calmWater();
+  startScene();
+});
+
+function createRouteWindow(titleText,blocks){
+  const panel = document.createElement('section');
+  panel.className = 'route-info-window';
+  const title = document.createElement('div');
+  title.className = 'route-info-title window-title';
+  title.textContent = titleText;
+  const body = document.createElement('div');
+  body.className = 'route-info-body';
+
+  blocks.forEach(block=>{
+    const element = document.createElement(block.type);
+    element.textContent = block.text;
+    if(block.href){
+      element.href = block.href;
+      element.className = 'route-info-link';
+      if(block.href.startsWith('https://')){
+        element.target = '_self';
+        element.rel = 'noopener';
+      }
+    }
+    body.append(element);
+  });
+
+  panel.append(title,body);
+  return panel;
+}
+
+function renderRoute(page){
+  const validPages = ['home','about','projects','github','contact'];
+  currentPage = validPages.includes(page) ? page : 'home';
+  const isHome = currentPage === 'home';
+  homeDetails.hidden = !isHome;
+  routeView.hidden = isHome;
+  if(isHome){
+    document.title = 'keril.art';
+    return;
+  }
+
+  const copy = translations[currentLanguage];
+  routePath.textContent = `C:\\keril.art\\${currentPage}`;
+  routeContent.replaceChildren();
+
+  if(currentPage === 'about' || currentPage === 'projects'){
+    const panel = document.getElementById(currentPage).cloneNode(true);
+    panel.removeAttribute('id');
+    panel.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));
+    routeContent.append(panel);
+  }else if(currentPage === 'github'){
+    routeContent.append(createRouteWindow(copy.routeGithub,[
+      {type:'p',text:copy.githubPageDescription},
+      {type:'a',text:'github.com/EtoKekyes',href:'https://github.com/EtoKekyes'},
+      {type:'h3',text:copy.githubProjectTitle},
+      {type:'p',text:copy.githubProjectDescription},
+      {type:'a',text:copy.githubProjectLink,href:'https://github.com/EtoKekyes/diplom'}
+    ]));
+  }else{
+    routeContent.append(createRouteWindow(copy.routeContact,[
+      {type:'p',text:copy.contactPageDescription},
+      {type:'a',text:'theredcatnyashovich@gmail.com',href:'mailto:theredcatnyashovich@gmail.com'},
+      {type:'a',text:copy.contactEmailLink,href:'mailto:theredcatnyashovich@gmail.com'}
+    ]));
+  }
+
+  document.title = `${copy[`route${currentPage[0].toUpperCase()}${currentPage.slice(1)}`]} | keril.art`;
+}
+
+function pageFromLocation(){
+  const match = location.hash.match(/^#page=(about|projects|github|contact)$/);
+  return match ? match[1] : 'home';
+}
+
+function navigateToPage(page){
+  const validPages = ['home','about','projects','github','contact'];
+  if(!validPages.includes(page))return;
+  const nextHash = page === 'home' ? '' : `#page=${page}`;
+  if(location.hash !== nextHash){
+    try{
+      history.pushState({page},'',`${location.pathname}${location.search}${nextHash}`);
+    }catch(error){
+      location.hash = nextHash;
+    }
+  }
+  renderRoute(page);
+}
+
+document.querySelectorAll('.dock [data-route-page]').forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();
+  navigateToPage(link.dataset.routePage);
+}));
+document.querySelector('#route-home').addEventListener('click',()=>navigateToPage('home'));
+function syncRouteWithLocation(){
+  const page = pageFromLocation();
+  if(page !== currentPage)renderRoute(page);
+}
+window.addEventListener('popstate',syncRouteWithLocation);
+window.addEventListener('hashchange',syncRouteWithLocation);
+
+async function fetchVisitorCount(){
+  if(window.location.protocol === 'file:'){
+    renderVisitorCount();
+    return;
+  }
+  try{
+    const response = await fetch('counter.php',{cache:'no-store',credentials:'same-origin'});
+    if(!response.ok)throw new Error('Counter unavailable');
+    const data = await response.json();
+    if(!Number.isSafeInteger(data.uniqueVisitorsAllTime) || data.uniqueVisitorsAllTime < 0)throw new Error('Invalid counter response');
+    visitorsAllTime = data.uniqueVisitorsAllTime;
+    renderVisitorCount();
+  }catch(error){
+    renderVisitorCount();
+  }
+}
+
+function animateGreeting(text){
+  window.clearTimeout(greetingStartTimeout);
+  window.clearInterval(greetingTypingInterval);
+  heroGreeting.classList.remove('is-complete');
+  heroGreeting.textContent = '';
+  heroGreeting.setAttribute('aria-label',text);
+  const characters = [...text];
+  let visibleCharacters = 0;
+  greetingStartTimeout = window.setTimeout(()=>{
+    greetingTypingInterval = window.setInterval(()=>{
+      visibleCharacters += 1;
+      heroGreeting.textContent = characters.slice(0,visibleCharacters).join('');
+      if(visibleCharacters >= characters.length){
+        window.clearInterval(greetingTypingInterval);
+        heroGreeting.classList.add('is-complete');
+      }
+    },40);
+  },300);
+}
+
+function applyLanguage(language,persist=false){
+  currentLanguage = language;
+  const copy = translations[currentLanguage];
+  document.documentElement.lang = currentLanguage;
+  document.querySelectorAll('[data-i18n]').forEach(element=>{
+    if(element === heroGreeting)animateGreeting(copy.heroGreeting);
+    else element.textContent = copy[element.dataset.i18n];
+  });
+  renderVisitorCount();
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(element=>{
+    element.setAttribute('aria-label',copy[element.dataset.i18nAriaLabel]);
+  });
+  searchInput.placeholder = copy.searchPlaceholder;
+  searchInput.setAttribute('aria-label',copy.searchLabel);
+  suggestionsList.setAttribute('aria-label',copy.resultsLabel);
+  languageMenu.setAttribute('aria-label',copy.languageMenu);
+  languageTarget.textContent = currentLanguage.toUpperCase();
+  languageToggle.setAttribute('aria-label',copy.languageButton);
+  languageToggle.title = copy.languageButton;
+  languageOptions.forEach(option=>{
+    const selected = option.dataset.language === currentLanguage;
+    option.setAttribute('aria-checked',String(selected));
+    option.querySelector('.language-option__check').textContent = selected ? '✓' : '';
+  });
+  if(persist){
+    try{localStorage.setItem('keril-art-language',currentLanguage)}catch(error){}
+  }
+  if(!suggestionsList.hidden)renderSuggestions();
+  if(currentPage !== 'home')renderRoute(currentPage);
+  renderBubbleCounter();
+}
+
+function normalizeSearchText(value){
+  return value.toLocaleLowerCase(currentLanguage).replaceAll('ё','е').trim();
+}
+
+function selectSuggestion(index){
+  const item = matchingItems[index];
+  if(!item)return;
+  suggestionsList.hidden = true;
+  searchInput.setAttribute('aria-expanded','false');
+  searchInput.removeAttribute('aria-activedescendant');
+  navigateToPage(item.target === 'about' ? 'about' : 'projects');
+}
+
+function renderSuggestions(){
+  const copy = translations[currentLanguage];
+  const query = normalizeSearchText(searchInput.value);
+  const terms = query.split(/\s+/).filter(Boolean);
+  matchingItems = searchItems.filter(item=>{
+    const searchable = normalizeSearchText(`${copy[item.titleKey]} ${copy[item.detailKey]} ${translations.ru[item.titleKey]} ${translations.ru[item.detailKey]} ${item.keywords} ${item.path}`);
+    return terms.every(term=>searchable.includes(term));
+  });
+  activeSuggestionIndex = -1;
+  suggestionsList.replaceChildren();
+
+  if(!matchingItems.length){
+    const emptyMessage = document.createElement('div');
+    emptyMessage.className = 'path-suggestions__empty';
+    emptyMessage.textContent = copy.noResults;
+    suggestionsList.append(emptyMessage);
+  }else{
+    matchingItems.forEach((item,index)=>{
+      const option = document.createElement('button');
+      option.className = 'path-suggestion';
+      option.type = 'button';
+      option.id = `path-suggestion-${index}`;
+      option.setAttribute('role','option');
+      option.setAttribute('aria-selected','false');
+
+      const icon = document.createElement('span');
+      icon.className = 'path-suggestion__icon';
+      icon.setAttribute('aria-hidden','true');
+      icon.textContent = item.target === 'about' ? '▤' : '▣';
+
+      const suggestionCopy = document.createElement('span');
+      suggestionCopy.className = 'path-suggestion__copy';
+      const title = document.createElement('span');
+      title.className = 'path-suggestion__title';
+      title.textContent = copy[item.titleKey];
+      const detail = document.createElement('span');
+      detail.className = 'path-suggestion__detail';
+      detail.textContent = `C:\\keril.art\\${item.path}  ·  ${copy[item.detailKey]}`;
+      suggestionCopy.append(title,detail);
+
+      const kind = document.createElement('span');
+      kind.className = 'path-suggestion__kind';
+      kind.textContent = copy[item.kindKey];
+      option.append(icon,suggestionCopy,kind);
+      option.addEventListener('click',()=>selectSuggestion(index));
+      suggestionsList.append(option);
+    });
+  }
+
+  suggestionsList.hidden = false;
+  searchInput.setAttribute('aria-expanded','true');
+}
+
+function closeSuggestions(){
+  suggestionsList.hidden = true;
+  searchInput.setAttribute('aria-expanded','false');
+  searchInput.removeAttribute('aria-activedescendant');
+  activeSuggestionIndex = -1;
+}
+
+searchForm.addEventListener('click',event=>{
+  if(event.target !== searchInput && !event.target.closest('.path-suggestion'))searchInput.focus();
+});
+
+function setLanguageMenuOpen(open,focusSelected=false){
+  languageMenu.hidden = !open;
+  languageToggle.setAttribute('aria-expanded',String(open));
+  if(open && focusSelected)languageMenu.querySelector('[aria-checked="true"]').focus();
+}
+
+searchInput.addEventListener('focus',()=>{
+  document.querySelector('.path-search__caret').hidden = true;
+  searchSeparator.hidden = false;
+  renderSuggestions();
+});
+searchInput.addEventListener('input',renderSuggestions);
+searchInput.addEventListener('keydown',event=>{
+  if(event.key === 'ArrowDown' || event.key === 'ArrowUp'){
+    if(suggestionsList.hidden)renderSuggestions();
+    if(!matchingItems.length)return;
+    event.preventDefault();
+    const direction = event.key === 'ArrowDown' ? 1 : -1;
+    activeSuggestionIndex = (activeSuggestionIndex + direction + matchingItems.length) % matchingItems.length;
+    suggestionsList.querySelectorAll('.path-suggestion').forEach((option,index)=>{
+      const selected = index === activeSuggestionIndex;
+      option.setAttribute('aria-selected',String(selected));
+      if(selected){
+        searchInput.setAttribute('aria-activedescendant',option.id);
+        option.scrollIntoView({block:'nearest'});
+      }
+    });
+  }else if(event.key === 'Enter'){
+    if(!suggestionsList.hidden && matchingItems.length){
+      event.preventDefault();
+      selectSuggestion(activeSuggestionIndex < 0 ? 0 : activeSuggestionIndex);
+    }
+  }else if(event.key === 'Escape'){
+    closeSuggestions();
+  }
+});
+searchForm.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(matchingItems.length)selectSuggestion(activeSuggestionIndex < 0 ? 0 : activeSuggestionIndex);
+});
+document.addEventListener('pointerdown',event=>{
+  if(!searchForm.contains(event.target))closeSuggestions();
+  if(!languageSwitcher.contains(event.target))setLanguageMenuOpen(false);
+});
+searchInput.addEventListener('blur',()=>{
+  if(!searchInput.value){
+    document.querySelector('.path-search__caret').hidden = false;
+    searchSeparator.hidden = true;
+  }
+});
+languageToggle.addEventListener('click',()=>{
+  setLanguageMenuOpen(languageMenu.hidden);
+});
+languageToggle.addEventListener('keydown',event=>{
+  if(event.key === 'ArrowDown' || event.key === 'ArrowUp'){
+    event.preventDefault();
+    setLanguageMenuOpen(true,true);
+  }
+});
+languageSwitcher.addEventListener('focusout',event=>{
+  if(!languageSwitcher.contains(event.relatedTarget))setLanguageMenuOpen(false);
+});
+languageOptions.forEach(option=>option.addEventListener('click',()=>{
+  applyLanguage(option.dataset.language,true);
+  setLanguageMenuOpen(false);
+  languageToggle.focus();
+}));
+languageMenu.addEventListener('keydown',event=>{
+  const currentIndex = languageOptions.indexOf(document.activeElement);
+  if(event.key === 'Escape'){
+    event.preventDefault();
+    setLanguageMenuOpen(false);
+    languageToggle.focus();
+  }else if(event.key === 'ArrowDown' || event.key === 'ArrowUp'){
+    event.preventDefault();
+    const direction = event.key === 'ArrowDown' ? 1 : -1;
+    languageOptions[(currentIndex + direction + languageOptions.length) % languageOptions.length].focus();
+  }else if(event.key === 'Home' || event.key === 'End'){
+    event.preventDefault();
+    languageOptions[event.key === 'Home' ? 0 : languageOptions.length - 1].focus();
+  }
+});
+document.addEventListener('keydown',event=>{
+  if(event.key === 'Escape' && !languageMenu.hidden){
+    setLanguageMenuOpen(false);
+    languageToggle.focus();
+  }
+});
+initializeScene();
+function applyTheme(theme,persist=false){
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+  themeToggle.setAttribute('aria-pressed',String(theme === 'dark'));
+  if(persist){
+    try{localStorage.setItem('keril-art-theme',theme)}catch(error){}
+  }
+}
+
+themeToggle.addEventListener('click',()=>{
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark',true);
+});
+themeGate.querySelectorAll('[data-theme-choice]').forEach(button=>button.addEventListener('click',()=>{
+  applyTheme(button.dataset.themeChoice,true);
+  document.documentElement.classList.remove('theme-pending');
+  pageShell.inert = false;
+  themeToggle.focus();
+}));
+applyTheme(document.documentElement.dataset.theme);
+if(document.documentElement.classList.contains('theme-pending')){
+  // Until a theme is chosen the rest of the page cannot be focused or clicked.
+  pageShell.inert = true;
+  themeGate.querySelector(`[data-theme-choice="${document.documentElement.dataset.theme}"]`).focus();
+}
+applyLanguage(getInitialLanguage());
+renderRoute(pageFromLocation());
+fetchVisitorCount();
+</script>
+</body>
+</html>
