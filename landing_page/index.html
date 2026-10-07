@@ -315,7 +315,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     </div>
 
     <div class="home-details" id="home-details">
-    <section id="about" class="xp-window" data-window-page="about" aria-labelledby="about-window-title">
+    <section id="about" class="xp-window" data-window-page="me" aria-labelledby="about-window-title">
       <div class="xp-window__bar">
         <span data-i18n="aboutWindowTitle" id="about-window-title" class="window-title xp-window__title">обо_мне.txt</span>
       </div>
@@ -324,6 +324,14 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       </div></div></div>
     </section>
+
+    <!-- Text of the "об_этом.txt" window opened by the "об этом" nav button: what this site is for. -->
+    <template id="about-site-content">
+      <div class="xp-window__text">
+        <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse.</p>
+        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+      </div>
+    </template>
 
     <section id="projects" class="xp-window" data-window-page="projects" aria-labelledby="projects-window-title">
       <div class="xp-window__bar">
@@ -441,29 +449,30 @@ let visitorsAllTime = null;
 const translations = {
   ru:{
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub — откроется в новой вкладке',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
-    heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',
+    heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',aboutSiteWindowTitle:'об_этом.txt',
     projectsWindowTitle:'проекты.zip',
-    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы, трекеров и передачи третьим лицам. Без согласия посещение просто не учитывается.',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeProjects:'Проекты',routeContact:'Связаться со мной',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы, трекеров и передачи третьим лицам. Без согласия посещение просто не учитывается.',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по страницам, статьям и проектам',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
-    kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Обо мне',suggestAboutDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
+    kindPage:'страница',kindProject:'проект',suggestAboutTitle:'Об этом',suggestAboutDetail:'Зачем этот сайт и чем я занимаюсь',suggestMeTitle:'Обо мне',suggestMeDetail:'Образование, опыт и навыки',suggestWifiTitle:'Детектор Wi-Fi-атак',suggestWifiDetail:'Python, Scapy, обнаружение атак',
     suggestLifiTitle:'Гибридная сеть Wi-Fi/LiFi',suggestLifiDetail:'Оптическая сеть для музейного комплекса',suggestVpnTitle:'Self-hosted VPN-инфраструктура',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
   },
   en:{
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
-    heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',
+    heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',aboutSiteWindowTitle:'about_this.txt',
     projectsWindowTitle:'projects.zip',
-    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers, nothing shared with third parties. Without consent your visit is simply not counted.',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeProjects:'Projects',routeContact:'Contact me',
+    footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers, nothing shared with third parties. Without consent your visit is simply not counted.',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search pages, articles, and projects',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
-    kindPage:'page',kindProject:'project',suggestAboutTitle:'About me',suggestAboutDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
+    kindPage:'page',kindProject:'project',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for and why I do this',suggestMeTitle:'About me',suggestMeDetail:'Education, experience, and skills',suggestWifiTitle:'Wi-Fi Attack Detector',suggestWifiDetail:'Python, Scapy, attack detection',
     suggestLifiTitle:'Hybrid Wi-Fi/LiFi Network',suggestLifiDetail:'Optical network for a museum complex',suggestVpnTitle:'Self-hosted VPN Infrastructure',suggestVpnDetail:'AmneziaWG, Reality, Hysteria2, DNS'
   }
 };
 let currentLanguage = 'ru';
 const searchItems = [
-  {target:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about обо мне education образование связь безопасность сеть'},
-  {target:'project-wifi',path:'projects\\wifi-detector',titleKey:'suggestWifiTitle',detailKey:'suggestWifiDetail',kindKey:'kindProject',keywords:'wifi wi-fi атаки security безопасность scapy python диплом detector детектор'},
-  {target:'project-lifi',path:'projects\\wifi-lifi',titleKey:'suggestLifiTitle',detailKey:'suggestLifiDetail',kindKey:'kindProject',keywords:'lifi лифи wifi wi-fi оптическая сеть музей optical'},
-  {target:'project-vpn',path:'projects\\vpn',titleKey:'suggestVpnTitle',detailKey:'suggestVpnDetail',kindKey:'kindProject',keywords:'vpn впн amneziawg reality hysteria2 dns сервер'}
+  {page:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about this об этом сайт site зачем why'},
+  {page:'me',path:'me',titleKey:'suggestMeTitle',detailKey:'suggestMeDetail',kindKey:'kindPage',keywords:'about me обо мне education образование связь безопасность сеть'},
+  {page:'projects',path:'projects\\wifi-detector',titleKey:'suggestWifiTitle',detailKey:'suggestWifiDetail',kindKey:'kindProject',keywords:'wifi wi-fi атаки security безопасность scapy python диплом detector детектор'},
+  {page:'projects',path:'projects\\wifi-lifi',titleKey:'suggestLifiTitle',detailKey:'suggestLifiDetail',kindKey:'kindProject',keywords:'lifi лифи wifi wi-fi оптическая сеть музей optical'},
+  {page:'projects',path:'projects\\vpn',titleKey:'suggestVpnTitle',detailKey:'suggestVpnDetail',kindKey:'kindProject',keywords:'vpn впн amneziawg reality hysteria2 dns сервер'}
 ];
 let activeSuggestionIndex = -1;
 let matchingItems = [];
@@ -1381,7 +1390,7 @@ reducedMotion.addEventListener('change',()=>{
   startScene();
 });
 
-const routePages = ['home','about','projects','contact'];
+const routePages = ['home','about','me','projects','contact'];
 const windowReturnDelay = 2000;
 const windowIcons = {
   minimize:'<svg aria-hidden="true" width="9" height="9" viewBox="0 0 8 8"><rect x="1" y="6" width="6" height="1.3" fill="#2A4A6E"/></svg>',
@@ -1564,13 +1573,17 @@ function renderRoute(page){
   routeContent.replaceChildren();
 
   let panel;
-  if(currentPage === 'about' || currentPage === 'projects'){
-    panel = document.getElementById(currentPage).cloneNode(true);
+  if(currentPage === 'me' || currentPage === 'projects'){
+    // "About me" and projects open the same windows as on the home page, full size.
+    panel = document.getElementById(currentPage === 'me' ? 'about' : 'projects').cloneNode(true);
     panel.removeAttribute('id');
     panel.removeAttribute('aria-labelledby');
-    panel.setAttribute('aria-label',copy[`${currentPage}WindowTitle`]);
+    panel.setAttribute('aria-label',panel.querySelector('.xp-window__title').textContent);
     panel.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));
     panel.classList.remove('is-minimized','is-closed','is-popping','is-returning');
+  }else if(currentPage === 'about'){
+    // The "об этом" nav button opens its own window about the site itself.
+    panel = createRouteWindow('about',copy.aboutSiteWindowTitle,document.querySelector('#about-site-content').content.cloneNode(true));
   }else{
     // Content is cleared for now and will be rewritten; the window stays as an empty shell.
     panel = createRouteWindow(currentPage,copy.routeContact);
@@ -1582,7 +1595,7 @@ function renderRoute(page){
 }
 
 function pageFromLocation(){
-  const match = location.hash.match(/^#page=(about|projects|contact)$/);
+  const match = location.hash.match(/^#page=(about|me|projects|contact)$/);
   return match ? match[1] : 'home';
 }
 
@@ -1749,7 +1762,7 @@ function selectSuggestion(index){
   suggestionsList.hidden = true;
   searchInput.setAttribute('aria-expanded','false');
   searchInput.removeAttribute('aria-activedescendant');
-  navigateToPage(item.target === 'about' ? 'about' : 'projects');
+  navigateToPage(item.page);
 }
 
 function renderSuggestions(){
@@ -1780,7 +1793,7 @@ function renderSuggestions(){
       const icon = document.createElement('span');
       icon.className = 'path-suggestion__icon';
       icon.setAttribute('aria-hidden','true');
-      icon.textContent = item.target === 'about' ? '▤' : '▣';
+      icon.textContent = item.kindKey === 'kindPage' ? '▤' : '▣';
 
       const suggestionCopy = document.createElement('span');
       suggestionCopy.className = 'path-suggestion__copy';
