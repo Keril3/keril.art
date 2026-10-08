@@ -614,6 +614,14 @@ const finaleDuration = 2000;
 const comboRestAfterFinale = 10000;
 const finaleBurstArea = 1500;
 const finaleBurstMax = 900;
+// Some burst bubbles turn back, gather into the owner's nickname (drawn in the site font), hold it
+// and then pop from left to right. Times are in ms after the burst.
+const finaleWord = 'Keril3';
+const finaleWordGatherAt = 600;
+const finaleWordPopAt = 4600;
+const finaleWordSweep = 800;
+const finaleWordSpring = 40;
+const finaleWordDamping = 11;
 // Extra floaters from quick-pop bonuses may exceed the usual count by this much; the stream gets its own allowance on top.
 const extraFloaterLimit = 220;
 const burstCanvas = document.querySelector('#burst-canvas');
@@ -1121,7 +1129,8 @@ function explodeCounter(x,y){
     floater.sparkly = true;
   }
   bubbleStream = null;
-  refillPausedUntil = now + 4600;
+  // Background floaters come back only once the nickname has popped.
+  refillPausedUntil = now + finaleWordPopAt + finaleWordSweep;
   refillGradualUntil = refillPausedUntil + 4000;
   refillCredit = 0;
   // Bubbles scatter evenly over the whole page above the content, then pop one by one.
@@ -1137,9 +1146,61 @@ function explodeCounter(x,y){
     floater.vy = Math.sin(heading) * speed;
     floater.isBurst = true;
     floater.sparkly = true;
-    floater.expiresAt = now + randomBetween(1800,4500);
+    // They pop sooner than the word bubbles arrive, so the nickname forms on a clearing screen.
+    floater.expiresAt = now + randomBetween(1200,2600);
     burstFloaters.push(floater);
   }
+  const word = nicknameLayout(x,y);
+  for(const point of word.points){
+    const floater = createFloater(undefined,'bubble');
+    const heading = randomBetween(0,Math.PI * 2);
+    const speed = randomBetween(150,450);
+    floater.x = x + randomBetween(-20,20);
+    floater.y = y + randomBetween(-12,12);
+    floater.vx = Math.cos(heading) * speed;
+    floater.vy = Math.sin(heading) * speed;
+    floater.size = word.step * randomBetween(1,1.12);
+    floater.opacity = 1;
+    floater.isBurst = true;
+    floater.sparkly = true;
+    floater.target = point;
+    floater.gatherAt = now + finaleWordGatherAt + randomBetween(0,250);
+    floater.expiresAt = now + finaleWordPopAt + (point.x - word.left) / word.width * finaleWordSweep + randomBetween(0,120);
+    burstFloaters.push(floater);
+  }
+}
+
+// Monocraft is a pixel font: one glyph pixel is 1/9 of the font size (letters are 6 wide, capitals
+// 7 tall), so every filled glyph pixel of the nickname becomes one bubble. The word is drawn at 90px,
+// where glyph pixels are crisp 10px squares, and read at their centers. It is centered on the burst
+// and takes up to 86% of the width, with bubbles at most 26px apart.
+function nicknameLayout(centerX,centerY){
+  const cell = 10;
+  const columns = finaleWord.length * 6;
+  const rows = 9;
+  const context = document.createElement('canvas').getContext('2d',{willReadFrequently:true});
+  context.canvas.width = columns * cell;
+  context.canvas.height = rows * cell;
+  context.font = `${cell * 9}px Monocraft, monospace`;
+  context.fillText(finaleWord,0,7 * cell);
+  const pixels = context.getImageData(0,0,columns * cell,rows * cell).data;
+  const cells = [];
+  for(let row = 0;row < rows;row++){
+    for(let column = 0;column < columns;column++){
+      const index = ((row * cell + cell / 2) * columns * cell + column * cell + cell / 2) * 4 + 3;
+      if(pixels[index] > 128)cells.push({column,row});
+    }
+  }
+  if(!cells.length)return {points:[],step:0,left:centerX,width:1};
+  const firstColumn = Math.min(...cells.map(cell=>cell.column));
+  const firstRow = Math.min(...cells.map(cell=>cell.row));
+  const usedColumns = Math.max(...cells.map(cell=>cell.column)) - firstColumn + 1;
+  const usedRows = Math.max(...cells.map(cell=>cell.row)) - firstRow + 1;
+  const step = Math.min(sceneWidth * 0.86 / usedColumns,sceneHeight * 0.3 / usedRows,26);
+  const left = centerX - usedColumns * step / 2;
+  const top = centerY - usedRows * step / 2;
+  const points = cells.map(cell=>({x:left + (cell.column - firstColumn + 0.5) * step,y:top + (cell.row - firstRow + 0.5) * step}));
+  return {points,step,left,width:usedColumns * step};
 }
 
 function updateBurstFloaters(delta,now){
@@ -1151,6 +1212,15 @@ function updateBurstFloaters(delta,now){
       popFloater(floater,false);
       return false;
     }
+    if(floater.target && now >= floater.gatherAt){
+      // A slightly springy pull brings the bubble onto its letter; a slow bob keeps the word alive.
+      const targetY = floater.target.y + Math.sin(now / 450 + floater.phase) * 1.5;
+      floater.vx += ((floater.target.x - floater.x) * finaleWordSpring - floater.vx * finaleWordDamping) * delta;
+      floater.vy += ((targetY - floater.y) * finaleWordSpring - floater.vy * finaleWordDamping) * delta;
+      floater.x += floater.vx * delta;
+      floater.y += floater.vy * delta;
+      return true;
+    }
     const speed = Math.hypot(floater.vx,floater.vy);
     if(speed > 0.001){
       const scale = (speed + (floater.baseSpeed - speed) * relax) / speed;
@@ -1161,7 +1231,8 @@ function updateBurstFloaters(delta,now){
     floater.y += floater.vy * delta;
     floater.rotation += floater.spin * delta;
     const margin = floater.size / 2 + 4;
-    return floater.x > -margin && floater.x < sceneWidth + margin && floater.y > -margin && floater.y < sceneHeight + margin;
+    // Nickname bubbles may fly off the edge for a moment: they come back to their letter.
+    return floater.target || floater.x > -margin && floater.x < sceneWidth + margin && floater.y > -margin && floater.y < sceneHeight + margin;
   });
 }
 
@@ -1169,6 +1240,19 @@ function drawBurstLayer(){
   if(!burstFloaters.length && !burstPopEffects.length && !burstCanvasDirty)return;
   burstContext.setTransform(scenePixelRatio,0,0,scenePixelRatio,0,0);
   burstContext.clearRect(0,0,sceneWidth,sceneHeight);
+  // Nickname bubbles share one blue backing that merges into solid strokes, so the letters read
+  // over white windows and text too.
+  burstContext.beginPath();
+  for(const floater of burstFloaters){
+    if(!floater.target)continue;
+    // 0.8 of the size overlaps the diagonal neighbours, so even slanted strokes join up.
+    const radius = floater.size * 0.8;
+    burstContext.moveTo(floater.x + radius,floater.y);
+    burstContext.arc(floater.x,floater.y,radius,0,Math.PI * 2);
+  }
+  burstContext.globalAlpha = 1;
+  burstContext.fillStyle = 'rgba(28,95,196,0.8)';
+  burstContext.fill();
   drawFloaters(burstContext,burstFloaters);
   drawPopEffects(burstContext,burstPopEffects);
   burstCanvasDirty = burstFloaters.length > 0 || burstPopEffects.length > 0;
