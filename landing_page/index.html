@@ -104,12 +104,16 @@ a{text-decoration:none}
 .xp-window__text{display:flex;flex-direction:column;gap:14px;font-size:17px;line-height:1.75}
 .xp-window__text p{margin:0}
 .contact-list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
-.contact-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px}
-.contact-list__label{flex:none;min-width:6.5em;color:#527795}
+.contact-list li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
+.contact-list__app{display:inline-flex;flex:none;align-items:center;gap:8px;min-width:7.5em;color:#527795}
+.contact-list__app svg{flex:none}
 .contact-list__value{min-width:0;overflow-wrap:anywhere}
-a.contact-list__value{color:#1C5FC4;text-decoration:underline;text-underline-offset:3px}
-html[data-theme="dark"] .contact-list__label{color:#9DB8DD}
-html[data-theme="dark"] a.contact-list__value{color:#9CCBFF}
+.contact-list__link{display:inline-flex;flex:none;width:28px;height:26px;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#CFE6FB 48%,#A9D0F3 52%,#7FB4E8 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 1px 3px rgba(20,70,140,0.25);color:#1C5FC4;text-decoration:none;cursor:pointer}
+.contact-list__link:hover{filter:brightness(1.08)}
+.contact-list__link:active{transform:translateY(1px)}
+html[data-theme="dark"] .contact-list__app{color:#9DB8DD}
+/* The chain buttons stay light in the dark theme, like the "to home page" button, so the icon keeps its dark blue. */
+html[data-theme="dark"] .contact-list__link,html[data-theme="dark"] .contact-list__link *{color:#1C5FC4!important}
 .xp-window.is-popping{animation:window-pop .26s ease-in forwards}
 @keyframes window-pop{40%{transform:scale(1.05)}100%{transform:scale(1.12);opacity:0}}
 .xp-window.is-closed{visibility:hidden}
@@ -122,6 +126,8 @@ html[data-theme="dark"] a.contact-list__value{color:#9CCBFF}
 @media(prefers-reduced-motion:reduce){.xp-window.is-popping,.xp-window.is-returning{animation:none}.xp-window__collapse{transition:none}}
 .scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='white'%3E%3Ccircle cx='14' cy='18' r='1.4' opacity='.75'/%3E%3Ccircle cx='47' cy='9' r='1' opacity='.5'/%3E%3Ccircle cx='79' cy='21' r='1.6' opacity='.8'/%3E%3Ccircle cx='28' cy='46' r='1' opacity='.55'/%3E%3Ccircle cx='62' cy='41' r='1.3' opacity='.7'/%3E%3Ccircle cx='90' cy='55' r='.9' opacity='.45'/%3E%3Ccircle cx='9' cy='77' r='1.1' opacity='.6'/%3E%3Ccircle cx='44' cy='82' r='1.5' opacity='.75'/%3E%3Ccircle cx='74' cy='73' r='1' opacity='.5'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='131' height='131'%3E%3Cg fill='white'%3E%3Ccircle cx='31' cy='64' r='1.2' opacity='.6'/%3E%3Ccircle cx='97' cy='29' r='.9' opacity='.5'/%3E%3Ccircle cx='112' cy='103' r='1.3' opacity='.65'/%3E%3Ccircle cx='58' cy='120' r='.9' opacity='.45'/%3E%3C/g%3E%3C/svg%3E"),var(--sky)}
 .scene canvas{position:absolute;top:0;left:0;display:block}
+/* A 10% shade over the sky and its floaters keeps the background from competing with the windows. */
+.scene::after{content:"";position:absolute;inset:0;background:rgba(11,37,69,0.1)}
 #scene-canvas{width:100%;height:100%}
 .cookie-banner{position:fixed;left:50%;bottom:16px;z-index:36;width:min(560px,calc(100% - 32px));box-sizing:border-box;transform:translateX(-50%);box-shadow:0 12px 30px rgba(11,37,69,0.35);animation:cookie-rise .45s cubic-bezier(.2,1.2,.4,1)}
 .turnstile-slot{position:fixed;left:50%;bottom:16px;z-index:37;transform:translateX(-50%)}
@@ -330,19 +336,21 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         <span data-i18n="aboutWindowTitle" id="about-window-title" class="window-title xp-window__title">обо_мне.txt</span>
       </div>
       <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body xp-window__text">
-        <p data-i18n="aboutMeIntro">Привет! Я Keril³ — начинающий разработчик. Пока ищу своё направление: пробую разные сферы разработки и смотрю, что затянет сильнее всего. Сейчас пишу на Python и C# (для Unity).</p>
+        <p data-i18n="aboutMeIntro">Привет! Я Keril³ — начинающий разработчик. Пока ищу своё направление: пробую разные сферы разработки и смотрю, что затянет сильнее всего. Имею небольшой опыт программирования на Python, C# (Unity) и HTML, сейчас изучаю C++ и Unreal Engine.</p>
         <p data-i18n="aboutMeEducation">По образованию я инженер связи: бакалавриат по направлению «Инфокоммуникационные технологии и системы связи» и магистратура «Мобильные сети и технологии».</p>
         <p data-i18n="aboutMeGamedev">Больше всего меня тянет в геймдев — его я и собираюсь изучать дальше. Сам люблю в основном шутеры и головоломки, так что ждите: скоро здесь появятся и мои первые игры.</p>
         <p data-i18n="aboutMeHobbies">Помимо разработки занимаюсь 3D-печатью, а иногда собираю кастомные клавиатуры и занимаюсь твердотельным моделированием.</p>
-        <p data-i18n="aboutMeProjects">Все мои проекты лежат на GitHub, а про некоторые из них коротко рассказано в окне «проекты.zip».</p>
+        <p data-i18n="aboutMeProjects">Все мои проекты лежат на GitHub, а лучшие скоро появятся в окне «проекты.zip».</p>
       </div></div></div>
     </section>
 
     <!-- Text of the "об_этом.txt" window opened by the "об этом" nav button: what this site is for. -->
     <template id="about-site-content">
       <div class="xp-window__text">
-        <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse.</p>
-        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+        <p data-i18n="aboutSiteIntro">Это мой личный сайт-визитка: здесь можно узнать, кто я, посмотреть мои проекты и найти, как со мной связаться.</p>
+        <p data-i18n="aboutSiteWhy">Я сделал его, чтобы у меня было своё место в интернете, а не только профили в соцсетях, и заодно попрактиковаться: сайт написан вручную, без конструкторов, и работает на моём собственном сервере, который я настраивал сам.</p>
+        <p data-i18n="aboutSiteStyle">Оформление — смесь Frutiger Aero, Windows XP и эстетики Tenshi Kawaii: глянец, пузыри, звёздочки и окна, как на компьютерах из нулевых. Мне просто нравится этот стиль, и хотелось сделать что-то не похожее на типичные сайты.</p>
+        <p data-i18n="aboutSiteBubbles">И да, фигуры на фоне можно лопать курсором или пальцем. Попробуйте набрать большое комбо — вдруг что-нибудь случится.</p>
       </div>
     </template>
 
@@ -350,10 +358,23 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     <template id="contact-content">
       <div class="xp-window__text">
         <p data-i18n="contactIntro">Со мной можно связаться здесь:</p>
+        <!-- The handles are plain text; only the chain button after each one is a link. -->
         <ul class="contact-list">
-          <li><span class="contact-list__label">Discord</span><a class="contact-list__value" href="https://discord.com/users/249232022483107840" target="_blank" rel="noopener noreferrer">keril3</a></li>
-          <li><span class="contact-list__label" data-i18n="contactEmail">Почта</span><a class="contact-list__value" data-email-user="hello" data-email-domain="keril.art"></a></li>
-          <li><span class="contact-list__label">Telegram</span><a class="contact-list__value" href="https://t.me/Minimalnaya_dlina_5_simvolov" target="_blank" rel="noopener noreferrer">@Minimalnaya_dlina_5_simvolov</a></li>
+          <li data-email-user="hello" data-email-domain="keril.art">
+            <span class="contact-list__app"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><rect x="1.75" y="4.25" width="16.5" height="11.5" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M2.6 5.3 10 10.9l7.4-5.6" fill="none" stroke="#1C5FC4" stroke-width="1.5" stroke-linejoin="round"/></svg><span data-i18n="contactEmail">Почта</span></span>
+            <span class="contact-list__value"></span>
+            <a class="contact-list__link" data-i18n-aria-label="contactEmailLink" aria-label="Написать на почту"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
+          </li>
+          <li>
+            <span class="contact-list__app"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><rect width="20" height="20" rx="5" fill="#5865F2"/><path d="M6.2 6.3c1.2-.6 2.4-.9 3.8-.9s2.6.3 3.8.9c1 1.5 1.6 3.3 1.7 5.4-1 .8-2.1 1.3-3.2 1.6l-.7-1.1c-.5.2-1.1.3-1.6.3s-1.1-.1-1.6-.3l-.7 1.1c-1.1-.3-2.2-.8-3.2-1.6.1-2.1.7-3.9 1.7-5.4z" fill="#ffffff"/><circle cx="8.2" cy="9.9" r="1.1" fill="#5865F2"/><circle cx="11.8" cy="9.9" r="1.1" fill="#5865F2"/></svg>Discord</span>
+            <span class="contact-list__value">keril3</span>
+            <a class="contact-list__link" href="https://discord.com/users/249232022483107840" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="contactDiscordLink" aria-label="Открыть профиль в Discord (в новой вкладке)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
+          </li>
+          <li>
+            <span class="contact-list__app"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#29A9EB"/><path d="M4.6 9.7 14.4 5.9c.5-.2.9.1.8.8l-1.7 7.9c-.1.6-.5.7-1 .4l-2.6-1.9-1.2 1.2c-.1.1-.3.2-.5.2l.2-2.7 4.9-4.4c.2-.2 0-.3-.3-.1l-6 3.8-2.6-.8c-.6-.2-.6-.6.1-.8z" fill="#ffffff"/></svg>Telegram</span>
+            <span class="contact-list__value">@Minimalnaya_dlina_5_simvolov</span>
+            <a class="contact-list__link" href="https://t.me/Minimalnaya_dlina_5_simvolov" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="contactTelegramLink" aria-label="Открыть чат в Telegram (в новой вкладке)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
+          </li>
         </ul>
       </div>
     </template>
@@ -363,8 +384,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         <span data-i18n="projectsWindowTitle" id="projects-window-title" class="window-title xp-window__title">проекты.zip</span>
       </div>
       <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body xp-window__text">
-        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.</p>
+        <p data-i18n="projectsSoon">Скоро тут появятся проекты, которые мне не стыдно показать на публику.</p>
       </div></div></div>
     </section>
 
@@ -477,28 +497,28 @@ const translations = {
   ru:{
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub — откроется в новой вкладке',navMail:'Связаться со мной',navMailLabel:'Связаться со мной',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',aboutSiteWindowTitle:'об_этом.txt',
-    projectsWindowTitle:'проекты.zip',aboutMeIntro:'Привет! Я Keril³ — начинающий разработчик. Пока ищу своё направление: пробую разные сферы разработки и смотрю, что затянет сильнее всего. Сейчас пишу на Python и C# (для Unity).',aboutMeEducation:'По образованию я инженер связи: бакалавриат по направлению «Инфокоммуникационные технологии и системы связи» и магистратура «Мобильные сети и технологии».',aboutMeGamedev:'Больше всего меня тянет в геймдев — его я и собираюсь изучать дальше. Сам люблю в основном шутеры и головоломки, так что ждите: скоро здесь появятся и мои первые игры.',aboutMeHobbies:'Помимо разработки занимаюсь 3D-печатью, а иногда собираю кастомные клавиатуры и занимаюсь твердотельным моделированием.',aboutMeProjects:'Все мои проекты лежат на GitHub, а про некоторые из них коротко рассказано в окне «проекты.zip».',
+    projectsWindowTitle:'проекты.zip',projectsSoon:'Скоро тут появятся проекты, которые мне не стыдно показать на публику.',aboutSiteIntro:'Это мой личный сайт-визитка: здесь можно узнать, кто я, посмотреть мои проекты и найти, как со мной связаться.',aboutSiteWhy:'Я сделал его, чтобы у меня было своё место в интернете, а не только профили в соцсетях, и заодно попрактиковаться: сайт написан вручную, без конструкторов, и работает на моём собственном сервере, который я настраивал сам.',aboutSiteStyle:'Оформление — смесь Frutiger Aero, Windows XP и эстетики Tenshi Kawaii: глянец, пузыри, звёздочки и окна, как на компьютерах из нулевых. Мне просто нравится этот стиль, и хотелось сделать что-то не похожее на типичные сайты.',aboutSiteBubbles:'И да, фигуры на фоне можно лопать курсором или пальцем. Попробуйте набрать большое комбо — вдруг что-нибудь случится.',aboutMeIntro:'Привет! Я Keril³ — начинающий разработчик. Пока ищу своё направление: пробую разные сферы разработки и смотрю, что затянет сильнее всего. Имею небольшой опыт программирования на Python, C# (Unity) и HTML, сейчас изучаю C++ и Unreal Engine.',aboutMeEducation:'По образованию я инженер связи: бакалавриат по направлению «Инфокоммуникационные технологии и системы связи» и магистратура «Мобильные сети и технологии».',aboutMeGamedev:'Больше всего меня тянет в геймдев — его я и собираюсь изучать дальше. Сам люблю в основном шутеры и головоломки, так что ждите: скоро здесь появятся и мои первые игры.',aboutMeHobbies:'Помимо разработки занимаюсь 3D-печатью, а иногда собираю кастомные клавиатуры и занимаюсь твердотельным моделированием.',aboutMeProjects:'Все мои проекты лежат на GitHub, а лучшие скоро появятся в окне «проекты.zip».',
     footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по разделам сайта',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindLink:'ссылка',suggestAboutTitle:'Об этом',suggestAboutDetail:'Для чего этот сайт',suggestMeTitle:'Обо мне',suggestMeDetail:'Кто я, образование и хобби',
-    suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Коротко о моих проектах',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке'
+    suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Скоро здесь появятся мои проекты',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',contactEmailLink:'Написать на почту',contactDiscordLink:'Открыть профиль в Discord (в новой вкладке)',contactTelegramLink:'Открыть чат в Telegram (в новой вкладке)',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке'
   },
   en:{
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',aboutSiteWindowTitle:'about_this.txt',
-    projectsWindowTitle:'projects.zip',aboutMeIntro:"Hi! I'm Keril³, a beginner developer. I'm still looking for my path: trying out different areas of development to see which one pulls me in the most. Right now I write Python and C# (for Unity).",aboutMeEducation:"I'm a telecom engineer by education: a bachelor's in Infocommunication Technologies and Communication Systems and a master's in Mobile Networks and Technologies.",aboutMeGamedev:"I'm most drawn to game development, and that's what I plan to learn next. I mostly love shooters and puzzle games, so stay tuned: my first games will show up here soon.",aboutMeHobbies:'Outside of development I do 3D printing, and now and then I build custom keyboards and do solid modeling.',aboutMeProjects:'All my projects live on GitHub, and a few of them are briefly described in the projects.zip window.',
+    projectsWindowTitle:'projects.zip',projectsSoon:"Projects I'm not embarrassed to show in public will appear here soon.",aboutSiteIntro:"This is my personal business-card site: here you can find out who I am, see my projects and learn how to reach me.",aboutSiteWhy:"I made it to have a place of my own on the internet, not just social media profiles, and to practice along the way: the site is written by hand, without site builders, and runs on my own server, which I set up myself.",aboutSiteStyle:"The look is a mix of Frutiger Aero, Windows XP and the Tenshi Kawaii aesthetic: gloss, bubbles, stars and windows like on computers from the 2000s. I just love this style and wanted to make something unlike typical websites.",aboutSiteBubbles:"And yes, you can pop the shapes in the background with your cursor or finger. Try building a big combo, maybe something will happen.",aboutMeIntro:"Hi! I'm Keril³, a beginner developer. I'm still looking for my path: trying out different areas of development to see which one pulls me in the most. I have a little experience programming in Python, C# (Unity), and HTML, and I'm now learning C++ and Unreal Engine.",aboutMeEducation:"I'm a telecom engineer by education: a bachelor's in Infocommunication Technologies and Communication Systems and a master's in Mobile Networks and Technologies.",aboutMeGamedev:"I'm most drawn to game development, and that's what I plan to learn next. I mostly love shooters and puzzle games, so stay tuned: my first games will show up here soon.",aboutMeHobbies:'Outside of development I do 3D printing, and now and then I build custom keyboards and do solid modeling.',aboutMeProjects:'All my projects live on GitHub, and the best of them will soon appear in the projects.zip window.',
     footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search site sections',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindLink:'link',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for',suggestMeTitle:'About me',suggestMeDetail:'Who I am, education, and hobbies',
-    suggestProjectsTitle:'Projects',suggestProjectsDetail:'A short look at my projects',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab'
+    suggestProjectsTitle:'Projects',suggestProjectsDetail:'My projects will appear here soon',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',contactEmailLink:'Send an email',contactDiscordLink:'Open Discord profile (new tab)',contactTelegramLink:'Open Telegram chat (new tab)',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab'
   }
 };
 let currentLanguage = 'ru';
 // Only sections that exist on the site; keywords cover what their windows talk about, in both languages.
 // An item with a url opens that address in a new tab instead of a page of the site.
 const searchItems = [
-  {page:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about this об этом сайт site зачем для чего why'},
-  {page:'me',path:'me',titleKey:'suggestMeTitle',detailKey:'suggestMeDetail',kindKey:'kindPage',keywords:'about me обо мне кто я keril keril3 python c# unity геймдев gamedev игры games шутеры shooters головоломки puzzles образование education инженер engineer связь telecom мобильные сети mobile networks хобби hobbies 3d печать printing клавиатуры keyboards моделирование modeling'},
+  {page:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about this об этом сайт site зачем для чего why визитка business card сервер server frutiger aero windows xp стиль style пузыри bubbles комбо combo'},
+  {page:'me',path:'me',titleKey:'suggestMeTitle',detailKey:'suggestMeDetail',kindKey:'kindPage',keywords:'about me обо мне кто я keril keril3 python c# unity html c++ cpp unreal engine геймдев gamedev игры games шутеры shooters головоломки puzzles образование education инженер engineer связь telecom мобильные сети mobile networks хобби hobbies 3d печать printing клавиатуры keyboards моделирование modeling'},
   {page:'projects',path:'projects',titleKey:'suggestProjectsTitle',detailKey:'suggestProjectsDetail',kindKey:'kindPage',keywords:'projects проекты работы works portfolio портфолио'},
   {page:'contact',path:'contact',titleKey:'suggestContactTitle',detailKey:'suggestContactDetail',kindKey:'kindPage',keywords:'contact контакты связаться написать reach связь discord дискорд telegram телеграм почта email mail e-mail'},
   {url:'https://github.com/Keril3',path:'github.com/Keril3',titleKey:'suggestGithubTitle',detailKey:'suggestGithubDetail',kindKey:'kindLink',keywords:'github гитхаб код code репозитории repositories'}
@@ -599,7 +619,7 @@ const waterContext = waterCanvas.getContext('2d');
 const floaterSprites = createFloaterSprites();
 const floaterKinds = [{type:'bubble',weight:0.24},{type:'star',weight:0.24},{type:'heart',weight:0.2},{type:'dot',weight:0.32}];
 // One floater per this many square pixels of viewport, so density matches on any screen size.
-const floaterArea = 6000;
+const floaterArea = 7000;
 const waterCellSize = 4;
 const waterDamping = 0.935;
 const waterBrush = Array.from({length:25},(_,index)=>Math.exp(-(((index % 5) - 2) ** 2 + (Math.floor(index / 5) - 2) ** 2) / 1.1));
@@ -636,8 +656,8 @@ const bubbleStreamSpread = 60 * Math.PI / 180;
 const comboFinale = 333;
 const finaleDuration = 2000;
 const comboRestAfterFinale = 10000;
-const finaleBurstArea = 1500;
-const finaleBurstMax = 900;
+const finaleBurstArea = 4500;
+const finaleBurstMax = 300;
 // Some burst bubbles turn back, gather into the owner's nickname (drawn in the site font), hold it
 // and then pop from left to right. Times are in ms after the burst.
 const finaleWord = 'Keril3';
@@ -761,7 +781,7 @@ function resizeScene(){
   burstCanvas.width = sceneCanvas.width;
   burstCanvas.height = sceneCanvas.height;
   burstCanvasDirty = true;
-  floaterTarget = Math.max(40,Math.min(300,Math.round(sceneWidth * sceneHeight / floaterArea)));
+  floaterTarget = Math.max(40,Math.min(260,Math.round(sceneWidth * sceneHeight / floaterArea)));
   resetWater();
   if(reducedMotion.matches)drawScene();
 }
@@ -1139,18 +1159,19 @@ function startCounterFinale(){
 
 function explodeCounter(x,y){
   const bubbleSprite = floaterSprites.bubble[0];
-  createPopEffect({type:'bubble',x,y,size:240,sprite:bubbleSprite,rotation:0,opacity:0,sparkly:true},burstPopEffects);
+  createPopEffect({type:'bubble',x,y,size:240,sprite:bubbleSprite,rotation:0,opacity:0},burstPopEffects);
   for(let index = 0;index < 10;index++){
     const angle = index / 10 * Math.PI * 2;
-    createPopEffect({type:'bubble',x:x + Math.cos(angle) * 80,y:y + Math.sin(angle) * 50,size:randomBetween(30,60),sprite:bubbleSprite,rotation:0,opacity:0.9,sparkly:true},burstPopEffects);
+    createPopEffect({type:'bubble',x:x + Math.cos(angle) * 80,y:y + Math.sin(angle) * 50,size:randomBetween(30,60),sprite:bubbleSprite,rotation:0,opacity:0.9},burstPopEffects);
   }
   const now = performance.now();
   // The shock wave clears every background floater on its way out, and nothing new arrives
   // until the burst bubbles are gone; then floaters fly back in during the combo rest.
+  // Hundreds of things pop within a second here, so their pops are light: no glitter, few droplets.
   const waveSpeed = 1.4;
   for(const floater of floaters){
     floater.popAt = now + Math.hypot(floater.x - x,floater.y - y) / waveSpeed;
-    floater.sparkly = true;
+    floater.light = true;
   }
   bubbleStream = null;
   // Background floaters come back only once the nickname has popped.
@@ -1169,14 +1190,15 @@ function explodeCounter(x,y){
     floater.vx = Math.cos(heading) * speed;
     floater.vy = Math.sin(heading) * speed;
     floater.isBurst = true;
-    floater.sparkly = true;
+    floater.light = true;
     // They pop sooner than the word bubbles arrive, so the nickname forms on a clearing screen.
     floater.expiresAt = now + randomBetween(1200,2600);
     burstFloaters.push(floater);
   }
   const word = nicknameLayout(x,y);
   for(const point of word.points){
-    const floater = createFloater(undefined,'bubble');
+    // Any kind of floater can be a pixel of the nickname: bubbles, stars, hearts and dots.
+    const floater = createFloater();
     const heading = randomBetween(0,Math.PI * 2);
     const speed = randomBetween(150,450);
     floater.x = x + randomBetween(-20,20);
@@ -1185,8 +1207,9 @@ function explodeCounter(x,y){
     floater.vy = Math.sin(heading) * speed;
     floater.size = word.step * randomBetween(1,1.12);
     floater.opacity = 1;
+    floater.spin = 0;
     floater.isBurst = true;
-    floater.sparkly = true;
+    floater.light = true;
     floater.target = point;
     floater.gatherAt = now + finaleWordGatherAt + randomBetween(0,250);
     floater.expiresAt = now + finaleWordPopAt + (point.x - word.left) / word.width * finaleWordSweep + randomBetween(0,120);
@@ -1310,8 +1333,9 @@ window.addEventListener('resize',()=>{
 
 function createPopEffect(floater,list = popEffects){
   const colors = popColors[floater.type];
-  // Finale pops shed fewer droplets but add twinkling glitter that drifts down.
-  const count = floater.sparkly ? 4 + Math.round(floater.size / 10) : 6 + Math.round(floater.size / 6);
+  // Light pops (the finale) shed only three droplets; sparkly pops (a closed window) shed fewer
+  // droplets but add twinkling glitter that drifts down.
+  const count = floater.light ? 3 : floater.sparkly ? 4 + Math.round(floater.size / 10) : 6 + Math.round(floater.size / 6);
   const sparkleCount = floater.sparkly ? 5 + Math.round(floater.size / 4) : 0;
   list.push({
     x:floater.x,
@@ -1702,11 +1726,15 @@ function renderRoute(page){
   }
   // Windows built from templates start with the Russian text.
   panel.querySelectorAll('[data-i18n]').forEach(element=>{element.textContent = copy[element.dataset.i18n]});
+  panel.querySelectorAll('[data-i18n-aria-label]').forEach(element=>{
+    element.setAttribute('aria-label',copy[element.dataset.i18nAriaLabel]);
+    element.title = copy[element.dataset.i18nAriaLabel];
+  });
   // The email address is kept in two parts in the markup, so bots reading the HTML do not find it whole.
-  panel.querySelectorAll('[data-email-user]').forEach(link=>{
-    const address = `${link.dataset.emailUser}@${link.dataset.emailDomain}`;
-    link.href = `mailto:${address}`;
-    link.textContent = address;
+  panel.querySelectorAll('[data-email-user]').forEach(item=>{
+    const address = `${item.dataset.emailUser}@${item.dataset.emailDomain}`;
+    item.querySelector('.contact-list__value').textContent = address;
+    item.querySelector('.contact-list__link').href = `mailto:${address}`;
   });
   routeContent.append(panel);
   updateWindowButtons(panel);
@@ -1985,7 +2013,9 @@ function renderSuggestions(){
       const icon = document.createElement('span');
       icon.className = 'path-suggestion__icon';
       icon.setAttribute('aria-hidden','true');
-      icon.textContent = item.url ? '↗' : '▤';
+      // External links get the same chain icon as the contact page; pages keep the document glyph.
+      if(item.url)icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>';
+      else icon.textContent = '▤';
 
       const suggestionCopy = document.createElement('span');
       suggestionCopy.className = 'path-suggestion__copy';
