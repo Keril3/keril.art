@@ -1865,6 +1865,8 @@ async function fetchVisitorCount(){
   // With consent the first response sets the cookie, and the visit is counted on a second request
   // that sends it back. counter.php checks the Turnstile token only on the request that counts.
   const turnstileToken = await getTurnstileToken();
+  // The token can take a few seconds; a visitor who declined cookies meanwhile is not recorded.
+  if(getCookieConsent() !== 'accepted')return;
   await loadVisitorStats(async()=>{
     const data = await requestCounter('POST',null,turnstileToken);
     return data.needsConfirmation ? requestCounter('POST',null,turnstileToken) : data;
