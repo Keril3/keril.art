@@ -103,6 +103,13 @@ a{text-decoration:none}
 .xp-window__body{padding:22px;background:#ffffff}
 .xp-window__text{display:flex;flex-direction:column;gap:14px;font-size:17px;line-height:1.75}
 .xp-window__text p{margin:0}
+.contact-list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.contact-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px}
+.contact-list__label{flex:none;min-width:6.5em;color:#527795}
+.contact-list__value{min-width:0;overflow-wrap:anywhere}
+a.contact-list__value{color:#1C5FC4;text-decoration:underline;text-underline-offset:3px}
+html[data-theme="dark"] .contact-list__label{color:#9DB8DD}
+html[data-theme="dark"] a.contact-list__value{color:#9CCBFF}
 .xp-window.is-popping{animation:window-pop .26s ease-in forwards}
 @keyframes window-pop{40%{transform:scale(1.05)}100%{transform:scale(1.12);opacity:0}}
 .xp-window.is-closed{visibility:hidden}
@@ -339,6 +346,18 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
       </div>
     </template>
 
+    <!-- Text of the "связаться со мной" page window: the owner's contacts. -->
+    <template id="contact-content">
+      <div class="xp-window__text">
+        <p data-i18n="contactIntro">Со мной можно связаться здесь:</p>
+        <ul class="contact-list">
+          <li><span class="contact-list__label">Discord</span><a class="contact-list__value" href="https://discord.com/users/249232022483107840" target="_blank" rel="noopener noreferrer">keril3</a></li>
+          <li><span class="contact-list__label" data-i18n="contactEmail">Почта</span><a class="contact-list__value" data-email-user="hello" data-email-domain="keril.art"></a></li>
+          <li><span class="contact-list__label">Telegram</span><a class="contact-list__value" href="https://t.me/Minimalnaya_dlina_5_simvolov" target="_blank" rel="noopener noreferrer">@Minimalnaya_dlina_5_simvolov</a></li>
+        </ul>
+      </div>
+    </template>
+
     <section id="projects" class="xp-window" data-window-page="projects" aria-labelledby="projects-window-title">
       <div class="xp-window__bar">
         <span data-i18n="projectsWindowTitle" id="projects-window-title" class="window-title xp-window__title">проекты.zip</span>
@@ -462,7 +481,7 @@ const translations = {
     footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по разделам сайта',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindLink:'ссылка',suggestAboutTitle:'Об этом',suggestAboutDetail:'Для чего этот сайт',suggestMeTitle:'Обо мне',suggestMeDetail:'Кто я, образование и хобби',
-    suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Коротко о моих проектах',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Как со мной связаться',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке'
+    suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Коротко о моих проектах',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке'
   },
   en:{
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
@@ -471,7 +490,7 @@ const translations = {
     footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search site sections',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindLink:'link',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for',suggestMeTitle:'About me',suggestMeDetail:'Who I am, education, and hobbies',
-    suggestProjectsTitle:'Projects',suggestProjectsDetail:'A short look at my projects',suggestContactTitle:'Contact me',suggestContactDetail:'How to reach me',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab'
+    suggestProjectsTitle:'Projects',suggestProjectsDetail:'A short look at my projects',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab'
   }
 };
 let currentLanguage = 'ru';
@@ -481,7 +500,7 @@ const searchItems = [
   {page:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about this об этом сайт site зачем для чего why'},
   {page:'me',path:'me',titleKey:'suggestMeTitle',detailKey:'suggestMeDetail',kindKey:'kindPage',keywords:'about me обо мне кто я keril keril3 python c# unity геймдев gamedev игры games шутеры shooters головоломки puzzles образование education инженер engineer связь telecom мобильные сети mobile networks хобби hobbies 3d печать printing клавиатуры keyboards моделирование modeling'},
   {page:'projects',path:'projects',titleKey:'suggestProjectsTitle',detailKey:'suggestProjectsDetail',kindKey:'kindPage',keywords:'projects проекты работы works portfolio портфолио'},
-  {page:'contact',path:'contact',titleKey:'suggestContactTitle',detailKey:'suggestContactDetail',kindKey:'kindPage',keywords:'contact контакты связаться написать reach связь'},
+  {page:'contact',path:'contact',titleKey:'suggestContactTitle',detailKey:'suggestContactDetail',kindKey:'kindPage',keywords:'contact контакты связаться написать reach связь discord дискорд telegram телеграм почта email mail e-mail'},
   {url:'https://github.com/Keril3',path:'github.com/Keril3',titleKey:'suggestGithubTitle',detailKey:'suggestGithubDetail',kindKey:'kindLink',keywords:'github гитхаб код code репозитории repositories'}
 ];
 let activeSuggestionIndex = -1;
@@ -1679,9 +1698,16 @@ function renderRoute(page){
     // The "об этом" nav button opens its own window about the site itself.
     panel = createRouteWindow('about',copy.aboutSiteWindowTitle,document.querySelector('#about-site-content').content.cloneNode(true));
   }else{
-    // Content is cleared for now and will be rewritten; the window stays as an empty shell.
-    panel = createRouteWindow(currentPage,copy.routeContact);
+    panel = createRouteWindow(currentPage,copy.routeContact,document.querySelector('#contact-content').content.cloneNode(true));
   }
+  // Windows built from templates start with the Russian text.
+  panel.querySelectorAll('[data-i18n]').forEach(element=>{element.textContent = copy[element.dataset.i18n]});
+  // The email address is kept in two parts in the markup, so bots reading the HTML do not find it whole.
+  panel.querySelectorAll('[data-email-user]').forEach(link=>{
+    const address = `${link.dataset.emailUser}@${link.dataset.emailDomain}`;
+    link.href = `mailto:${address}`;
+    link.textContent = address;
+  });
   routeContent.append(panel);
   updateWindowButtons(panel);
 
