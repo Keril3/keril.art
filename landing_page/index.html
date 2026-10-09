@@ -598,18 +598,18 @@ const floaterPopChance = 0.4;
 const popComboCount = 3;
 const popComboWindow = 300;
 const popComboReward = 5;
-// Each pop keeps the combo chain alive for this long; the counter window shows up at 50.
+// Each pop keeps the combo chain alive for this long; the counter window shows up at 20.
 const comboTimeout = 3.125;
-const comboCounterAt = 50;
-// Every 100 combo up to 900 sends a 0.7s stream of 200 floaters, like blowing soap bubbles,
+const comboCounterAt = 20;
+// Every 100 combo before the finale (100, 200, 300) sends a 0.7s stream of 200 floaters, like blowing soap bubbles,
 // aimed within a 120° fan around the inward normal of a random edge.
 const comboMilestone = 100;
 const bubbleStreamDuration = 0.7;
 const bubbleStreamCount = 200;
 const bubbleStreamSpread = 60 * Math.PI / 180;
-// At 1000 the counter window flies to the middle and bursts into bubbles over the whole page,
+// At 333 the counter window flies to the middle and bursts into bubbles over the whole page,
 // then the combo rests for 10s before it counts again.
-const comboFinale = 1000;
+const comboFinale = 333;
 const finaleDuration = 2000;
 const comboRestAfterFinale = 10000;
 const finaleBurstArea = 1500;
@@ -958,7 +958,7 @@ function registerPop(){
     }
   }
 
-  // After the 1000 finale the combo rests for a while before it counts again.
+  // After the finale the combo rests for a while before it counts again.
   if(bubbleCounterState === 'finale' || now < comboLockedUntil)return;
   comboCount++;
   comboTimeLeft = comboTimeout;
@@ -1014,8 +1014,8 @@ function renderBubbleCounter(){
   const isMinimized = bubbleCounterState === 'minimized';
   bubbleCounterTitle.textContent = isMinimized ? `${copy.bubbleCounterShort}: ${shownComboCount}` : copy.bubbleCounterTitle;
   bubbleCounterValue.textContent = shownComboCount;
-  // The goal moves to the next hundred once a milestone is passed: 100/100, then 101/200.
-  const goal = bubbleCounterState === 'finale' ? comboFinale : Math.max(comboMilestone,Math.ceil(comboCount / comboMilestone) * comboMilestone);
+  // The goal moves to the next hundred once a milestone is passed (100/100, then 101/200), and after 300 it is the finale: 301/333.
+  const goal = bubbleCounterState === 'finale' ? comboFinale : Math.min(comboFinale,Math.max(comboMilestone,Math.ceil(comboCount / comboMilestone) * comboMilestone));
   bubbleCounterGoal.textContent = `/${goal}`;
   bubbleCounterMinimize.setAttribute('aria-label',isMinimized ? copy.windowRestore : copy.windowMinimize);
   bubbleCounterMinimize.title = bubbleCounterMinimize.getAttribute('aria-label');
