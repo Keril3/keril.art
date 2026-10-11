@@ -17,6 +17,13 @@
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
 })();
+// The interface grows with wide windows: it is drawn for 1280px, is 1.5× at 1920px and at most 2×.
+// CSS zooms the content column and the floating windows by --ui-scale; narrower windows keep 1.
+function updateUiScale(){
+  var scale = Math.min(2,Math.max(1,window.innerWidth / 1280));
+  document.documentElement.style.setProperty('--ui-scale',String(Math.round(scale * 100) / 100));
+}
+updateUiScale();
 </script>
 <title>keril.art</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.75'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.3' stop-color='%23F1FBFF'/%3E%3Cstop offset='.65' stop-color='%23B8E6FF'/%3E%3Cstop offset='1' stop-color='%234FA8E8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28.5' fill='url(%23g)' stroke='%231C5FC4' stroke-width='3'/%3E%3Cellipse cx='22' cy='19' rx='8' ry='4.5' fill='%23fff' transform='rotate(-30 22 19)'/%3E%3Cpath d='M44 34l2.2 6.8 6.8 2.2-6.8 2.2L44 52l-2.2-6.8-6.8-2.2 6.8-2.2z' fill='%23FFC9E8' stroke='%231C5FC4' stroke-width='1.2'/%3E%3C/svg%3E">
@@ -31,6 +38,9 @@ body,body *{font-family:'Monocraft',monospace!important;font-weight:400!importan
 a{text-decoration:none}
 .page-shell{position:relative;z-index:1;width:100%;min-height:100vh;box-sizing:border-box}
 .page-column{position:relative;display:flex;max-width:780px;flex-direction:column;gap:32px;margin:0 auto;padding:40px 20px 56px}
+/* Everything inside grows with the window, text included (see updateUiScale in <head>). Inside a zoomed
+   element translate() and vw are zoomed too, while getBoundingClientRect() reports the zoomed size. */
+.page-column,.theme-gate__window,.cookie-banner,.bubble-counter{zoom:var(--ui-scale,1)}
 .status-bar{display:flex;align-items:center;gap:12px;padding:6px 14px;border:1px solid #ffffff;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));box-shadow:0 2px 8px rgba(20,70,140,0.2)}
 .status-bar__online{flex:none;font-size:14px;opacity:0.7}
 .dock{display:flex;flex-wrap:wrap;justify-content:center;gap:42px;padding:4px 0}
@@ -1186,9 +1196,11 @@ function startCounterFinale(){
   setCounterMeter(meterBlocks,false);
   renderBubbleCounter();
   // The window flies from its place at the side to the middle of the screen before it bursts.
+  // Its translate() is zoomed with the interface, so the on-screen distance is divided by the zoom.
   const rect = bubbleCounter.getBoundingClientRect();
-  bubbleCounter.style.setProperty('--to-center-x',`${sceneWidth / 2 - (rect.left + rect.width / 2)}px`);
-  bubbleCounter.style.setProperty('--to-center-y',`${sceneHeight / 2 - (rect.top + rect.height / 2)}px`);
+  const zoom = Number(getComputedStyle(bubbleCounter).zoom) || 1;
+  bubbleCounter.style.setProperty('--to-center-x',`${(sceneWidth / 2 - (rect.left + rect.width / 2)) / zoom}px`);
+  bubbleCounter.style.setProperty('--to-center-y',`${(sceneHeight / 2 - (rect.top + rect.height / 2)) / zoom}px`);
   bubbleCounter.classList.add('is-finale');
   window.setTimeout(()=>explodeCounter(sceneWidth / 2,sceneHeight / 2),finaleDuration * 0.86);
 }
@@ -1548,6 +1560,7 @@ document.addEventListener('pointerout',event=>{
 });
 window.addEventListener('blur',()=>{scenePointer = null});
 window.addEventListener('resize',()=>{
+  updateUiScale();
   resizeScene();
   if(!bubbleCounter.hidden)measureCounterMeter();
 });
