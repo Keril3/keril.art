@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 // Apply the theme before the first paint; without a saved choice the theme picker blocks the site.
@@ -19,18 +19,22 @@
 })();
 </script>
 <title>keril.art</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.75'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.3' stop-color='%23F1FBFF'/%3E%3Cstop offset='.65' stop-color='%23B8E6FF'/%3E%3Cstop offset='1' stop-color='%234FA8E8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28.5' fill='url(%23g)' stroke='%231C5FC4' stroke-width='3'/%3E%3Cellipse cx='22' cy='19' rx='8' ry='4.5' fill='%23fff' transform='rotate(-30 22 19)'/%3E%3Cpath d='M44 34l2.2 6.8 6.8 2.2-6.8 2.2L44 52l-2.2-6.8-6.8-2.2 6.8-2.2z' fill='%23FFC9E8' stroke='%231C5FC4' stroke-width='1.2'/%3E%3C/svg%3E">
 
 <style>
 @font-face{font-family:'Monocraft';src:url('https://cdn.jsdelivr.net/gh/IdreesInc/Monocraft@v4.2.1/dist/Monocraft-ttf/Monocraft.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 html{scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar{display:none;width:0;height:0}
 body{margin:0;min-height:100vh;background:#7FCDFB}
+/* All text is black (and light blue-white in the dark theme) unless a rule overrides it with !important. */
 body,body *{font-family:'Monocraft',monospace!important;font-weight:400!important;color:#000000!important}
 a{text-decoration:none}
-.xpbtn{transition:filter .1s ease, transform .1s ease}
-.xpbtn:hover{filter:brightness(1.06)}
-.xpbtn:active{transform:translateY(1px)}
-.dock a{transition:transform .15s ease}
+.page-shell{position:relative;z-index:1;width:100%;min-height:100vh;box-sizing:border-box}
+.page-column{position:relative;display:flex;max-width:780px;flex-direction:column;gap:32px;margin:0 auto;padding:40px 20px 56px}
+.status-bar{display:flex;align-items:center;gap:12px;padding:6px 14px;border:1px solid #ffffff;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));box-shadow:0 2px 8px rgba(20,70,140,0.2)}
+.status-bar__online{flex:none;font-size:14px;opacity:0.7}
+.dock{display:flex;flex-wrap:wrap;justify-content:center;gap:42px;padding:4px 0}
+.dock a{display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .15s ease}
 .dock a:hover{transform:translateY(-3px)}
 .dock a [data-i18n],.hero-greeting,.visitor-count{color:#000000!important;background:none!important;background-clip:border-box!important;-webkit-background-clip:border-box!important;-webkit-text-fill-color:#000000!important;-webkit-text-stroke:0!important;paint-order:normal;text-shadow:none!important}
 .dock a [data-i18n]{font-size:20px!important}
@@ -38,52 +42,50 @@ a{text-decoration:none}
 .caret{animation:blink 1s steps(1) infinite}
 @keyframes twinkle{0%,100%{opacity:0.3;transform:scale(0.9)}50%{opacity:0.9;transform:scale(1.15)}}
 .twinkle{animation:twinkle 3.2s ease-in-out infinite}
-.sheenbox{position:relative;overflow:hidden}
-.sheenbox::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.75),transparent);transform:skewX(-20deg);animation:sheen 4.5s ease-in-out infinite}
-@keyframes sheen{0%{left:-60%}60%{left:140%}100%{left:140%}}
-.xpicon{display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .15s ease}
-.xpicon:hover{transform:translateY(-3px)}
+/* After .twinkle, so the delays are not reset by its animation shorthand. */
+.twinkle--late{animation-delay:1.1s}
+.twinkle--later{animation-delay:1.6s}
+.hero{position:relative;padding:0 8px;text-align:center}
+.hero__star{position:absolute;z-index:0}
+.hero__star--left{top:10px;left:4%}
+.hero__star--right{top:70px;right:6%}
 .path-search{position:relative;display:flex;align-items:center;gap:5px;flex:1;min-width:0}
-.path-search__root,.path-search__separator{flex:none;font-family:'Anonymous Pro',monospace;font-size:15px;font-weight:700;color:#0B2545;letter-spacing:0}
-.path-search__caret{flex:none;font-family:'Anonymous Pro',monospace;font-size:15px;font-weight:700;color:#1C5FC4;line-height:1}
+.path-search__root,.path-search__separator{flex:none;font-size:15px;letter-spacing:0}
+.path-search__caret{flex:none;font-size:15px;line-height:1}
 .path-search__caret[hidden]{display:none}
 .path-search__separator[hidden]{display:none}
-.path-search__input{flex:1;min-width:60px;width:100%;padding:2px 0;border:0;outline:0;background:transparent;font-family:'Anonymous Pro',monospace;font-size:15px;color:#0B2545}
+.path-search__input{flex:1;min-width:60px;width:100%;padding:2px 0;border:0;outline:0;background:transparent;font-size:15px}
 .path-search__input::placeholder{color:#527795;opacity:0.8}
 .path-search__input::-webkit-search-cancel-button{cursor:pointer}
 .path-suggestions{position:absolute;top:calc(100% + 10px);left:0;z-index:5;width:min(440px,calc(100vw - 64px));max-height:min(360px,60vh);overflow:auto;padding:6px;border:1px solid #ffffff;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(232,246,255,0.98));box-shadow:0 10px 28px rgba(20,70,140,0.3);backdrop-filter:blur(10px)}
 .path-suggestions[hidden]{display:none}
-.path-suggestion{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:8px;background:transparent;text-align:left;color:#0B2545;cursor:pointer}
+.path-suggestion{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:8px;background:transparent;text-align:left;cursor:pointer}
 .path-suggestion:hover,.path-suggestion[aria-selected="true"]{background:linear-gradient(180deg,#ffffff,#CFEBFF);box-shadow:inset 0 0 0 1px #9BCDF1}
-.path-suggestion__icon{display:grid;flex:none;width:30px;height:30px;place-items:center;border:1px solid #9BCDF1;border-radius:7px;background:linear-gradient(180deg,#ffffff,#BFE0FB);font-family:'VT323',monospace;font-size:17px;color:#1C5FC4}
+.path-suggestion__icon{display:grid;flex:none;width:30px;height:30px;place-items:center;border:1px solid #9BCDF1;border-radius:7px;background:linear-gradient(180deg,#ffffff,#BFE0FB);font-size:17px}
 .path-suggestion__copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}
-.path-suggestion__title{font-family:'VT323',monospace;font-size:18px;line-height:1.1}
-.path-suggestion__detail{overflow:hidden;font-family:'VT323',monospace;font-size:14px;line-height:1.1;color:#527795;text-overflow:ellipsis;white-space:nowrap}
-.path-suggestion__kind{flex:none;font-family:'VT323',monospace;font-size:14px;color:#1C5FC4}
-.path-suggestions__empty{padding:12px;font-family:'VT323',monospace;font-size:17px;color:#527795}
-.path-suggestion__title,.path-suggestion__detail,.path-suggestion__kind,.path-suggestions__empty{font-family:'Anonymous Pro',monospace}
-.language-toggle{display:inline-flex;flex:none;align-items:center;justify-content:center;gap:4px;min-width:48px;height:28px;padding:2px 8px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-family:'VT323',monospace;font-size:15px;color:#0A2A52;cursor:pointer}
+.path-suggestion__title{font-size:18px;line-height:1.1}
+.path-suggestion__detail{overflow:hidden;font-size:14px;line-height:1.1;text-overflow:ellipsis;white-space:nowrap}
+.path-suggestion__kind{flex:none;font-size:14px}
+.path-suggestions__empty{padding:12px;font-size:17px}
+.language-toggle{display:inline-flex;flex:none;align-items:center;justify-content:center;gap:4px;min-width:48px;height:28px;padding:2px 8px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-size:15px;cursor:pointer}
 .language-toggle:hover{filter:brightness(1.06)}
 .language-toggle:active{transform:translateY(1px);box-shadow:inset 0 1px 3px rgba(20,70,140,0.3)}
 .language-toggle:focus-visible{outline:3px solid #FFC9E8;outline-offset:3px}
 .language-switcher{position:relative;flex:none}
 .language-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:6;min-width:140px;padding:5px;border:1px solid #ffffff;border-radius:7px;background:linear-gradient(180deg,#F4FAFF,#BFE0FB);box-shadow:0 6px 16px rgba(20,70,140,0.32),inset 0 1px 0 #ffffff}
 .language-menu[hidden]{display:none}
-.language-option{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:7px 9px;border:1px solid transparent;border-radius:4px;background:transparent;font-family:'VT323',monospace;font-size:17px;color:#0A2A52;text-align:left;cursor:pointer}
+.language-option{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:7px 9px;border:1px solid transparent;border-radius:4px;background:transparent;font-size:17px;text-align:left;cursor:pointer}
 .language-option:hover,.language-option[aria-checked="true"]{border-color:#8EBDE8;background:linear-gradient(180deg,#ffffff,#D8ECFC)}
-.language-option__check{color:#1C5FC4}
 .language-option:focus-visible{outline:3px solid #FFC9E8;outline-offset:-3px}
-.hero-greeting{max-width:100%;min-height:2.8em;line-height:1.4;letter-spacing:0.12em!important;white-space:pre-line;font-size:28px!important}
+.hero-greeting{position:relative;max-width:100%;min-height:2.8em;font-size:28px;line-height:1.4;letter-spacing:0.12em;white-space:pre-line;opacity:0.85}
 .hero-greeting::after{content:"_";display:inline-block;margin-left:2px;animation:blink 1s steps(1) infinite}
 .hero-greeting.is-complete::after{display:none}
-@media(min-width:700px){.hero-actions{gap:38px!important}.hero-actions .xpicon .sheenbox{width:92px!important;height:92px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 9px 18px rgba(20,70,140,0.42)!important}}
 @media(min-width:700px){.dock svg{width:45px;height:45px;filter:drop-shadow(0 2px 2px rgba(20,70,140,0.28))}}
 .visitor-count{font-size:15px}
 .window-title{color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;-webkit-text-stroke:0.75px #000000!important;paint-order:stroke fill;text-shadow:0 1px 1px rgba(0,0,0,0.35)}
 .route-view{display:flex;flex-direction:column;gap:14px;min-width:0}
 .route-view[hidden],.home-details[hidden]{display:none}
 .home-details{display:flex;flex-direction:column;gap:32px}
-.dock{flex-wrap:wrap}
 .route-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;padding:5px 10px;border:1px solid #ffffff;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.94),rgba(207,235,255,0.78));box-shadow:0 3px 9px rgba(20,70,140,0.18)}
 .route-home{flex:none;padding:5px 11px;border:1px solid #2A5FA8;border-radius:5px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 4px rgba(20,70,140,0.25);color:#0A2A52!important;font-size:15px;cursor:pointer}
 .route-path{min-width:0;overflow:hidden;color:#0B2545!important;font-size:14px;text-overflow:ellipsis;white-space:nowrap}
@@ -105,15 +107,32 @@ a{text-decoration:none}
 .xp-window__text p{margin:0}
 .contact-list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
 .contact-list li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
-.contact-list__app{display:inline-flex;flex:none;align-items:center;gap:8px;min-width:7.5em;color:#527795}
+.contact-list__app{display:inline-flex;flex:none;align-items:center;gap:8px;min-width:7.5em}
 .contact-list__app svg{flex:none}
 .contact-list__value{min-width:0;overflow-wrap:anywhere}
-.contact-list__link{display:inline-flex;flex:none;width:28px;height:26px;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#CFE6FB 48%,#A9D0F3 52%,#7FB4E8 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 1px 3px rgba(20,70,140,0.25);color:#1C5FC4;text-decoration:none;cursor:pointer}
-.contact-list__link:hover{filter:brightness(1.08)}
-.contact-list__link:active{transform:translateY(1px)}
-html[data-theme="dark"] .contact-list__app{color:#9DB8DD}
-/* The chain buttons stay light in the dark theme, like the "to home page" button, so the icon keeps its dark blue. */
-html[data-theme="dark"] .contact-list__link,html[data-theme="dark"] .contact-list__link *{color:#1C5FC4!important}
+/* Small square XP button with an icon (chain, globe) used for links on the contact and projects pages. */
+.link-button{display:inline-flex;flex:none;width:28px;height:26px;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#CFE6FB 48%,#A9D0F3 52%,#7FB4E8 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 1px 3px rgba(20,70,140,0.25);text-decoration:none;cursor:pointer}
+.link-button:hover{filter:brightness(1.08)}
+.link-button:active{transform:translateY(1px)}
+/* The buttons stay light in the dark theme, like the "to home page" button, so the icon is dark blue there. */
+html[data-theme="dark"] .link-button,html[data-theme="dark"] .link-button *{color:#1C5FC4!important}
+#route-content{display:flex;flex-direction:column;gap:32px}
+.repo-status{margin:0}
+.repo-list{margin:0;padding:0;list-style:none}
+.repo-list__item{display:flex;gap:16px;padding:18px 10px;border-top:1px dotted #4FA8E8;transition:background-color .6s ease}
+.repo-list__item:focus-visible{outline-offset:-3px}
+/* A project picked in the site search is lit up for a moment. */
+.repo-list__item.is-highlighted{background:#FFE6F4}
+html[data-theme="dark"] .repo-list__item.is-highlighted{background:rgba(255,201,232,0.2)}
+.repo-list__number{flex:none;min-width:2ch;font-size:20px;line-height:1.3;opacity:0.55}
+.repo-list__main{display:flex;flex:1;min-width:0;flex-direction:column;gap:6px}
+.repo-list__name{margin:0;font-size:18px;line-height:1.3;overflow-wrap:anywhere}
+.repo-list__description{font-size:16px;line-height:1.65;overflow-wrap:anywhere}
+.repo-list__meta{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:13px;line-height:1.6;opacity:0.75}
+.repo-list__language{display:inline-flex;align-items:center;gap:6px}
+.repo-list__dot{flex:none;width:10px;height:10px;border:1px solid rgba(11,37,69,0.35);border-radius:50%}
+.repo-list__links{display:flex;flex:none;align-items:flex-start;gap:8px}
+@media(max-width:480px){.repo-list__item{flex-wrap:wrap;gap:8px 12px;padding:16px 4px}.repo-list__main{flex-basis:calc(100% - 4ch)}.repo-list__links{margin-left:calc(2ch + 12px)}}
 .xp-window.is-popping{animation:window-pop .26s ease-in forwards}
 @keyframes window-pop{40%{transform:scale(1.05)}100%{transform:scale(1.12);opacity:0}}
 .xp-window.is-closed{visibility:hidden}
@@ -136,8 +155,7 @@ html[data-theme="dark"] .contact-list__link,html[data-theme="dark"] .contact-lis
 .cookie-banner__icon{flex:none}
 .cookie-banner__body{display:flex;flex-direction:column;gap:14px;padding:16px 18px}
 .cookie-banner__text{margin:0;font-size:14px;line-height:1.6}
-.cookie-banner__link{color:#1C5FC4;text-decoration:underline;text-underline-offset:3px}
-html[data-theme="dark"] .cookie-banner__link{color:#9CCBFF}
+.text-link{text-decoration:underline;text-underline-offset:3px}
 .cookie-banner__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}
 .xp-button{padding:7px 18px;border:1px solid #2A5FA8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-size:15px;cursor:pointer}
 .xp-button--secondary{border-color:#7FA7D4;background:linear-gradient(180deg,#ffffff,#DCEBF7)}
@@ -262,16 +280,16 @@ html[data-theme="dark"] .bubble-counter__meter{border-color:#6F8FEA;background:r
 html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{color:#FF8FC8!important}
 @media(max-width:480px){.bubble-counter{right:8px;width:160px}.bubble-counter__count{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.bubble-counter,.bubble-counter *{animation:none!important;transition:none!important}}
-@media(max-width:480px){.status-bar{flex-wrap:wrap;justify-content:space-between;border-radius:14px!important}.path-search{order:3;flex-basis:100%}.path-suggestions{width:100%}.dock{gap:24px!important}.dock a [data-i18n]{font-size:18px!important}.hero-greeting{font-size:20px!important;letter-spacing:0.06em!important}}
+@media(max-width:480px){.status-bar{flex-wrap:wrap;justify-content:space-between;border-radius:14px}.path-search{order:3;flex-basis:100%}.path-suggestions{width:100%}.dock{gap:24px}.dock a [data-i18n]{font-size:18px!important}.hero-greeting{font-size:20px;letter-spacing:0.06em}}
 </style>
 
 </head>
 <body>
 <div class="scene" aria-hidden="true"><canvas id="water-canvas"></canvas><canvas id="scene-canvas"></canvas></div>
-<div class="page-shell" style="position:relative;z-index:1;width:100%;min-height:100vh;box-sizing:border-box;color:#0B2545">
-  <div style="position:relative;max-width:780px;margin:0 auto;padding:40px 20px 56px;display:flex;flex-direction:column;gap:32px">
+<div class="page-shell">
+  <div class="page-column">
 
-    <div class="status-bar" style="display:flex;align-items:center;gap:12px;padding:6px 14px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));border:1px solid #ffffff;box-shadow:0 2px 8px rgba(20,70,140,0.2)">
+    <div class="status-bar">
       <form class="path-search" role="search" autocomplete="off">
         <span class="path-search__root">C:\keril.art</span>
         <span class="path-search__caret caret" aria-hidden="true">_</span>
@@ -279,7 +297,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         <input class="path-search__input" id="site-search" type="search" placeholder="поиск по сайту" spellcheck="false" aria-label="Поиск по разделам сайта" aria-autocomplete="list" aria-controls="path-suggestions" aria-expanded="false">
         <div class="path-suggestions" id="path-suggestions" role="listbox" aria-label="Результаты поиска" hidden></div>
       </form>
-      <span style="flex:none;font-family:'VT323',monospace;font-size:14px;color:#0B2545;opacity:0.7">online</span>
+      <span class="status-bar__online">online</span>
         <button class="language-toggle theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Тёмная тема" data-i18n-aria-label="themeToggleLabel">
           <svg class="theme-toggle__sun" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><g stroke="#ffffff" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></g></svg>
           <svg class="theme-toggle__moon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 13.4A7.2 7.2 0 0 1 15.5 3.2Z" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5" stroke-linejoin="round"/><path d="M18.5 4.5l.5 1.4 1.4.5-1.4.5-.5 1.4-.5-1.4-1.4-.5 1.4-.5Z" fill="#FFC9E8"/></svg>
@@ -293,33 +311,34 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         </div>
     </div>
 
-    <div class="dock" style="display:flex;justify-content:center;gap:42px;padding:4px 0">
-      <a href="#page=about" data-route-page="about" aria-label="Об этом" data-i18n-aria-label="navAboutLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+    <div class="dock">
+      <a href="#page=about" data-route-page="about" aria-label="Об этом" data-i18n-aria-label="navAboutLabel">
         <svg width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="9" width="20" height="14" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M5 9 L10 9 L12 6 L18 6 L20 9" fill="none" stroke="#1C5FC4" stroke-width="1.5"/></svg>
-        <span data-i18n="navAbout" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">обо мне</span>
+        <span data-i18n="navAbout">об этом</span>
       </a>
-      <a href="#page=projects" data-route-page="projects" aria-label="Проекты" data-i18n-aria-label="navProjectsLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <a href="#page=projects" data-route-page="projects" aria-label="Проекты" data-i18n-aria-label="navProjectsLabel">
         <svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><ellipse cx="15" cy="15" rx="11" ry="4.5" fill="none" stroke="#1C5FC4" stroke-width="1"/><line x1="15" y1="4" x2="15" y2="26" stroke="#1C5FC4" stroke-width="1"/></svg>
-        <span data-i18n="navProjects" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">проекты</span>
+        <span data-i18n="navProjects">проекты</span>
       </a>
-      <a href="https://github.com/Keril3" target="_blank" rel="noopener noreferrer" aria-label="GitHub — откроется в новой вкладке" data-i18n-aria-label="navGithubLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <a href="https://github.com/Keril3" target="_blank" rel="noopener noreferrer" aria-label="GitHub — откроется в новой вкладке" data-i18n-aria-label="navGithubLabel">
         <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.08c-3.1.67-3.75-1.32-3.75-1.32-.5-1.28-1.22-1.62-1.22-1.62-1-.68.08-.67.08-.67 1.1.08 1.68 1.12 1.68 1.12.97 1.66 2.54 1.18 3.16.9.1-.7.38-1.18.69-1.45-2.48-.28-5.09-1.24-5.09-5.53 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.06-1.14 3.06-1.14.6 1.53.22 2.67.1 2.95.72.78 1.15 1.77 1.15 2.99 0 4.3-2.61 5.25-5.1 5.52.4.35.74 1.03.74 2.08v3.05c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.2" stroke-linejoin="round"/></svg>
-        <span data-i18n="navGithub" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">github</span>
+        <span data-i18n="navGithub">github</span>
       </a>
-      <a href="#page=contact" data-route-page="contact" aria-label="Связаться со мной" data-i18n-aria-label="navMailLabel" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <a href="#page=contact" data-route-page="contact" aria-label="Связаться со мной" data-i18n-aria-label="navMailLabel">
         <svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="4" width="16" height="12" rx="1" fill="none" stroke="#1C5FC4" stroke-width="1.5"/><rect x="2" y="16" width="14" height="10" rx="1" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/></svg>
-        <span data-i18n="navMail" style="font-family:'VT323',monospace;font-size:15px;color:#0B2545">почта</span>
+        <span data-i18n="navMail">Связаться со мной</span>
       </a>
     </div>
 
-    <div style="position:relative;padding:0 8px;text-align:center">
-      <svg class="twinkle" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="position:absolute;z-index:0;top:10px;left:4%;animation-delay:0s">
+    <div class="hero">
+      <svg class="twinkle hero__star hero__star--left" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24">
         <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/>
       </svg>
-      <svg class="twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position:absolute;z-index:0;top:70px;right:6%;animation-delay:1.1s">
+      <svg class="twinkle twinkle--late hero__star hero__star--right" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24">
         <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/>
       </svg>
-      <div data-i18n="heroGreeting" class="hero-greeting" style="position:relative;font-size:16px;color:#0B2545;opacity:0.85">CONNECTION ESTABLISHED.\nWELCOME</div>
+      <div data-i18n="heroGreeting" class="hero-greeting">СОЕДИНЕНИЕ УСТАНОВЛЕНО.
+ДОБРО ПОЖАЛОВАТЬ!</div>
     </div>
 
     <div id="route-view" class="route-view" hidden>
@@ -363,19 +382,27 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
           <li data-email-user="hello" data-email-domain="keril.art">
             <span class="contact-list__app"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><rect x="1.75" y="4.25" width="16.5" height="11.5" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M2.6 5.3 10 10.9l7.4-5.6" fill="none" stroke="#1C5FC4" stroke-width="1.5" stroke-linejoin="round"/></svg><span data-i18n="contactEmail">Почта</span></span>
             <span class="contact-list__value"></span>
-            <a class="contact-list__link" data-i18n-aria-label="contactEmailLink" aria-label="Написать на почту"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
+            <a class="link-button" data-i18n-aria-label="contactEmailLink" data-i18n-title="contactEmailLink" aria-label="Написать на почту"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
           </li>
           <li>
             <span class="contact-list__app"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><rect width="20" height="20" rx="5" fill="#5865F2"/><path d="M6.2 6.3c1.2-.6 2.4-.9 3.8-.9s2.6.3 3.8.9c1 1.5 1.6 3.3 1.7 5.4-1 .8-2.1 1.3-3.2 1.6l-.7-1.1c-.5.2-1.1.3-1.6.3s-1.1-.1-1.6-.3l-.7 1.1c-1.1-.3-2.2-.8-3.2-1.6.1-2.1.7-3.9 1.7-5.4z" fill="#ffffff"/><circle cx="8.2" cy="9.9" r="1.1" fill="#5865F2"/><circle cx="11.8" cy="9.9" r="1.1" fill="#5865F2"/></svg>Discord</span>
             <span class="contact-list__value">keril3</span>
-            <a class="contact-list__link" href="https://discord.com/users/249232022483107840" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="contactDiscordLink" aria-label="Открыть профиль в Discord (в новой вкладке)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
+            <a class="link-button" href="https://discord.com/users/249232022483107840" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="contactDiscordLink" data-i18n-title="contactDiscordLink" aria-label="Открыть профиль в Discord (в новой вкладке)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
           </li>
           <li>
             <span class="contact-list__app"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#29A9EB"/><path d="M4.6 9.7 14.4 5.9c.5-.2.9.1.8.8l-1.7 7.9c-.1.6-.5.7-1 .4l-2.6-1.9-1.2 1.2c-.1.1-.3.2-.5.2l.2-2.7 4.9-4.4c.2-.2 0-.3-.3-.1l-6 3.8-2.6-.8c-.6-.2-.6-.6.1-.8z" fill="#ffffff"/></svg>Telegram</span>
             <span class="contact-list__value">@Minimalnaya_dlina_5_simvolov</span>
-            <a class="contact-list__link" href="https://t.me/Minimalnaya_dlina_5_simvolov" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="contactTelegramLink" aria-label="Открыть чат в Telegram (в новой вкладке)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
+            <a class="link-button" href="https://t.me/Minimalnaya_dlina_5_simvolov" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="contactTelegramLink" data-i18n-title="contactTelegramLink" aria-label="Открыть чат в Telegram (в новой вкладке)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></a>
           </li>
         </ul>
+      </div>
+    </template>
+
+    <!-- Body of the "репозитории.git" window on the projects page; the list is filled from the GitHub API. -->
+    <template id="github-content">
+      <div class="xp-window__text">
+        <p data-i18n="githubIntro">Все мои открытые репозитории на GitHub. Новые появляются здесь сами.</p>
+        <div data-github-repos></div>
       </div>
     </template>
 
@@ -406,7 +433,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     <footer class="signature">
       <svg class="signature__star twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
       <p class="signature__text"><span class="signature__made">made by</span><span class="signature__name">Keril<sup>3</sup></span></p>
-      <svg class="signature__star twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="animation-delay:1.6s"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
+      <svg class="signature__star twinkle twinkle--later" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
     </footer>
     <button class="cookie-settings" id="cookie-settings" type="button" data-i18n="cookieSettings">настройки cookie</button>
   </div>
@@ -440,7 +467,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
   </div>
   <div class="xp-window__body cookie-banner__body">
     <p data-i18n="cookieText" class="cookie-banner__text">Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.</p>
-    <p class="cookie-banner__text"><a class="cookie-banner__link" href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer" data-i18n="cookiePrivacy">Политика конфиденциальности Cloudflare Turnstile ↗</a></p>
+    <p class="cookie-banner__text"><a class="text-link" href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer" data-i18n="cookiePrivacy">Политика конфиденциальности Cloudflare Turnstile ↗</a></p>
     <div class="cookie-banner__actions">
       <button class="xp-button" id="cookie-accept" type="button" data-i18n="cookieAccept">Принять</button>
       <button class="xp-button xp-button--secondary" id="cookie-decline" type="button" data-i18n="cookieDecline">Отказаться</button>
@@ -473,6 +500,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
 const searchForm = document.querySelector('.path-search');
 const searchInput = document.querySelector('#site-search');
 const searchSeparator = document.querySelector('.path-search__separator');
+const searchCaret = document.querySelector('.path-search__caret');
 const suggestionsList = document.querySelector('#path-suggestions');
 const languageToggle = document.querySelector('#language-toggle');
 const languageTarget = document.querySelector('#language-target');
@@ -501,7 +529,8 @@ const translations = {
     footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по разделам сайта',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindLink:'ссылка',suggestAboutTitle:'Об этом',suggestAboutDetail:'Для чего этот сайт',suggestMeTitle:'Обо мне',suggestMeDetail:'Кто я, образование и хобби',
-    suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Скоро здесь появятся мои проекты',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',contactEmailLink:'Написать на почту',contactDiscordLink:'Открыть профиль в Discord (в новой вкладке)',contactTelegramLink:'Открыть чат в Telegram (в новой вкладке)',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке'
+    suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Лучшие проекты и репозитории с GitHub',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',contactEmailLink:'Написать на почту',contactDiscordLink:'Открыть профиль в Discord (в новой вкладке)',contactTelegramLink:'Открыть чат в Telegram (в новой вкладке)',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке',
+    kindProject:'проект',githubWindowTitle:'репозитории.git',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
   },
   en:{
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
@@ -510,7 +539,8 @@ const translations = {
     footerNote:'Visitors of all time',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'To home page',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search site sections',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindLink:'link',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for',suggestMeTitle:'About me',suggestMeDetail:'Who I am, education, and hobbies',
-    suggestProjectsTitle:'Projects',suggestProjectsDetail:'My projects will appear here soon',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',contactEmailLink:'Send an email',contactDiscordLink:'Open Discord profile (new tab)',contactTelegramLink:'Open Telegram chat (new tab)',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab'
+    suggestProjectsTitle:'Projects',suggestProjectsDetail:'Best projects and GitHub repositories',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',contactEmailLink:'Send an email',contactDiscordLink:'Open Discord profile (new tab)',contactTelegramLink:'Open Telegram chat (new tab)',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab',
+    kindProject:'project',githubWindowTitle:'repositories.git',githubIntro:'All my public repositories on GitHub. New ones show up here on their own.',githubLoading:'Loading the list from GitHub…',githubError:"Couldn't load the list from GitHub. All my projects are right there:",githubEmpty:'No public repositories yet.',repoNoDescription:'No description',repoUpdated:'updated',repoStars:'GitHub stars',repoGithubLink:'Open {name} on GitHub (new tab)',repoHomepageLink:'Open the {name} website (new tab)'
   }
 };
 let currentLanguage = 'ru';
@@ -519,12 +549,18 @@ let currentLanguage = 'ru';
 const searchItems = [
   {page:'about',path:'about',titleKey:'suggestAboutTitle',detailKey:'suggestAboutDetail',kindKey:'kindPage',keywords:'about this об этом сайт site зачем для чего why визитка business card сервер server frutiger aero windows xp стиль style пузыри bubbles комбо combo'},
   {page:'me',path:'me',titleKey:'suggestMeTitle',detailKey:'suggestMeDetail',kindKey:'kindPage',keywords:'about me обо мне кто я keril keril3 python c# unity html c++ cpp unreal engine геймдев gamedev игры games шутеры shooters головоломки puzzles образование education инженер engineer связь telecom мобильные сети mobile networks хобби hobbies 3d печать printing клавиатуры keyboards моделирование modeling'},
-  {page:'projects',path:'projects',titleKey:'suggestProjectsTitle',detailKey:'suggestProjectsDetail',kindKey:'kindPage',keywords:'projects проекты работы works portfolio портфолио'},
+  {page:'projects',path:'projects',titleKey:'suggestProjectsTitle',detailKey:'suggestProjectsDetail',kindKey:'kindPage',keywords:'projects проекты работы works portfolio портфолио github гитхаб репозитории repositories'},
   {page:'contact',path:'contact',titleKey:'suggestContactTitle',detailKey:'suggestContactDetail',kindKey:'kindPage',keywords:'contact контакты связаться написать reach связь discord дискорд telegram телеграм почта email mail e-mail'},
   {url:'https://github.com/Keril3',path:'github.com/Keril3',titleKey:'suggestGithubTitle',detailKey:'suggestGithubDetail',kindKey:'kindLink',keywords:'github гитхаб код code репозитории repositories'}
 ];
 let activeSuggestionIndex = -1;
 let matchingItems = [];
+// Icons drawn with currentColor, shared by search suggestions and link buttons.
+const icons = {
+  chain:'<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>',
+  globe:'<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 3.9 5.9 3.9 9.5s-1.3 6.8-3.9 9.5c-2.6-2.7-3.9-5.9-3.9-9.5s1.3-6.8 3.9-9.5Z"/></svg>',
+  github:'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.08c-3.1.67-3.75-1.32-3.75-1.32-.5-1.28-1.22-1.62-1.22-1.62-1-.68.08-.67.08-.67 1.1.08 1.68 1.12 1.68 1.12.97 1.66 2.54 1.18 3.16.9.1-.7.38-1.18.69-1.45-2.48-.28-5.09-1.24-5.09-5.53 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.06-1.14 3.06-1.14.6 1.53.22 2.67.1 2.95.72.78 1.15 1.77 1.15 2.99 0 4.3-2.61 5.25-5.1 5.52.4.35.74 1.03.74 2.08v3.05c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" fill="currentColor"/></svg>'
+};
 
 function getInitialLanguage(){
   try{
@@ -1327,10 +1363,6 @@ bubbleCounterClose.addEventListener('click',()=>{
   bubbleCounterState = 'closing';
   bubbleCounter.classList.add('is-leaving');
 });
-window.addEventListener('resize',()=>{
-  if(!bubbleCounter.hidden)measureCounterMeter();
-});
-
 function createPopEffect(floater,list = popEffects){
   const colors = popColors[floater.type];
   // Light pops (the finale) shed only three droplets; sparkly pops (a closed window) shed fewer
@@ -1515,7 +1547,10 @@ document.addEventListener('pointerout',event=>{
   if(!event.relatedTarget)scenePointer = null;
 });
 window.addEventListener('blur',()=>{scenePointer = null});
-window.addEventListener('resize',resizeScene);
+window.addEventListener('resize',()=>{
+  resizeScene();
+  if(!bubbleCounter.hidden)measureCounterMeter();
+});
 reducedMotion.addEventListener('change',()=>{
   scenePointer = null;
   popEffects = [];
@@ -1695,6 +1730,250 @@ function createVisitorStats(){
   return list;
 }
 
+// Public repositories of the GitHub profile fill the "репозитории.git" window on the projects page
+// and the site search. The browser asks the GitHub API directly (no token, 60 requests an hour per
+// visitor) and keeps the answer for 30 minutes; if GitHub cannot be reached, an older saved list is used.
+const githubUser = 'Keril3';
+const githubReposUrl = `https://api.github.com/users/${githubUser}/repos?type=owner&sort=pushed&per_page=100`;
+// Forks, the profile README repository and repositories with this topic stay off the site.
+const githubHiddenTopic = 'hide-from-site';
+const githubFields = ['name','fork','description','homepage','language','stargazers_count','pushed_at','topics'];
+const githubCacheKey = 'keril-art-github-repos';
+const githubCacheLifetime = 30 * 60 * 1000;
+const githubTimeout = 8000;
+const languageColors = {
+  'C':'#555555','C#':'#178600','C++':'#F34B7D','CSS':'#563D7C','Dart':'#00B4AB','GDScript':'#355570','Go':'#00ADD8',
+  'HTML':'#E34C26','Java':'#B07219','JavaScript':'#F1E05A','Jupyter Notebook':'#DA5B0B','Kotlin':'#A97BFF','Lua':'#000080',
+  'PHP':'#4F5D95','PowerShell':'#012456','Python':'#3572A5','Rust':'#DEA584','Shell':'#89E051','ShaderLab':'#222C37',
+  'Swift':'#F05138','TypeScript':'#3178C6'
+};
+// null until a list is loaded; the state is 'idle', 'loading', 'ready' or 'error'.
+let githubRepos = null;
+let githubState = 'idle';
+let githubRequest = null;
+
+function readWebAddress(value){
+  if(typeof value !== 'string' || !value.trim())return '';
+  const address = value.trim();
+  try{
+    const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(address) ? address : `https://${address}`);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : '';
+  }catch(error){
+    return '';
+  }
+}
+
+// Everything from the API (or the saved copy) is checked here; the page only shows it as text.
+function readGithubRepo(repo){
+  if(!repo || typeof repo !== 'object' || repo.fork)return null;
+  const name = typeof repo.name === 'string' ? repo.name : '';
+  if(!/^[\w.-]{1,100}$/.test(name) || name.toLowerCase() === githubUser.toLowerCase())return null;
+  const topics = Array.isArray(repo.topics) ? repo.topics.filter(topic=>typeof topic === 'string').slice(0,20) : [];
+  if(topics.includes(githubHiddenTopic))return null;
+  const pushedAt = Date.parse(repo.pushed_at);
+  return {
+    name,
+    url:`https://github.com/${githubUser}/${name}`,
+    description:typeof repo.description === 'string' ? repo.description.trim().slice(0,300) : '',
+    homepage:readWebAddress(repo.homepage),
+    language:typeof repo.language === 'string' ? repo.language.slice(0,40) : '',
+    stars:Number.isSafeInteger(repo.stargazers_count) && repo.stargazers_count > 0 ? repo.stargazers_count : 0,
+    pushedAt:Number.isNaN(pushedAt) ? 0 : pushedAt,
+    topics
+  };
+}
+
+function setGithubRepos(list){
+  githubRepos = list.map(readGithubRepo).filter(Boolean).sort((first,second)=>second.pushedAt - first.pushedAt);
+  githubState = 'ready';
+}
+
+function readGithubCache(){
+  try{
+    const cache = JSON.parse(localStorage.getItem(githubCacheKey));
+    if(cache && Number.isFinite(cache.savedAt) && Array.isArray(cache.repos))return cache;
+  }catch(error){}
+  return null;
+}
+
+async function fetchGithubRepos(){
+  const controller = new AbortController();
+  const timeout = window.setTimeout(()=>controller.abort(),githubTimeout);
+  try{
+    const response = await fetch(githubReposUrl,{headers:{Accept:'application/vnd.github+json'},credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});
+    if(!response.ok)throw new Error(`GitHub answered ${response.status}`);
+    const data = await response.json();
+    if(!Array.isArray(data))throw new Error('Unexpected GitHub response');
+    // Only the fields the page uses are kept, which also keeps the saved copy small.
+    return data.map(repo=>Object.fromEntries(githubFields.map(field=>[field,repo?.[field]])));
+  }finally{
+    window.clearTimeout(timeout);
+  }
+}
+
+// Loads the list once per page view (from the saved copy while it is fresh), then redraws whatever shows it.
+function loadGithubRepos(){
+  if(githubRequest)return githubRequest;
+  const cache = readGithubCache();
+  if(cache){
+    setGithubRepos(cache.repos);
+    if(Date.now() - cache.savedAt < githubCacheLifetime){
+      githubRequest = Promise.resolve();
+      return githubRequest;
+    }
+  }else{
+    githubState = 'loading';
+  }
+  githubRequest = fetchGithubRepos().then(repos=>{
+    try{localStorage.setItem(githubCacheKey,JSON.stringify({savedAt:Date.now(),repos}))}catch(error){}
+    setGithubRepos(repos);
+  }).catch(()=>{
+    // An older list stays on screen; with none, the window says so. The next visit to the page tries again.
+    if(githubRepos === null)githubState = 'error';
+    githubRequest = null;
+  }).finally(updateGithubViews);
+  return githubRequest;
+}
+
+function updateGithubViews(){
+  routeContent.querySelectorAll('[data-github-repos]').forEach(renderGithubRepos);
+  if(!suggestionsList.hidden)renderSuggestions();
+}
+
+function createLinkButton(href,icon,label){
+  const link = document.createElement('a');
+  link.className = 'link-button';
+  link.href = href;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.innerHTML = icon;
+  link.setAttribute('aria-label',label);
+  link.title = label;
+  return link;
+}
+
+function renderGithubRepos(slot){
+  const copy = translations[currentLanguage];
+  if(githubState !== 'ready'){
+    const status = document.createElement('p');
+    status.className = 'repo-status';
+    status.setAttribute('role','status');
+    if(githubState === 'error'){
+      const link = document.createElement('a');
+      link.className = 'text-link';
+      link.href = `https://github.com/${githubUser}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = `github.com/${githubUser}`;
+      status.append(`${copy.githubError} `,link);
+    }else{
+      status.textContent = copy.githubLoading;
+    }
+    slot.replaceChildren(status);
+    return;
+  }
+  if(!githubRepos.length){
+    const empty = document.createElement('p');
+    empty.className = 'repo-status';
+    empty.textContent = copy.githubEmpty;
+    slot.replaceChildren(empty);
+    return;
+  }
+
+  const list = document.createElement('ol');
+  list.className = 'repo-list';
+  const dateFormat = new Intl.DateTimeFormat(currentLanguage,{day:'numeric',month:'long',year:'numeric'});
+  githubRepos.forEach((repo,index)=>{
+    const item = document.createElement('li');
+    item.className = 'repo-list__item';
+    item.dataset.repo = repo.name;
+    item.tabIndex = -1;
+
+    const number = document.createElement('span');
+    number.className = 'repo-list__number';
+    number.setAttribute('aria-hidden','true');
+    number.textContent = String(index + 1).padStart(2,'0');
+
+    const main = document.createElement('div');
+    main.className = 'repo-list__main';
+    const name = document.createElement('h3');
+    name.className = 'repo-list__name';
+    name.textContent = repo.name;
+    const description = document.createElement('p');
+    description.className = 'repo-list__description';
+    description.textContent = repo.description || copy.repoNoDescription;
+    const meta = document.createElement('p');
+    meta.className = 'repo-list__meta';
+    if(repo.language){
+      const language = document.createElement('span');
+      language.className = 'repo-list__language';
+      const dot = document.createElement('span');
+      dot.className = 'repo-list__dot';
+      dot.setAttribute('aria-hidden','true');
+      dot.style.background = languageColors[repo.language] || '#4FA8E8';
+      language.append(dot,repo.language);
+      meta.append(language);
+    }
+    if(repo.stars){
+      const stars = document.createElement('span');
+      stars.textContent = `★ ${repo.stars.toLocaleString(currentLanguage)}`;
+      stars.title = copy.repoStars;
+      meta.append(stars);
+    }
+    if(repo.pushedAt){
+      const updated = document.createElement('span');
+      updated.textContent = `${copy.repoUpdated} ${dateFormat.format(repo.pushedAt)}`;
+      meta.append(updated);
+    }
+    main.append(name,description);
+    if(meta.childElementCount)main.append(meta);
+
+    const links = document.createElement('div');
+    links.className = 'repo-list__links';
+    if(repo.homepage)links.append(createLinkButton(repo.homepage,icons.globe,copy.repoHomepageLink.replace('{name}',repo.name)));
+    links.append(createLinkButton(repo.url,icons.chain,copy.repoGithubLink.replace('{name}',repo.name)));
+
+    item.append(number,main,links);
+    list.append(item);
+  });
+  slot.replaceChildren(list);
+}
+
+// A project picked in the search is scrolled into view, focused and lit up for a moment.
+function highlightRepo(name){
+  const item = [...routeContent.querySelectorAll('.repo-list__item')].find(element=>element.dataset.repo === name);
+  if(!item)return;
+  item.scrollIntoView({block:'center',behavior:reducedMotion.matches ? 'auto' : 'smooth'});
+  item.focus({preventScroll:true});
+  item.classList.add('is-highlighted');
+  window.setTimeout(()=>item.classList.remove('is-highlighted'),1600);
+}
+
+// Texts, labels and tooltips of elements marked with data-i18n, data-i18n-aria-label and data-i18n-title.
+function translateElements(root,copy){
+  root.querySelectorAll('[data-i18n]').forEach(element=>{
+    if(element === heroGreeting)animateGreeting(copy.heroGreeting);
+    else element.textContent = copy[element.dataset.i18n];
+  });
+  root.querySelectorAll('[data-i18n-aria-label]').forEach(element=>element.setAttribute('aria-label',copy[element.dataset.i18nAriaLabel]));
+  root.querySelectorAll('[data-i18n-title]').forEach(element=>{element.title = copy[element.dataset.i18nTitle]});
+}
+
+function cloneHomeWindow(id){
+  // "About me" and projects open the same windows as on the home page, full size.
+  const panel = document.getElementById(id).cloneNode(true);
+  panel.removeAttribute('id');
+  panel.removeAttribute('aria-labelledby');
+  panel.setAttribute('aria-label',panel.querySelector('.xp-window__title').textContent);
+  panel.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));
+  panel.classList.remove('is-minimized','is-closed','is-popping','is-returning');
+  return panel;
+}
+
+function templateContent(selector){
+  return document.querySelector(selector).content.cloneNode(true);
+}
+
 function renderRoute(page){
   currentPage = routePages.includes(page) ? page : 'home';
   const isHome = currentPage === 'home';
@@ -1707,37 +1986,31 @@ function renderRoute(page){
 
   const copy = translations[currentLanguage];
   routePath.textContent = `C:\\keril.art\\${currentPage}`;
-  routeContent.replaceChildren();
 
-  let panel;
-  if(currentPage === 'me' || currentPage === 'projects'){
-    // "About me" and projects open the same windows as on the home page, full size.
-    panel = document.getElementById(currentPage === 'me' ? 'about' : 'projects').cloneNode(true);
-    panel.removeAttribute('id');
-    panel.removeAttribute('aria-labelledby');
-    panel.setAttribute('aria-label',panel.querySelector('.xp-window__title').textContent);
-    panel.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));
-    panel.classList.remove('is-minimized','is-closed','is-popping','is-returning');
+  let panels;
+  if(currentPage === 'me'){
+    panels = [cloneHomeWindow('about')];
+  }else if(currentPage === 'projects'){
+    // The projects page shows "проекты.zip" from the home page and, under it, every repository from GitHub.
+    panels = [cloneHomeWindow('projects'),createRouteWindow('projects',copy.githubWindowTitle,templateContent('#github-content'))];
+    loadGithubRepos();
   }else if(currentPage === 'about'){
     // The "об этом" nav button opens its own window about the site itself.
-    panel = createRouteWindow('about',copy.aboutSiteWindowTitle,document.querySelector('#about-site-content').content.cloneNode(true));
+    panels = [createRouteWindow('about',copy.aboutSiteWindowTitle,templateContent('#about-site-content'))];
   }else{
-    panel = createRouteWindow(currentPage,copy.routeContact,document.querySelector('#contact-content').content.cloneNode(true));
+    panels = [createRouteWindow('contact',copy.routeContact,templateContent('#contact-content'))];
   }
+  routeContent.replaceChildren(...panels);
   // Windows built from templates start with the Russian text.
-  panel.querySelectorAll('[data-i18n]').forEach(element=>{element.textContent = copy[element.dataset.i18n]});
-  panel.querySelectorAll('[data-i18n-aria-label]').forEach(element=>{
-    element.setAttribute('aria-label',copy[element.dataset.i18nAriaLabel]);
-    element.title = copy[element.dataset.i18nAriaLabel];
-  });
+  translateElements(routeContent,copy);
   // The email address is kept in two parts in the markup, so bots reading the HTML do not find it whole.
-  panel.querySelectorAll('[data-email-user]').forEach(item=>{
+  routeContent.querySelectorAll('[data-email-user]').forEach(item=>{
     const address = `${item.dataset.emailUser}@${item.dataset.emailDomain}`;
     item.querySelector('.contact-list__value').textContent = address;
-    item.querySelector('.contact-list__link').href = `mailto:${address}`;
+    item.querySelector('.link-button').href = `mailto:${address}`;
   });
-  routeContent.append(panel);
-  updateWindowButtons(panel);
+  routeContent.querySelectorAll('[data-github-repos]').forEach(renderGithubRepos);
+  panels.forEach(updateWindowButtons);
 
   document.title = `${copy[`route${currentPage[0].toUpperCase()}${currentPage.slice(1)}`]} | keril.art`;
 }
@@ -1941,14 +2214,8 @@ function applyLanguage(language,persist=false){
   currentLanguage = language;
   const copy = translations[currentLanguage];
   document.documentElement.lang = currentLanguage;
-  document.querySelectorAll('[data-i18n]').forEach(element=>{
-    if(element === heroGreeting)animateGreeting(copy.heroGreeting);
-    else element.textContent = copy[element.dataset.i18n];
-  });
+  translateElements(document,copy);
   renderVisitorCount();
-  document.querySelectorAll('[data-i18n-aria-label]').forEach(element=>{
-    element.setAttribute('aria-label',copy[element.dataset.i18nAriaLabel]);
-  });
   searchInput.placeholder = copy.searchPlaceholder;
   searchInput.setAttribute('aria-label',copy.searchLabel);
   suggestionsList.setAttribute('aria-label',copy.resultsLabel);
@@ -1975,22 +2242,45 @@ function normalizeSearchText(value){
   return value.toLocaleLowerCase(currentLanguage).replaceAll('ё','е').trim();
 }
 
+// The fixed sections plus every repository loaded from GitHub, so new projects are found without editing this list.
+function getSearchItems(){
+  const repoItems = (githubRepos || []).map(repo=>({
+    page:'projects',
+    repo:repo.name,
+    path:`projects\\${repo.name}`,
+    title:repo.name,
+    detail:repo.description,
+    kindKey:'kindProject',
+    keywords:`${repo.language} ${repo.topics.join(' ')} проект project репозиторий repository github`
+  }));
+  return [...searchItems,...repoItems];
+}
+
+function suggestionText(item,copy){
+  if(item.titleKey)return {title:copy[item.titleKey],detail:copy[item.detailKey]};
+  return {title:item.title,detail:item.detail || copy.repoNoDescription};
+}
+
 function selectSuggestion(index){
   const item = matchingItems[index];
   if(!item)return;
-  suggestionsList.hidden = true;
-  searchInput.setAttribute('aria-expanded','false');
-  searchInput.removeAttribute('aria-activedescendant');
-  if(item.url)window.open(item.url,'_blank','noopener,noreferrer');
-  else navigateToPage(item.page);
+  closeSuggestions();
+  if(item.url){
+    window.open(item.url,'_blank','noopener,noreferrer');
+  }else{
+    navigateToPage(item.page);
+    if(item.repo)highlightRepo(item.repo);
+  }
 }
 
 function renderSuggestions(){
   const copy = translations[currentLanguage];
   const query = normalizeSearchText(searchInput.value);
   const terms = query.split(/\s+/).filter(Boolean);
-  matchingItems = searchItems.filter(item=>{
-    const searchable = normalizeSearchText(`${copy[item.titleKey]} ${copy[item.detailKey]} ${translations.ru[item.titleKey]} ${translations.ru[item.detailKey]} ${item.keywords} ${item.path}`);
+  matchingItems = getSearchItems().filter(item=>{
+    // Both languages are searched, so a Russian word finds a page while the site is in English and back.
+    const text = [suggestionText(item,translations.ru),suggestionText(item,translations.en)].map(({title,detail})=>`${title} ${detail}`).join(' ');
+    const searchable = normalizeSearchText(`${text} ${item.keywords} ${item.path}`);
     return terms.every(term=>searchable.includes(term));
   });
   activeSuggestionIndex = -1;
@@ -2013,18 +2303,20 @@ function renderSuggestions(){
       const icon = document.createElement('span');
       icon.className = 'path-suggestion__icon';
       icon.setAttribute('aria-hidden','true');
-      // External links get the same chain icon as the contact page; pages keep the document glyph.
-      if(item.url)icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>';
+      // External links get the same chain icon as the contact page, projects the GitHub mark; pages keep the document glyph.
+      if(item.url)icon.innerHTML = icons.chain;
+      else if(item.repo)icon.innerHTML = icons.github;
       else icon.textContent = '▤';
 
+      const text = suggestionText(item,copy);
       const suggestionCopy = document.createElement('span');
       suggestionCopy.className = 'path-suggestion__copy';
       const title = document.createElement('span');
       title.className = 'path-suggestion__title';
-      title.textContent = copy[item.titleKey];
+      title.textContent = text.title;
       const detail = document.createElement('span');
       detail.className = 'path-suggestion__detail';
-      detail.textContent = `${item.url ? item.path : `C:\\keril.art\\${item.path}`}  ·  ${copy[item.detailKey]}`;
+      detail.textContent = `${item.url ? item.path : `C:\\keril.art\\${item.path}`}  ·  ${text.detail}`;
       suggestionCopy.append(title,detail);
 
       const kind = document.createElement('span');
@@ -2058,8 +2350,10 @@ function setLanguageMenuOpen(open,focusSelected=false){
 }
 
 searchInput.addEventListener('focus',()=>{
-  document.querySelector('.path-search__caret').hidden = true;
+  searchCaret.hidden = true;
   searchSeparator.hidden = false;
+  // Projects join the suggestions right away from the saved list, or once it arrives from GitHub.
+  loadGithubRepos();
   renderSuggestions();
 });
 searchInput.addEventListener('input',renderSuggestions);
@@ -2084,7 +2378,11 @@ searchInput.addEventListener('keydown',event=>{
       selectSuggestion(activeSuggestionIndex < 0 ? 0 : activeSuggestionIndex);
     }
   }else if(event.key === 'Escape'){
-    closeSuggestions();
+    // The browser's own Escape clears the field and fires "input", which would open the list again:
+    // the first Escape closes the list, the next one clears the text.
+    event.preventDefault();
+    if(!suggestionsList.hidden)closeSuggestions();
+    else searchInput.value = '';
   }
 });
 searchForm.addEventListener('submit',event=>{
@@ -2108,7 +2406,7 @@ searchForm.addEventListener('focusout',event=>{
 });
 searchInput.addEventListener('blur',()=>{
   if(!searchInput.value){
-    document.querySelector('.path-search__caret').hidden = false;
+    searchCaret.hidden = false;
     searchSeparator.hidden = true;
   }
 });
@@ -2150,7 +2448,6 @@ document.addEventListener('keydown',event=>{
     languageToggle.focus();
   }
 });
-initializeScene();
 function applyTheme(theme,persist=false){
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
@@ -2184,6 +2481,7 @@ if(document.documentElement.classList.contains('theme-pending')){
   pageShell.inert = true;
   themeGate.querySelector(`[data-theme-choice="${document.documentElement.dataset.theme}"]`).focus();
 }
+initializeScene();
 document.querySelectorAll('#home-details .xp-window').forEach(addWindowButtons);
 applyLanguage(getInitialLanguage());
 renderRoute(pageFromLocation());
