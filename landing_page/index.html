@@ -17,10 +17,11 @@
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
 })();
-// The interface grows with wide windows: it is drawn for 1280px, is 1.5× at 1920px and at most 2×.
-// CSS zooms the content column and the floating windows by --ui-scale; narrower windows keep 1.
+// The interface grows gently with wide windows, at a quarter of the window's rate: it is drawn for
+// 1280px, is about 1.13× at 1920px and at most 1.25× (from 2560px). CSS zooms the content column and
+// the floating windows by --ui-scale; narrower windows keep 1.
 function updateUiScale(){
-  var scale = Math.min(2,Math.max(1,window.innerWidth / 1280));
+  var scale = Math.min(1.25,Math.max(1,1 + (window.innerWidth / 1280 - 1) / 4));
   document.documentElement.style.setProperty('--ui-scale',String(Math.round(scale * 100) / 100));
 }
 updateUiScale();
@@ -37,7 +38,9 @@ body{margin:0;min-height:100vh;background:#7FCDFB}
 body,body *{font-family:'Monocraft',monospace!important;font-weight:400!important;color:#000000!important}
 a{text-decoration:none}
 .page-shell{position:relative;z-index:1;width:100%;min-height:100vh;box-sizing:border-box}
-.page-column{position:relative;display:flex;max-width:780px;flex-direction:column;gap:32px;margin:0 auto;padding:40px 20px 56px}
+/* Width of the content windows; the visitors window widens to it too. */
+:root{--column-width:936px}
+.page-column{position:relative;display:flex;max-width:var(--column-width);flex-direction:column;gap:32px;margin:0 auto;padding:40px 20px 56px}
 /* Everything inside grows with the window, text included (see updateUiScale in <head>). Inside a zoomed
    element translate() and vw are zoomed too, while getBoundingClientRect() reports the zoomed size. */
 .page-column,.theme-gate__window,.cookie-banner,.bubble-counter{zoom:var(--ui-scale,1)}
@@ -187,7 +190,7 @@ html[data-theme="dark"] .xp-button{color:#0A2A52!important}
 html[data-theme="dark"]{--sky:linear-gradient(180deg,#0A1030 0%,#18225E 45%,#352C7E 100%)}
 html[data-theme="dark"] body{background:#18225E}
 .counter-window{box-sizing:border-box;align-self:center;width:100%;max-width:360px;transition:max-width .45s cubic-bezier(.2,1.1,.4,1)}
-.counter-window.is-expanded{max-width:780px}
+.counter-window.is-expanded{max-width:var(--column-width)}
 .counter-window__body{padding:0 18px}
 .counter-window__part{display:grid;overflow:hidden;transition:grid-template-rows .4s ease}
 .counter-window__part>div{min-height:0}
