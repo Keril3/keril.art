@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self' https://api.github.com https://api.mymemory.translated.net; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 // Apply the theme before the first paint; without a saved choice the theme picker blocks the site.
@@ -141,6 +141,7 @@ html[data-theme="dark"] .repo-list__item.is-highlighted{background:rgba(255,201,
 .repo-list__meta{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:13px;line-height:1.6;opacity:0.75}
 .repo-list__language{display:inline-flex;align-items:center;gap:6px}
 .repo-list__dot{flex:none;width:10px;height:10px;border:1px solid rgba(11,37,69,0.35);border-radius:50%}
+.repo-list__translated{cursor:help}
 .repo-list__links{display:flex;flex:none;align-items:flex-start;gap:8px}
 @media(max-width:480px){.repo-list__item{flex-wrap:wrap;gap:8px 12px;padding:16px 4px}.repo-list__main{flex-basis:calc(100% - 4ch)}.repo-list__links{margin-left:calc(2ch + 12px)}}
 .xp-window.is-popping{animation:window-pop .26s ease-in forwards}
@@ -540,7 +541,7 @@ const translations = {
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по разделам сайта',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindLink:'ссылка',suggestAboutTitle:'Об этом',suggestAboutDetail:'Для чего этот сайт',suggestMeTitle:'Обо мне',suggestMeDetail:'Кто я, образование и хобби',
     suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Мои репозитории с GitHub',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',contactEmailLink:'Написать на почту',contactDiscordLink:'Открыть профиль в Discord (в новой вкладке)',contactTelegramLink:'Открыть чат в Telegram (в новой вкладке)',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке',
-    kindProject:'проект',githubWindowTitle:'репозитории.git',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
+    kindProject:'проект',githubWindowTitle:'репозитории.git',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoTranslated:'автоперевод',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
   },
   en:{
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
@@ -550,7 +551,7 @@ const translations = {
     searchPlaceholder:'search this site',searchLabel:'Search site sections',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindLink:'link',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for',suggestMeTitle:'About me',suggestMeDetail:'Who I am, education, and hobbies',
     suggestProjectsTitle:'Projects',suggestProjectsDetail:'My repositories from GitHub',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',contactEmailLink:'Send an email',contactDiscordLink:'Open Discord profile (new tab)',contactTelegramLink:'Open Telegram chat (new tab)',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab',
-    kindProject:'project',githubWindowTitle:'repositories.git',githubIntro:'All my public repositories on GitHub. New ones show up here on their own.',githubLoading:'Loading the list from GitHub…',githubError:"Couldn't load the list from GitHub. All my projects are right there:",githubEmpty:'No public repositories yet.',repoNoDescription:'No description',repoUpdated:'updated',repoStars:'GitHub stars',repoGithubLink:'Open {name} on GitHub (new tab)',repoHomepageLink:'Open the {name} website (new tab)'
+    kindProject:'project',githubWindowTitle:'repositories.git',githubIntro:'All my public repositories on GitHub. New ones show up here on their own.',githubLoading:'Loading the list from GitHub…',githubError:"Couldn't load the list from GitHub. All my projects are right there:",githubEmpty:'No public repositories yet.',repoNoDescription:'No description',repoUpdated:'updated',repoStars:'GitHub stars',repoTranslated:'machine-translated',repoGithubLink:'Open {name} on GitHub (new tab)',repoHomepageLink:'Open the {name} website (new tab)'
   }
 };
 let currentLanguage = 'ru';
@@ -1744,15 +1745,16 @@ function createVisitorStats(){
 }
 
 // Public repositories of the GitHub profile fill the "репозитории.git" window on the projects page
-// and the site search. The browser asks the GitHub API directly (no token, 60 requests an hour per
-// visitor) and keeps the answer for 30 minutes; if GitHub cannot be reached, an older saved list is used.
+// and the site search. The browser asks the GitHub API directly (no token) once per page view. The saved
+// copy from the last visit is shown at once and replaced by the answer; it is also what stays on screen
+// when GitHub cannot be reached. An unchanged list comes back as 304 from GitHub, which does not count
+// against its limit of 60 requests an hour per visitor.
 const githubUser = 'Keril3';
 const githubReposUrl = `https://api.github.com/users/${githubUser}/repos?type=owner&sort=pushed&per_page=100`;
 // Forks, the profile README repository and repositories with this topic stay off the site.
 const githubHiddenTopic = 'hide-from-site';
 const githubFields = ['name','fork','description','homepage','language','stargazers_count','pushed_at','topics'];
 const githubCacheKey = 'keril-art-github-repos';
-const githubCacheLifetime = 30 * 60 * 1000;
 const githubTimeout = 8000;
 const languageColors = {
   'C':'#555555','C#':'#178600','C++':'#F34B7D','CSS':'#563D7C','Dart':'#00B4AB','GDScript':'#355570','Go':'#00ADD8',
@@ -1813,7 +1815,8 @@ async function fetchGithubRepos(){
   const controller = new AbortController();
   const timeout = window.setTimeout(()=>controller.abort(),githubTimeout);
   try{
-    const response = await fetch(githubReposUrl,{headers:{Accept:'application/vnd.github+json'},credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});
+    // "no-cache" makes the browser check its copy with GitHub (ETag) instead of using it unasked.
+    const response = await fetch(githubReposUrl,{headers:{Accept:'application/vnd.github+json'},cache:'no-cache',credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});
     if(!response.ok)throw new Error(`GitHub answered ${response.status}`);
     const data = await response.json();
     if(!Array.isArray(data))throw new Error('Unexpected GitHub response');
@@ -1824,19 +1827,12 @@ async function fetchGithubRepos(){
   }
 }
 
-// Loads the list once per page view (from the saved copy while it is fresh), then redraws whatever shows it.
+// Asks GitHub once per page view, showing the saved copy meanwhile, then redraws whatever shows the list.
 function loadGithubRepos(){
   if(githubRequest)return githubRequest;
   const cache = readGithubCache();
-  if(cache){
-    setGithubRepos(cache.repos);
-    if(Date.now() - cache.savedAt < githubCacheLifetime){
-      githubRequest = Promise.resolve();
-      return githubRequest;
-    }
-  }else{
-    githubState = 'loading';
-  }
+  if(cache)setGithubRepos(cache.repos);
+  else githubState = 'loading';
   githubRequest = fetchGithubRepos().then(repos=>{
     try{localStorage.setItem(githubCacheKey,JSON.stringify({savedAt:Date.now(),repos}))}catch(error){}
     setGithubRepos(repos);
@@ -1851,6 +1847,81 @@ function loadGithubRepos(){
 function updateGithubViews(){
   routeContent.querySelectorAll('[data-github-repos]').forEach(renderGithubRepos);
   if(!suggestionsList.hidden)renderSuggestions();
+}
+
+// Descriptions are written on GitHub in Russian or English. In the other site language they are shown
+// machine-translated by the free MyMemory API (no key, about 5000 characters a day per visitor). Each
+// translation is kept in localStorage, so a text is translated once per browser; until it arrives, or if
+// the service fails, the original is shown.
+const translationUrl = 'https://api.mymemory.translated.net/get';
+const translationCacheKey = 'keril-art-translations';
+const translationCacheLimit = 200;
+const translationTimeout = 8000;
+// Keyed by "target language|original text".
+const translationCache = readTranslationCache();
+const translationRequests = new Map();
+
+function readTranslationCache(){
+  try{
+    const cache = JSON.parse(localStorage.getItem(translationCacheKey));
+    if(cache && typeof cache === 'object' && !Array.isArray(cache)){
+      return new Map(Object.entries(cache).filter(([key,value])=>typeof value === 'string'));
+    }
+  }catch(error){}
+  return new Map();
+}
+
+function saveTranslationCache(){
+  // The oldest translations go first once there are too many (descriptions that were since edited).
+  while(translationCache.size > translationCacheLimit)translationCache.delete(translationCache.keys().next().value);
+  try{localStorage.setItem(translationCacheKey,JSON.stringify(Object.fromEntries(translationCache)))}catch(error){}
+}
+
+// Any Cyrillic letter makes a text Russian, so English product names inside a Russian sentence do not mislead it.
+function textLanguage(text){
+  if(/[а-яё]/i.test(text))return 'ru';
+  return /[a-z]/i.test(text) ? 'en' : '';
+}
+
+async function fetchTranslation(text,source,target){
+  const controller = new AbortController();
+  const timeout = window.setTimeout(()=>controller.abort(),translationTimeout);
+  try{
+    const query = new URLSearchParams({q:text,langpair:`${source}|${target}`});
+    const response = await fetch(`${translationUrl}?${query}`,{credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});
+    if(!response.ok)throw new Error(`Translation answered ${response.status}`);
+    const data = await response.json();
+    const translation = data?.responseData?.translatedText;
+    // Errors and the daily limit come back as status codes or as warnings in place of the translation.
+    if(Number(data?.responseStatus) !== 200 || data.quotaFinished || typeof translation !== 'string' || !translation.trim()
+      || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID LANGUAGE PAIR/i.test(translation))throw new Error('No translation');
+    // The answer may hold HTML entities (&#39;). A textarea decodes them but keeps anything tag-like as
+    // plain text, and the result is only ever shown with textContent.
+    const decoder = document.createElement('textarea');
+    decoder.innerHTML = translation;
+    const decoded = decoder.value.trim();
+    if(!decoded)throw new Error('Empty translation');
+    return decoded.slice(0,400);
+  }finally{
+    window.clearTimeout(timeout);
+  }
+}
+
+// The description in the site language: the original, a saved translation, or the original while one is fetched.
+function repoDescription(repo){
+  const source = textLanguage(repo.description);
+  if(!source || source === currentLanguage)return {text:repo.description,translated:false};
+  const key = `${currentLanguage}|${repo.description}`;
+  if(translationCache.has(key))return {text:translationCache.get(key),translated:true};
+  // One attempt per text and page view; a failed one is not repeated until the page is opened again.
+  if(!translationRequests.has(key)){
+    translationRequests.set(key,fetchTranslation(repo.description,source,currentLanguage).then(translation=>{
+      translationCache.set(key,translation);
+      saveTranslationCache();
+      updateGithubViews();
+    }).catch(()=>{}));
+  }
+  return {text:repo.description,translated:false};
 }
 
 function createLinkButton(href,icon,label){
@@ -1914,7 +1985,8 @@ function renderGithubRepos(slot){
     name.textContent = repo.name;
     const description = document.createElement('p');
     description.className = 'repo-list__description';
-    description.textContent = repo.description || copy.repoNoDescription;
+    const shownDescription = repoDescription(repo);
+    description.textContent = shownDescription.text || copy.repoNoDescription;
     const meta = document.createElement('p');
     meta.className = 'repo-list__meta';
     if(repo.language){
@@ -1937,6 +2009,15 @@ function renderGithubRepos(slot){
       const updated = document.createElement('span');
       updated.textContent = `${copy.repoUpdated} ${dateFormat.format(repo.pushedAt)}`;
       meta.append(updated);
+    }
+    if(shownDescription.translated){
+      // A machine translation says so; the original is in the tooltip.
+      const translated = document.createElement('span');
+      translated.className = 'repo-list__translated';
+      translated.textContent = copy.repoTranslated;
+      translated.title = repo.description;
+      description.title = repo.description;
+      meta.append(translated);
     }
     main.append(name,description);
     if(meta.childElementCount)main.append(meta);
@@ -2262,9 +2343,9 @@ function getSearchItems(){
     repo:repo.name,
     path:`projects\\${repo.name}`,
     title:repo.name,
-    detail:repo.description,
+    detail:repoDescription(repo).text,
     kindKey:'kindProject',
-    keywords:`${repo.language} ${repo.topics.join(' ')} проект project репозиторий repository github`
+    keywords:`${repo.description} ${repo.language} ${repo.topics.join(' ')} проект project репозиторий repository github`
   }));
   return [...searchItems,...repoItems];
 }
