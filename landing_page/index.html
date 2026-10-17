@@ -312,8 +312,17 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 .tenshi.is-showing .tenshi__halo{animation:tenshi-halo 1.4s ease-in-out infinite alternate}
 @keyframes tenshi-halo{to{transform:translateY(-4px)}}
 .tenshi .twinkle{transform-box:fill-box;transform-origin:center}
-.tenshi__bubble{position:absolute;top:-76px;left:229px;z-index:1;rotate:-30deg;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:14px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
-.tenshi__bubble::after{content:"";position:absolute;left:-9px;bottom:8px;border:7px solid transparent;border-right-color:#4FA8E8}
+/* The wings flap slowly all the time she is on screen. */
+.tenshi__wing{transform-box:view-box;animation:tenshi-flap-left 2.6s ease-in-out infinite alternate}
+.tenshi__wing--left{transform-origin:96px 184px}
+.tenshi__wing--right{transform-origin:160px 184px;animation-name:tenshi-flap-right}
+@keyframes tenshi-flap-left{from{transform:rotate(7deg)}to{transform:rotate(-9deg)}}
+@keyframes tenshi-flap-right{from{transform:rotate(-7deg)}to{transform:rotate(9deg)}}
+.tenshi__bubble{position:absolute;top:-76px;left:229px;z-index:1;rotate:-30deg;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:999px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
+/* A trail of shrinking circles leads from the bubble down to her, like in comics. */
+.tenshi__bubble::before,.tenshi__bubble::after{content:"";position:absolute;border:2px solid #4FA8E8;border-radius:50%;background:#ffffff;box-shadow:0 2px 5px rgba(20,70,140,0.2)}
+.tenshi__bubble::before{left:-4px;bottom:-14px;width:12px;height:12px}
+.tenshi__bubble::after{left:-17px;bottom:-26px;width:7px;height:7px;box-shadow:-9px 9px 0 -1px #ffffff,-9px 9px 0 1px #4FA8E8}
 .tenshi.is-showing .tenshi__bubble{animation:tenshi-bubble 9s both}
 @keyframes tenshi-bubble{0%,14%{opacity:0;transform:scale(0.6)}19%,84%{opacity:1;transform:scale(1)}89%,100%{opacity:0;transform:scale(0.9)}}
 /* The bubble stays light in the dark theme, so its text stays dark blue. */
@@ -524,10 +533,10 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     </defs>
     <path class="twinkle" d="M300 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#FFC9E8"/>
     <path class="twinkle twinkle--late" d="M246 104l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#ffffff" stroke="#CFEBFF"/>
-    <use href="#tenshi-wing"/>
-    <use href="#tenshi-wing" transform="translate(256 0) scale(-1 1)"/>
+    <g class="tenshi__wing tenshi__wing--left"><use href="#tenshi-wing"/></g>
+    <g class="tenshi__wing tenshi__wing--right"><use href="#tenshi-wing" transform="translate(256 0) scale(-1 1)"/></g>
     <g class="tenshi__head">
-      <path d="M66 100C60 44 196 44 190 100L198 202C186 208 174 206 166 196L158 150H98L90 196C82 206 70 208 58 202Z" fill="url(#tenshi-hair)" stroke="#3F7FD1" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M64 102C58 44 198 44 192 102C195 128 194 150 186 166C176 172 164 170 158 162H98C92 170 80 172 70 166C62 150 61 128 64 102Z" fill="url(#tenshi-hair)" stroke="#3F7FD1" stroke-width="3" stroke-linejoin="round"/>
     </g>
     <!-- The body goes on below the picture, so no gap shows under her when she leans. -->
     <path d="M64 420V272C64 216 94 192 128 192S192 216 192 272V420Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3"/>
@@ -546,8 +555,8 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
       <path d="M114 148Q128 152 142 148Q141 168 128 168Q115 168 114 148Z" fill="#B8323F" stroke="#6B2E2E" stroke-width="2" stroke-linejoin="round"/>
       <path d="M120 162Q128 156 136 162Q133 167 128 167Q123 167 120 162Z" fill="#FF8FA3"/>
       <g fill="url(#tenshi-hair)" stroke="#3F7FD1" stroke-width="3" stroke-linejoin="round">
-        <path d="M72 100C62 128 64 162 70 188C80 178 84 160 84 138C84 122 80 108 76 100Z"/>
-        <path d="M184 100C194 128 192 162 186 188C176 178 172 160 172 138C172 122 176 108 180 100Z"/>
+        <path d="M72 100C63 122 63 148 70 166C78 170 88 164 90 154C86 150 84 140 84 130C84 118 81 108 77 100Z"/>
+        <path d="M184 100C193 122 193 148 186 166C178 170 168 164 166 154C170 150 172 140 172 130C172 118 175 108 179 100Z"/>
         <path d="M70 112C66 60 100 44 128 44C158 44 192 60 186 112C182 102 178 94 172 86C170 96 166 102 158 106C158 98 154 90 150 86C146 98 138 104 128 106C126 98 122 90 116 86C112 96 104 103 96 106C98 98 96 92 92 86C86 94 78 104 70 112Z"/>
         <path d="M126 46C122 30 134 20 148 23C140 27 136 34 136 46"/>
       </g>
