@@ -318,16 +318,17 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 .tenshi__wing--right{transform-origin:160px 184px;animation-name:tenshi-flap-right}
 @keyframes tenshi-flap-left{from{transform:rotate(7deg)}to{transform:rotate(-9deg)}}
 @keyframes tenshi-flap-right{from{transform:rotate(-7deg)}to{transform:rotate(9deg)}}
-.tenshi__bubble{position:absolute;top:-76px;left:229px;z-index:1;rotate:-30deg;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:999px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
-/* A trail of shrinking circles leads from the bubble down to her, like in comics. */
-.tenshi__bubble::before,.tenshi__bubble::after{content:"";position:absolute;border:2px solid #4FA8E8;border-radius:50%;background:#ffffff;box-shadow:0 2px 5px rgba(20,70,140,0.2)}
-.tenshi__bubble::before{left:-4px;bottom:-14px;width:12px;height:12px}
-.tenshi__bubble::after{left:-17px;bottom:-26px;width:7px;height:7px;box-shadow:-9px 9px 0 -1px #ffffff,-9px 9px 0 1px #4FA8E8}
+.tenshi__bubble{position:absolute;top:-53px;left:188px;z-index:1;rotate:-30deg;transform-origin:3.9px 27.1px;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:999px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
+/* A trail of three shrinking circles on one line, evenly spaced, leaves the bubble's rounded left end towards
+   her head, like in comics. The bubble turns around that point, so the trail stays put whatever the text. */
+.tenshi__bubble::before,.tenshi__bubble::after{content:"";position:absolute;box-sizing:border-box;border:2px solid #4FA8E8;border-radius:50%;background:#ffffff}
+.tenshi__bubble::before{left:-13.6px;top:25.2px;width:14px;height:14px}
+.tenshi__bubble::after{left:-23.8px;top:37.5px;width:10px;height:10px;box-shadow:-9.6px 8.0px 0 -3.5px #ffffff,-9.6px 8.0px 0 -1.5px #4FA8E8}
 .tenshi.is-showing .tenshi__bubble{animation:tenshi-bubble 9s both}
 @keyframes tenshi-bubble{0%,14%{opacity:0;transform:scale(0.6)}19%,84%{opacity:1;transform:scale(1)}89%,100%{opacity:0;transform:scale(0.9)}}
 /* The bubble stays light in the dark theme, so its text stays dark blue. */
 html[data-theme="dark"] .tenshi__bubble{color:#0A2A52!important}
-@media(max-width:480px){.tenshi{width:250px}.tenshi__bubble{top:-62px;left:163px;font-size:14px}}
+@media(max-width:480px){.tenshi{width:250px}.tenshi__bubble{top:-55px;left:142px;font-size:14px;transform-origin:3.6px 25.5px}.tenshi__bubble::before{left:-13.8px;top:23.5px}.tenshi__bubble::after{left:-24.1px;top:35.8px}}
 /* Kept on the site for good, she stays peeking from the bottom left corner in the finale's pose with her
    greeting, without moving. */
 .tenshi.is-resident{transform:translate(-10%,-24%) rotate(30deg);transition:transform .9s cubic-bezier(.3,1.25,.55,1)}
