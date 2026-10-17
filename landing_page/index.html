@@ -45,7 +45,7 @@ a{text-decoration:none}
 .page-column{position:relative;display:flex;max-width:var(--column-width);flex-direction:column;gap:32px;margin:0 auto;padding:40px 20px 56px}
 /* Everything inside grows with the window, text included (see updateUiScale in <head>). Inside a zoomed
    element translate() and vw are zoomed too, while getBoundingClientRect() reports the zoomed size. */
-.page-column,.theme-gate__window,.cookie-banner,.bubble-counter{zoom:var(--ui-scale,1)}
+.page-column,.theme-gate__window,.cookie-banner,.bubble-counter,.tenshi{zoom:var(--ui-scale,1)}
 .status-bar{display:flex;align-items:center;gap:12px;padding:6px 14px;border:1px solid #ffffff;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));box-shadow:0 2px 8px rgba(20,70,140,0.2)}
 .status-bar__online{flex:none;font-size:14px;opacity:0.7}
 .dock{display:flex;flex-wrap:wrap;justify-content:center;gap:42px;padding:4px 0}
@@ -247,7 +247,7 @@ html[data-theme="dark"] .path-suggestions,html[data-theme="dark"] .language-menu
 html[data-theme="dark"] .path-suggestion:hover,html[data-theme="dark"] .path-suggestion[aria-selected="true"],html[data-theme="dark"] .language-option:hover,html[data-theme="dark"] .language-option[aria-checked="true"]{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.45),rgba(42,60,154,0.45));box-shadow:none}
 html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.4),rgba(42,60,154,0.55))}
 html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
-.bubble-counter{position:fixed;top:50%;right:16px;z-index:20;width:214px;overflow:hidden;border:2px solid #ffffff;border-radius:10px;box-shadow:0 8px 22px rgba(20,70,140,0.35);transform:translateY(-50%);transition:width .35s ease,right .35s ease,border-radius .35s ease,transform .4s ease}
+.bubble-counter{position:fixed;top:50%;right:16px;z-index:20;width:256px;overflow:hidden;border:2px solid #ffffff;border-radius:10px;box-shadow:0 8px 22px rgba(20,70,140,0.35);transform:translateY(-50%);transition:width .35s ease,right .35s ease,border-radius .35s ease,transform .4s ease}
 .bubble-counter[hidden]{display:none}
 .bubble-counter.is-entering{animation:counter-fly-in .65s cubic-bezier(.2,1.3,.4,1)}
 .bubble-counter.is-leaving{animation:counter-fly-out .35s ease-in forwards}
@@ -259,7 +259,7 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 .bubble-counter.is-minimized .bubble-counter__restore-icon{display:block}
 .bubble-counter__collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s ease}
 .bubble-counter__clip{min-height:0;overflow:hidden}
-.bubble-counter.is-minimized{right:0;width:236px;border-bottom-width:0;border-radius:10px 10px 0 0;transform:translateY(-50%) translateX(calc(50% - 15.5px)) rotate(-90deg)}
+.bubble-counter.is-minimized{right:0;width:256px;border-bottom-width:0;border-radius:10px 10px 0 0;transform:translateY(-50%) translateX(calc(50% - 15.5px)) rotate(-90deg)}
 .bubble-counter.is-minimized .bubble-counter__collapse{grid-template-rows:0fr}
 .bubble-counter__body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 14px 14px;background:#ffffff}
 .bubble-counter__label{font-size:13px;letter-spacing:0.3em}
@@ -278,24 +278,36 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 .bubble-counter.is-celebrating .bubble-counter__count{animation:count-celebrate .6s ease}
 @keyframes counter-glow{30%{box-shadow:0 0 0 3px #FFC9E8,0 0 26px 8px rgba(255,201,232,0.9),0 0 46px 14px rgba(127,205,251,0.7)}}
 @keyframes count-celebrate{40%{transform:scale(1.5) rotate(-6deg)}}
-.bubble-counter.no-transition,.bubble-counter.no-transition *{transition:none!important}
-.bubble-counter.is-finale{z-index:40;pointer-events:none;animation:counter-finale 2s cubic-bezier(.45,0,.3,1) forwards}
-@keyframes counter-finale{
-  0%{transform:translateY(-50%)}
-  35%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.35);box-shadow:0 0 0 3px #FFC9E8,0 0 24px 8px rgba(255,201,232,0.8)}
-  45%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.3) rotate(-2deg)}
-  53%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.37) rotate(2deg)}
-  61%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.32) rotate(-3deg);box-shadow:0 0 0 3px #FFC9E8,0 0 34px 12px rgba(255,201,232,0.9)}
-  68%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.42) rotate(4deg)}
-  75%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.36) rotate(-5deg)}
-  81%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.5) rotate(5deg)}
-  86%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(1.44);opacity:1;box-shadow:0 0 0 4px #ffffff,0 0 50px 20px rgba(255,201,232,1)}
-  100%{transform:translate(var(--to-center-x),calc(-50% + var(--to-center-y))) scale(2.4);opacity:0;box-shadow:0 0 0 3px #ffffff,0 0 80px 40px rgba(255,255,255,0.9)}
-}
 .burst-canvas{position:fixed;inset:0;z-index:30;display:block;width:100%;height:100%;pointer-events:none}
+/* Tenshi-tan, the combo finale: she peeks up from the bottom edge tilted, waves and slides back down
+   (tenshi-peek lasts tenshiShowTime). */
+.tenshi{position:fixed;right:max(5%,16px);bottom:0;z-index:40;width:260px;pointer-events:none;transform:translateY(105%);transform-origin:50% 100%}
+.tenshi[hidden]{display:none}
+.tenshi.is-showing{animation:tenshi-peek 6s both}
+@keyframes tenshi-peek{
+  0%{transform:translateY(105%) rotate(8deg);animation-timing-function:cubic-bezier(.3,1.45,.55,1)}
+  14%{transform:translateY(0) rotate(-6deg)}
+  86%{transform:translateY(0) rotate(-6deg);animation-timing-function:cubic-bezier(.55,0,.8,.45)}
+  100%{transform:translateY(105%) rotate(8deg)}
+}
+.tenshi__art{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 6px 14px rgba(11,37,69,0.3))}
+.tenshi__hand{transform-box:view-box;transform-origin:176px 232px}
+.tenshi.is-showing .tenshi__hand{animation:tenshi-wave .45s ease-in-out .9s 9 alternate}
+@keyframes tenshi-wave{from{transform:rotate(-12deg)}to{transform:rotate(14deg)}}
+.tenshi.is-showing .tenshi__halo{animation:tenshi-halo 1.4s ease-in-out infinite alternate}
+@keyframes tenshi-halo{to{transform:translateY(-4px)}}
+.tenshi .twinkle{transform-box:fill-box;transform-origin:center}
+.tenshi__bubble{position:absolute;top:34px;left:-58px;z-index:1;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:14px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
+.tenshi__bubble::after{content:"";position:absolute;right:-9px;bottom:10px;border:7px solid transparent;border-left-color:#4FA8E8}
+.tenshi.is-showing .tenshi__bubble{animation:tenshi-bubble 6s both}
+@keyframes tenshi-bubble{0%,18%{opacity:0;transform:scale(0.6)}24%,80%{opacity:1;transform:scale(1)}86%,100%{opacity:0;transform:scale(0.9)}}
+/* The bubble stays light in the dark theme, so its text stays dark blue. */
+html[data-theme="dark"] .tenshi__bubble{color:#0A2A52!important}
+@media(max-width:480px){.tenshi{right:10px;width:190px}.tenshi__bubble{top:20px;left:-50px;font-size:14px}}
+@media(prefers-reduced-motion:reduce){.tenshi,.tenshi *{animation:none!important}}
 html[data-theme="dark"] .bubble-counter__meter{border-color:#6F8FEA;background:rgba(5,10,36,0.8)}
 html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{color:#FF8FC8!important}
-@media(max-width:480px){.bubble-counter{right:8px;width:160px}.bubble-counter__count{font-size:28px}}
+@media(max-width:480px){.bubble-counter{right:8px;width:236px}.bubble-counter__count{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.bubble-counter,.bubble-counter *{animation:none!important;transition:none!important}}
 @media(max-width:480px){.status-bar{flex-wrap:wrap;justify-content:space-between;border-radius:14px}.path-search{order:3;flex-basis:100%}.path-suggestions{width:100%}.dock{gap:24px}.dock a [data-i18n]{font-size:18px!important}.hero-greeting{font-size:20px;letter-spacing:0.06em}}
 </style>
@@ -476,6 +488,68 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     </div>
   </div>
 </aside>
+<!-- Tenshi-tan for the combo finale: blue hair with an ahoge, a halo, lilac-edged wings, a star clip, a red bow and a ":3" smile. -->
+<div class="tenshi" id="tenshi" aria-hidden="true" hidden>
+  <p class="tenshi__bubble" data-i18n="tenshiHello">привет! :3</p>
+  <svg class="tenshi__art" viewBox="0 0 260 270" width="260" height="270">
+    <defs>
+      <linearGradient id="tenshi-hair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AEDBFF"/><stop offset="1" stop-color="#6FAEF0"/></linearGradient>
+      <linearGradient id="tenshi-iris" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2557C9"/><stop offset="1" stop-color="#8FD0FF"/></linearGradient>
+      <g id="tenshi-wing">
+        <path d="M94 196C70 196 44 186 26 164C38 167 47 166 54 163C39 156 29 144 24 128C37 135 49 137 58 135C49 124 45 111 46 98C62 120 80 148 98 176Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M54 163C68 171 82 178 94 184M58 135C70 149 82 162 96 176" fill="none" stroke="#CBBDF4" stroke-width="2" stroke-linecap="round"/>
+      </g>
+    </defs>
+    <path class="twinkle" d="M34 52l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#FFC9E8"/>
+    <path class="twinkle twinkle--late" d="M226 92l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#ffffff" stroke="#CFEBFF"/>
+    <use href="#tenshi-wing"/>
+    <use href="#tenshi-wing" transform="translate(256 0) scale(-1 1)"/>
+    <path d="M66 100C60 44 196 44 190 100L198 202C186 208 174 206 166 196L158 150H98L90 196C82 206 70 208 58 202Z" fill="url(#tenshi-hair)" stroke="#3F7FD1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M64 272C64 216 94 192 128 192S192 216 192 272Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3"/>
+    <path d="M117 166h22v30h-22z" fill="#FFE3D6"/>
+    <g stroke="#B3202C" stroke-width="2" stroke-linejoin="round">
+      <path d="M124 204L114 230L122 226L128 208L134 226L142 230L132 204Z" fill="#D92B38"/>
+      <path d="M128 201L106 190L108 213Z" fill="#E53945"/>
+      <path d="M128 201L150 190L148 213Z" fill="#E53945"/>
+      <circle cx="128" cy="201" r="5" fill="#E53945"/>
+    </g>
+    <path d="M74 106C74 148 100 172 128 172S182 148 182 106C182 70 74 70 74 106Z" fill="#FFEDE3" stroke="#EBC1AD" stroke-width="2"/>
+    <g fill="none" stroke="#1E2A55" stroke-width="4" stroke-linecap="round">
+      <path d="M92 119C97 111 113 111 118 119"/>
+      <path d="M138 119C143 111 159 111 164 119"/>
+    </g>
+    <ellipse cx="105" cy="131" rx="12" ry="16" fill="#1E3A8A"/>
+    <ellipse cx="105" cy="132" rx="10" ry="14" fill="url(#tenshi-iris)"/>
+    <ellipse cx="105" cy="134" rx="5" ry="7" fill="#1B2F78"/>
+    <ellipse cx="151" cy="131" rx="12" ry="16" fill="#1E3A8A"/>
+    <ellipse cx="151" cy="132" rx="10" ry="14" fill="url(#tenshi-iris)"/>
+    <ellipse cx="151" cy="134" rx="5" ry="7" fill="#1B2F78"/>
+    <g fill="#ffffff">
+      <circle cx="100" cy="125" r="4.5"/><circle cx="109" cy="139" r="2"/>
+      <circle cx="146" cy="125" r="4.5"/><circle cx="155" cy="139" r="2"/>
+    </g>
+    <ellipse cx="91" cy="151" rx="9" ry="5" fill="#FF9EB5" opacity=".7"/>
+    <ellipse cx="165" cy="151" rx="9" ry="5" fill="#FF9EB5" opacity=".7"/>
+    <path d="M120 154q4 5 8 0q4 5 8 0" fill="none" stroke="#6B2E2E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="url(#tenshi-hair)" stroke="#3F7FD1" stroke-width="3" stroke-linejoin="round">
+      <path d="M72 100C62 128 64 162 70 188C80 178 84 160 84 138C84 122 80 108 76 100Z"/>
+      <path d="M184 100C194 128 192 162 186 188C176 178 172 160 172 138C172 122 176 108 180 100Z"/>
+      <path d="M70 112C66 60 100 44 128 44C158 44 192 60 186 112C182 102 178 94 172 86C170 96 166 102 158 106C158 98 154 90 150 86C146 98 138 104 128 106C126 98 122 90 116 86C112 96 104 103 96 106C98 98 96 92 92 86C86 94 78 104 70 112Z"/>
+      <path d="M126 46C122 30 134 20 148 23C140 27 136 34 136 46"/>
+    </g>
+    <path d="M90 64C104 54 122 52 136 55M148 57C157 59 165 64 171 71" fill="none" stroke="#E3F2FF" stroke-width="4" stroke-linecap="round" opacity=".9"/>
+    <path d="M170 57L173.5 66L183 66.5L175.5 72.5L178 82L170 76.5L162 82L164.5 72.5L157 66.5L166.5 66Z" fill="#FFD54A" stroke="#E0A21A" stroke-width="2" stroke-linejoin="round"/>
+    <g class="tenshi__halo" fill="none">
+      <ellipse cx="128" cy="20" rx="44" ry="10" stroke="#F7C948" stroke-width="6"/>
+      <ellipse cx="128" cy="20" rx="44" ry="10" stroke="#FFF1A8" stroke-width="2"/>
+    </g>
+    <g class="tenshi__hand">
+      <path d="M166 224C180 212 192 188 198 168L218 174C212 198 198 224 182 238Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M199 168C193 152 195 134 205 130C208 118 221 117 224 128C232 124 239 134 235 145C239 156 231 170 218 174Z" fill="#FFEDE3" stroke="#E2AE97" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M213 133V148M223 134V148M201 154C194 150 192 142 197 138" fill="none" stroke="#E2AE97" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>
 <div class="turnstile-slot" id="turnstile-slot"></div>
 <section class="xp-window cookie-banner" id="cookie-banner" aria-labelledby="cookie-banner-title" hidden>
   <div class="xp-window__bar">
@@ -543,7 +617,7 @@ const translations = {
     navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub (откроется в новой вкладке)',navMail:'связаться со мной',navMailLabel:'Связаться со мной',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',aboutSiteWindowTitle:'об_этом.txt',
     projectsWindowTitle:'проекты.zip',projectsSoon:'Скоро тут появятся проекты, которые мне не стыдно показать на публику.',aboutSiteIntro:'Это мой личный сайт-визитка: здесь можно узнать, кто я, посмотреть мои проекты и найти, как со мной связаться.',aboutSiteWhy:'Я сделал его, чтобы у меня было своё место в интернете, а не только профили в соцсетях, и заодно попрактиковаться: сайт написан вручную, без конструкторов, и работает на моём собственном сервере, который я настраивал сам.',aboutSiteStyle:'Оформление — смесь Frutiger Aero, Windows XP и эстетики Tenshi Kawaii: глянец, пузыри, звёздочки и окна, как на компьютерах из нулевых. Мне просто нравится этот стиль, и хотелось сделать что-то не похожее на типичные сайты.',aboutSiteBubbles:'И да, фигуры на фоне можно лопать курсором или пальцем. Попробуйте набрать большое комбо — вдруг что-нибудь случится.',aboutMeIntro:'Привет! Я Keril³ — начинающий разработчик. Пока ищу своё направление: пробую разные сферы разработки и смотрю, что затянет сильнее всего. Имею небольшой опыт программирования на Python, C# (Unity) и HTML, сейчас изучаю C++ и Unreal Engine.',aboutMeEducation:'По образованию я инженер связи: бакалавриат по направлению «Инфокоммуникационные технологии и системы связи» и магистратура «Мобильные сети и технологии».',aboutMeGamedev:'Больше всего меня тянет в геймдев — его я и собираюсь изучать дальше. Сам люблю в основном шутеры и головоломки, так что ждите: скоро здесь появятся и мои первые игры.',aboutMeHobbies:'Помимо разработки занимаюсь 3D-печатью, а иногда собираю кастомные клавиатуры и занимаюсь твердотельным моделированием.',aboutMeProjects:'Все мои проекты лежат на GitHub, а лучшие скоро появятся в окне «проекты.zip».',
-    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
+    footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',bubbleCounterTitle:'пузыри.exe',bubbleCounterShort:'пузыри',bubbleComboLabel:'комбо',tenshiHello:'привет! :3',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по разделам сайта',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',languageTarget:'RU',
     kindPage:'страница',kindLink:'ссылка',suggestAboutTitle:'Об этом',suggestAboutDetail:'Для чего этот сайт',suggestMeTitle:'Обо мне',suggestMeDetail:'Кто я, образование и хобби',
     suggestProjectsTitle:'Проекты',suggestProjectsDetail:'Мои репозитории с GitHub',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Discord, почта и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',contactEmailLink:'Написать на почту',contactDiscordLink:'Открыть профиль в Discord (в новой вкладке)',contactTelegramLink:'Открыть чат в Telegram (в новой вкладке)',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке',
@@ -553,7 +627,7 @@ const translations = {
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',aboutSiteWindowTitle:'about_this.txt',
     projectsWindowTitle:'projects.zip',projectsSoon:"Projects I'm not embarrassed to show in public will appear here soon.",aboutSiteIntro:"This is my personal business-card site: here you can find out who I am, see my projects and learn how to reach me.",aboutSiteWhy:"I made it to have a place of my own on the internet, not just social media profiles, and to practice along the way: the site is written by hand, without site builders, and runs on my own server, which I set up myself.",aboutSiteStyle:"The look is a mix of Frutiger Aero, Windows XP and the Tenshi Kawaii aesthetic: gloss, bubbles, stars and windows like on computers from the 2000s. I just love this style and wanted to make something unlike typical websites.",aboutSiteBubbles:"And yes, you can pop the shapes in the background with your cursor or finger. Try building a big combo, maybe something will happen.",aboutMeIntro:"Hi! I'm Keril³, a beginner developer. I'm still looking for my path: trying out different areas of development to see which one pulls me in the most. I have a little experience programming in Python, C# (Unity), and HTML, and I'm now learning C++ and Unreal Engine.",aboutMeEducation:"I'm a telecom engineer by education: a bachelor's in Infocommunication Technologies and Communication Systems and a master's in Mobile Networks and Technologies.",aboutMeGamedev:"I'm most drawn to game development, and that's what I plan to learn next. I mostly love shooters and puzzle games, so stay tuned: my first games will show up here soon.",aboutMeHobbies:'Outside of development I do 3D printing, and now and then I build custom keyboards and do solid modeling.',aboutMeProjects:'All my projects live on GitHub, and the best of them will soon appear in the projects.zip window.',
-    footerNote:'All-time visitors',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'Back to home',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
+    footerNote:'All-time visitors',counterWindowTitle:'visitors.exe',bubbleCounterTitle:'bubbles.exe',bubbleCounterShort:'bubbles',bubbleComboLabel:'combo',tenshiHello:'hi! :3',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'Back to home',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
     searchPlaceholder:'search this site',searchLabel:'Search site sections',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',languageTarget:'EN',
     kindPage:'page',kindLink:'link',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for',suggestMeTitle:'About me',suggestMeDetail:'Who I am, education, and hobbies',
     suggestProjectsTitle:'Projects',suggestProjectsDetail:'My repositories from GitHub',suggestContactTitle:'Contact me',suggestContactDetail:'Discord, email, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',contactEmailLink:'Send an email',contactDiscordLink:'Open Discord profile (new tab)',contactTelegramLink:'Open Telegram chat (new tab)',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab',
@@ -601,12 +675,17 @@ const starPath = new Path2D('M50 2 61 37 98 50 61 63 50 98 39 63 2 50 39 37Z');
 const heartPath = new Path2D('M50 91 13 55C-1 40 8 15 28 12c10-2 18 3 22 12 4-9 12-14 22-12 20 3 29 28 15 43Z');
 const spriteResolution = 80;
 const spriteShapeSize = 70;
+// Sprites are drawn in 80-unit coordinates on canvases with this many pixels per unit, so the largest
+// floaters (70px) stay sharp on high-density screens.
+const spriteDetail = 2.5;
 
 function createSprite(draw){
   const canvas = document.createElement('canvas');
-  canvas.width = spriteResolution;
-  canvas.height = spriteResolution;
-  draw(canvas.getContext('2d'),spriteResolution / 2);
+  canvas.width = spriteResolution * spriteDetail;
+  canvas.height = spriteResolution * spriteDetail;
+  const context = canvas.getContext('2d');
+  context.scale(spriteDetail,spriteDetail);
+  draw(context,spriteResolution / 2);
   return canvas;
 }
 
@@ -706,35 +785,16 @@ const sceneBlockers = '.xp-window,.status-bar,.route-toolbar,.dock a,.hero-greet
 const popComboCount = 3;
 const popComboWindow = 1000;
 const popComboReward = 5;
-// Each pop keeps the combo chain alive for this long; the counter window shows up at 20.
+// Each pop keeps the combo chain alive for this long; the counter window shows up at 5.
 const comboTimeout = 3.28;
-const comboCounterAt = 20;
-// Every 100 combo before the finale (100, 200, 300) sends a 0.7s stream of 200 floaters, like blowing soap bubbles,
-// from a point on an edge away from the corners, aimed within a 60° fan around the inward normal. Each one's
-// launch speed is capped so it slows down within 60% of the way across the screen in its direction, and then
-// it turns roughly towards the middle and drifts like the others instead of going on towards the far edge.
-const comboMilestone = 100;
-const bubbleStreamDuration = 0.7;
-const bubbleStreamCount = 200;
-const bubbleStreamSpread = 30 * Math.PI / 180;
-const bubbleStreamEdgeMargin = 0.15;
-const bubbleStreamReach = 0.6;
-// At 333 the counter window flies to the middle and bursts into bubbles over the whole page,
-// then the combo rests for 10s before it counts again.
-const comboFinale = 333;
-const finaleDuration = 2000;
+const comboCounterAt = 5;
+// 100 is the most the combo can reach: the counter window glows and flies off, and Tenshi-tan peeks up
+// from the bottom edge and waves (her .is-showing animation lasts tenshiShowTime); then the combo rests
+// for comboRestAfterFinale before it counts again.
+const comboFinale = 100;
+const tenshiShowTime = 6000;
 const comboRestAfterFinale = 10000;
-const finaleBurstArea = 4500;
-const finaleBurstMax = 300;
-// Some burst bubbles turn back, gather into the owner's nickname (drawn in the site font), hold it
-// and then pop from left to right. Times are in ms after the burst.
-const finaleWord = 'Keril3';
-const finaleWordGatherAt = 600;
-const finaleWordPopAt = 4600;
-const finaleWordSweep = 800;
-const finaleWordSpring = 40;
-const finaleWordDamping = 11;
-// Extra floaters from quick-pop bonuses may exceed the usual count by this much; the stream gets its own allowance on top.
+// Extra floaters from quick-pop bonuses may exceed the usual count by this much.
 const extraFloaterLimit = 220;
 const burstCanvas = document.querySelector('#burst-canvas');
 const burstContext = burstCanvas.getContext('2d');
@@ -742,14 +802,9 @@ let recentPopTimes = [];
 let comboCount = 0;
 let comboTimeLeft = 0;
 let comboLockedUntil = 0;
-let bubbleStream = null;
-let burstFloaters = [];
+// Pops of closed windows are drawn above the page on #burst-canvas.
 let burstPopEffects = [];
 let burstCanvasDirty = false;
-// After the finale the screen stays empty for a moment, then floaters fly back in over a few seconds.
-let refillPausedUntil = 0;
-let refillGradualUntil = 0;
-let refillCredit = 0;
 const popRingDuration = 0.5;
 const sparkleDuration = 1;
 const sparkleColors = ['#ffffff','#ffffff','#FFC9E8','#CFEBFF'];
@@ -775,7 +830,7 @@ function pickSpawnEdge(){
 function createFloater(edge,type = pickFloaterType()){
   const variants = floaterSprites[type];
   // Squaring the roll keeps most floaters small so the scene does not get crowded.
-  const size = 5 + 30 * Math.random() ** 2;
+  const size = 10 + 60 * Math.random() ** 2;
   const speed = randomBetween(8,22);
   let heading = randomBetween(0,Math.PI * 2);
   let x = randomBetween(0,sceneWidth);
@@ -933,11 +988,6 @@ function updateFloaters(delta,now){
 
   const survivors = [];
   for(const floater of floaters){
-    // The finale's shock wave pops every floater as it passes.
-    if(floater.popAt && now >= floater.popAt){
-      popFloater(floater,false);
-      continue;
-    }
     // Cursor and waves may not speed a floater past 80px/s, but launched floaters keep their head start.
     const speedLimit = Math.max(80,Math.hypot(floater.vx,floater.vy));
     if(pointerIsRecent && pointerPush > 0){
@@ -966,16 +1016,10 @@ function updateFloaters(delta,now){
       floater.vy *= speedLimit / speed;
       speed = speedLimit;
     }
-    if(floater.fromStream && speed < floater.baseSpeed * 1.5){
-      floater.fromStream = false;
-      const heading = Math.atan2(sceneHeight / 2 - floater.y,sceneWidth / 2 - floater.x) + randomBetween(-1,1);
-      floater.vx = Math.cos(heading) * speed;
-      floater.vy = Math.sin(heading) * speed;
-    }
     if(speed > 0.001){
       const relaxedSpeed = speed + (floater.baseSpeed - speed) * Math.min(1,delta * floaterSpeedRelax);
-      // Floaters wander in slow curves; stream floaters fly straight until they slow down, so they stop where aimed.
-      const turn = floater.fromStream ? 0 : Math.sin(now / 3000 + floater.phase) * 0.22 * delta;
+      // Floaters wander in slow curves.
+      const turn = Math.sin(now / 3000 + floater.phase) * 0.22 * delta;
       const cos = Math.cos(turn);
       const sin = Math.sin(turn);
       const scale = relaxedSpeed / speed;
@@ -993,16 +1037,7 @@ function updateFloaters(delta,now){
   }
 
   // Floaters that drift off-screen are replaced from a random edge, keeping the count steady.
-  if(now >= refillGradualUntil){
-    while(survivors.length < floaterTarget)survivors.push(createFloater(pickSpawnEdge()));
-  }else if(now >= refillPausedUntil){
-    refillCredit += delta * floaterTarget / ((refillGradualUntil - refillPausedUntil) / 1000);
-    while(refillCredit >= 1 && survivors.length < floaterTarget){
-      refillCredit--;
-      const point = pickEdgePoint();
-      survivors.push(aimFloater(createFloater(),point.x,point.y,point.normal + randomBetween(-0.9,0.9),randomBetween(90,220)));
-    }
-  }
+  while(survivors.length < floaterTarget)survivors.push(createFloater(pickSpawnEdge()));
   floaters = survivors;
 }
 
@@ -1037,30 +1072,19 @@ function floaterAt(list,x,y,reach){
   return closest;
 }
 
-// Finale floaters fly above the page and can be popped anywhere; background ones only where nothing covers them.
+// The floater under a press, unless a window, button or text of the page covers that spot.
 function pressedFloater(event,reach){
   const covered = event.target instanceof Element && event.target.closest(sceneBlockers);
-  return floaterAt(burstFloaters,event.clientX,event.clientY,reach)
-    || (covered ? null : floaterAt(floaters,event.clientX,event.clientY,reach));
+  return covered ? null : floaterAt(floaters,event.clientX,event.clientY,reach);
 }
 
-// A random point on a random edge; margin keeps it that share of the edge away from the corners.
-function pickEdgePoint(margin = 0){
+function pickEdgePoint(){
   const edge = pickSpawnEdge();
-  const along = margin + Math.random() * (1 - 2 * margin);
+  const along = Math.random();
   if(edge === 'left')return {x:0,y:along * sceneHeight,normal:0};
   if(edge === 'right')return {x:sceneWidth,y:along * sceneHeight,normal:Math.PI};
   if(edge === 'top')return {x:along * sceneWidth,y:0,normal:Math.PI / 2};
   return {x:along * sceneWidth,y:sceneHeight,normal:-Math.PI / 2};
-}
-
-// How far a straight line from a point on the screen goes in this direction before it leaves the screen.
-function distanceToSceneEdge(x,y,heading){
-  const dx = Math.cos(heading);
-  const dy = Math.sin(heading);
-  const alongX = dx > 1e-6 ? (sceneWidth - x) / dx : dx < -1e-6 ? -x / dx : Infinity;
-  const alongY = dy > 1e-6 ? (sceneHeight - y) / dy : dy < -1e-6 ? -y / dy : Infinity;
-  return Math.max(0,Math.min(alongX,alongY));
 }
 
 function aimFloater(floater,x,y,heading,speed){
@@ -1074,7 +1098,7 @@ function aimFloater(floater,x,y,heading,speed){
 }
 
 function launchFloater(x,y,heading,speed,limit = floaterTarget + extraFloaterLimit,type){
-  if(floaters.length >= limit || performance.now() < refillPausedUntil)return null;
+  if(floaters.length >= limit)return null;
   const floater = aimFloater(createFloater(undefined,type),x,y,heading,speed);
   floaters.push(floater);
   return floater;
@@ -1099,41 +1123,8 @@ function registerPop(){
   stopCounterRoll();
   if(comboCount === comboCounterAt && bubbleCounterState === 'hidden')showBubbleCounter();
   bumpCounter();
-  if(comboCount >= comboFinale){
-    startCounterFinale();
-    return;
-  }
-  if(comboCount % comboMilestone === 0){
-    playCounterEffect('is-celebrating');
-    const point = pickEdgePoint(bubbleStreamEdgeMargin);
-    bubbleStream = {
-      x:point.x,
-      y:point.y,
-      heading:point.normal + randomBetween(-bubbleStreamSpread,bubbleStreamSpread),
-      remaining:bubbleStreamCount,
-      emitRemainder:0
-    };
-  }
   renderBubbleCounter();
-}
-
-function updateBubbleStream(delta){
-  if(!bubbleStream)return;
-  bubbleStream.emitRemainder += delta * bubbleStreamCount / bubbleStreamDuration;
-  while(bubbleStream.emitRemainder >= 1 && bubbleStream.remaining > 0){
-    bubbleStream.emitRemainder -= 1;
-    bubbleStream.remaining--;
-    // A little spread along the edge, never outside it: a floater starting beyond the edge would be dropped at once.
-    const x = Math.min(sceneWidth,Math.max(0,bubbleStream.x + randomBetween(-6,6)));
-    const y = Math.min(sceneHeight,Math.max(0,bubbleStream.y + randomBetween(-6,6)));
-    const heading = bubbleStream.heading + randomBetween(-0.2,0.2);
-    // Slowing from its launch speed v to its drift speed (22px/s at most) takes a floater (v - 22) / floaterSpeedRelax
-    // pixels, so the speed is capped to stop it within bubbleStreamReach of the way to the far edge.
-    const speed = Math.min(randomBetween(385,735),22 + floaterSpeedRelax * bubbleStreamReach * distanceToSceneEdge(x,y,heading));
-    const floater = launchFloater(x,y,heading,speed,floaterTarget + extraFloaterLimit + bubbleStreamCount);
-    if(floater)floater.fromStream = true;
-  }
-  if(bubbleStream.remaining <= 0)bubbleStream = null;
+  if(comboCount >= comboFinale)startFinale();
 }
 
 const bubbleCounter = document.querySelector('#bubble-counter');
@@ -1156,9 +1147,7 @@ function renderBubbleCounter(){
   const isMinimized = bubbleCounterState === 'minimized';
   bubbleCounterTitle.textContent = isMinimized ? `${copy.bubbleCounterShort}: ${shownComboCount}` : copy.bubbleCounterTitle;
   bubbleCounterValue.textContent = shownComboCount;
-  // The goal moves to the next hundred once a milestone is passed (100/100, then 101/200), and after 300 it is the finale: 301/333.
-  const goal = bubbleCounterState === 'finale' ? comboFinale : Math.min(comboFinale,Math.max(comboMilestone,Math.ceil(comboCount / comboMilestone) * comboMilestone));
-  bubbleCounterGoal.textContent = `/${goal}`;
+  bubbleCounterGoal.textContent = `/${comboFinale}`;
   bubbleCounterMinimize.setAttribute('aria-label',isMinimized ? copy.windowRestore : copy.windowMinimize);
   bubbleCounterMinimize.title = bubbleCounterMinimize.getAttribute('aria-label');
   bubbleCounterClose.setAttribute('aria-label',copy.windowClose);
@@ -1185,16 +1174,15 @@ function stopCounterRoll(){
   bubbleCounter.classList.remove('is-resetting');
 }
 
-function finishCombo(effectClass){
-  // The number visibly rolls down to zero: a shake when the combo breaks before 100, a glow after it.
+function finishCombo(){
+  // When the chain breaks, the window shakes and the number visibly rolls down to zero.
   const startCount = shownComboCount;
   comboCount = 0;
   stopCounterRoll();
-  playCounterEffect(effectClass);
+  playCounterEffect('is-resetting');
   const startTime = performance.now();
-  const rollDelay = effectClass === 'is-celebrating' ? 450 : 150;
   counterRollTimer = window.setInterval(()=>{
-    const progress = Math.min(1,Math.max(0,(performance.now() - startTime - rollDelay) / 550));
+    const progress = Math.min(1,Math.max(0,(performance.now() - startTime - 150) / 550));
     shownComboCount = Math.round(startCount * (1 - progress));
     renderBubbleCounter();
     if(progress >= 1)window.clearInterval(counterRollTimer);
@@ -1217,7 +1205,7 @@ function setCounterMeter(blocks,isLow){
 function updateCombo(delta){
   if(comboTimeLeft > 0){
     comboTimeLeft = Math.max(0,comboTimeLeft - delta);
-    if(comboTimeLeft === 0 && comboCount > 0)finishCombo(comboCount < comboMilestone ? 'is-resetting' : 'is-celebrating');
+    if(comboTimeLeft === 0 && comboCount > 0)finishCombo();
   }
   if(bubbleCounterState === 'hidden' || bubbleCounterState === 'finale')return;
   // The meter drops a whole block at a time, like the Windows XP loading bar.
@@ -1233,183 +1221,49 @@ function showBubbleCounter(){
   measureCounterMeter();
 }
 
-function startCounterFinale(){
-  bubbleCounterState = 'finale';
+const tenshi = document.querySelector('#tenshi');
+
+// The finale at combo 100: the counter window glows and then flies off, while Tenshi-tan peeks up from
+// the bottom edge, waves and slides back down.
+function startFinale(){
   comboCount = 0;
   comboTimeLeft = 0;
-  comboLockedUntil = performance.now() + finaleDuration + comboRestAfterFinale;
-  stopCounterRoll();
-  window.clearTimeout(counterEffectTimer);
-  shownComboCount = comboFinale;
-  bubbleCounter.hidden = false;
-  bubbleCounter.classList.add('no-transition');
-  bubbleCounter.classList.remove('is-minimized','is-entering','is-leaving','is-celebrating','is-resetting');
-  measureCounterMeter();
-  setCounterMeter(meterBlocks,false);
-  renderBubbleCounter();
-  // The window flies from its place at the side to the middle of the screen before it bursts.
-  // Its translate() is zoomed with the interface, so the on-screen distance is divided by the zoom.
-  const rect = bubbleCounter.getBoundingClientRect();
-  const zoom = Number(getComputedStyle(bubbleCounter).zoom) || 1;
-  bubbleCounter.style.setProperty('--to-center-x',`${(sceneWidth / 2 - (rect.left + rect.width / 2)) / zoom}px`);
-  bubbleCounter.style.setProperty('--to-center-y',`${(sceneHeight / 2 - (rect.top + rect.height / 2)) / zoom}px`);
-  bubbleCounter.classList.add('is-finale');
-  window.setTimeout(()=>explodeCounter(sceneWidth / 2,sceneHeight / 2),finaleDuration * 0.86);
+  comboLockedUntil = performance.now() + tenshiShowTime + comboRestAfterFinale;
+  if(bubbleCounterState === 'open' || bubbleCounterState === 'minimized'){
+    bubbleCounterState = 'finale';
+    setCounterMeter(meterBlocks,false);
+    playCounterEffect('is-celebrating');
+    // The glow and the flight are both animations, so the flight starts once the glow is over.
+    window.setTimeout(()=>{
+      bubbleCounter.classList.remove('is-celebrating');
+      bubbleCounter.classList.add('is-leaving');
+    },1100);
+  }
+  tenshi.hidden = false;
+  tenshi.classList.remove('is-showing');
+  void tenshi.offsetWidth;
+  tenshi.classList.add('is-showing');
 }
 
-function explodeCounter(x,y){
-  const bubbleSprite = floaterSprites.bubble[0];
-  createPopEffect({type:'bubble',x,y,size:240,sprite:bubbleSprite,rotation:0,opacity:0},burstPopEffects);
-  for(let index = 0;index < 10;index++){
-    const angle = index / 10 * Math.PI * 2;
-    createPopEffect({type:'bubble',x:x + Math.cos(angle) * 80,y:y + Math.sin(angle) * 50,size:randomBetween(30,60),sprite:bubbleSprite,rotation:0,opacity:0.9},burstPopEffects);
-  }
-  const now = performance.now();
-  // The shock wave clears every background floater on its way out, and nothing new arrives
-  // until the burst bubbles are gone; then floaters fly back in during the combo rest.
-  // Hundreds of things pop within a second here, so their pops are light: no glitter, few droplets.
-  const waveSpeed = 1.4;
-  for(const floater of floaters){
-    floater.popAt = now + Math.hypot(floater.x - x,floater.y - y) / waveSpeed;
-    floater.light = true;
-  }
-  bubbleStream = null;
-  // Background floaters come back only once the nickname has popped.
-  refillPausedUntil = now + finaleWordPopAt + finaleWordSweep;
-  refillGradualUntil = refillPausedUntil + 4000;
-  refillCredit = 0;
-  // Bubbles scatter evenly over the whole page above the content, then pop one by one.
-  const count = Math.min(finaleBurstMax,Math.round(sceneWidth * sceneHeight / finaleBurstArea));
-  const reach = Math.hypot(sceneWidth,sceneHeight) / 2;
-  for(let index = 0;index < count;index++){
-    const floater = createFloater(undefined,Math.random() < 0.7 ? 'bubble' : undefined);
-    const heading = randomBetween(0,Math.PI * 2);
-    const speed = floater.baseSpeed + reach * Math.sqrt(Math.random()) * 1.4;
-    floater.x = x + randomBetween(-20,20);
-    floater.y = y + randomBetween(-12,12);
-    floater.vx = Math.cos(heading) * speed;
-    floater.vy = Math.sin(heading) * speed;
-    floater.isBurst = true;
-    floater.light = true;
-    // They pop sooner than the word bubbles arrive, so the nickname forms on a clearing screen.
-    floater.expiresAt = now + randomBetween(1200,2600);
-    burstFloaters.push(floater);
-  }
-  const word = nicknameLayout(x,y);
-  for(const point of word.points){
-    // Any kind of floater can be a pixel of the nickname: bubbles, stars, hearts and dots.
-    const floater = createFloater();
-    const heading = randomBetween(0,Math.PI * 2);
-    const speed = randomBetween(150,450);
-    floater.x = x + randomBetween(-20,20);
-    floater.y = y + randomBetween(-12,12);
-    floater.vx = Math.cos(heading) * speed;
-    floater.vy = Math.sin(heading) * speed;
-    floater.size = word.step * randomBetween(1,1.12);
-    floater.opacity = 1;
-    floater.spin = 0;
-    floater.isBurst = true;
-    floater.light = true;
-    floater.target = point;
-    floater.gatherAt = now + finaleWordGatherAt + randomBetween(0,250);
-    floater.expiresAt = now + finaleWordPopAt + (point.x - word.left) / word.width * finaleWordSweep + randomBetween(0,120);
-    burstFloaters.push(floater);
-  }
-}
-
-// Monocraft is a pixel font: one glyph pixel is 1/9 of the font size (letters are 6 wide, capitals
-// 7 tall), so every filled glyph pixel of the nickname becomes one bubble. The word is drawn at 90px,
-// where glyph pixels are crisp 10px squares, and read at their centers. It is centered on the burst
-// and takes up to 86% of the width, with bubbles at most 26px apart.
-function nicknameLayout(centerX,centerY){
-  const cell = 10;
-  const columns = finaleWord.length * 6;
-  const rows = 9;
-  const context = document.createElement('canvas').getContext('2d',{willReadFrequently:true});
-  context.canvas.width = columns * cell;
-  context.canvas.height = rows * cell;
-  context.font = `${cell * 9}px Monocraft, monospace`;
-  context.fillText(finaleWord,0,7 * cell);
-  const pixels = context.getImageData(0,0,columns * cell,rows * cell).data;
-  const cells = [];
-  for(let row = 0;row < rows;row++){
-    for(let column = 0;column < columns;column++){
-      const index = ((row * cell + cell / 2) * columns * cell + column * cell + cell / 2) * 4 + 3;
-      if(pixels[index] > 128)cells.push({column,row});
-    }
-  }
-  if(!cells.length)return {points:[],step:0,left:centerX,width:1};
-  const firstColumn = Math.min(...cells.map(cell=>cell.column));
-  const firstRow = Math.min(...cells.map(cell=>cell.row));
-  const usedColumns = Math.max(...cells.map(cell=>cell.column)) - firstColumn + 1;
-  const usedRows = Math.max(...cells.map(cell=>cell.row)) - firstRow + 1;
-  const step = Math.min(sceneWidth * 0.86 / usedColumns,sceneHeight * 0.3 / usedRows,26);
-  const left = centerX - usedColumns * step / 2;
-  const top = centerY - usedRows * step / 2;
-  const points = cells.map(cell=>({x:left + (cell.column - firstColumn + 0.5) * step,y:top + (cell.row - firstRow + 0.5) * step}));
-  return {points,step,left,width:usedColumns * step};
-}
-
-function updateBurstFloaters(delta,now){
-  if(!burstFloaters.length)return;
-  const relax = Math.min(1,delta * floaterSpeedRelax);
-  burstFloaters = burstFloaters.filter(floater=>{
-    if(floater.popped)return false;
-    if(now >= floater.expiresAt){
-      popFloater(floater,false);
-      return false;
-    }
-    if(floater.target && now >= floater.gatherAt){
-      // A slightly springy pull brings the bubble onto its letter; a slow bob keeps the word alive.
-      const targetY = floater.target.y + Math.sin(now / 450 + floater.phase) * 1.5;
-      floater.vx += ((floater.target.x - floater.x) * finaleWordSpring - floater.vx * finaleWordDamping) * delta;
-      floater.vy += ((targetY - floater.y) * finaleWordSpring - floater.vy * finaleWordDamping) * delta;
-      floater.x += floater.vx * delta;
-      floater.y += floater.vy * delta;
-      return true;
-    }
-    const speed = Math.hypot(floater.vx,floater.vy);
-    if(speed > 0.001){
-      const scale = (speed + (floater.baseSpeed - speed) * relax) / speed;
-      floater.vx *= scale;
-      floater.vy *= scale;
-    }
-    floater.x += floater.vx * delta;
-    floater.y += floater.vy * delta;
-    floater.rotation += floater.spin * delta;
-    const margin = floater.size / 2 + 4;
-    // Nickname bubbles may fly off the edge for a moment: they come back to their letter.
-    return floater.target || floater.x > -margin && floater.x < sceneWidth + margin && floater.y > -margin && floater.y < sceneHeight + margin;
-  });
-}
+tenshi.addEventListener('animationend',event=>{
+  if(event.target !== tenshi)return;
+  tenshi.classList.remove('is-showing');
+  tenshi.hidden = true;
+});
 
 function drawBurstLayer(){
-  if(!burstFloaters.length && !burstPopEffects.length && !burstCanvasDirty)return;
+  if(!burstPopEffects.length && !burstCanvasDirty)return;
   burstContext.setTransform(scenePixelRatio,0,0,scenePixelRatio,0,0);
   burstContext.clearRect(0,0,sceneWidth,sceneHeight);
-  // Nickname bubbles share one blue backing that merges into solid strokes, so the letters read
-  // over white windows and text too.
-  burstContext.beginPath();
-  for(const floater of burstFloaters){
-    if(!floater.target)continue;
-    // 0.8 of the size overlaps the diagonal neighbours, so even slanted strokes join up.
-    const radius = floater.size * 0.8;
-    burstContext.moveTo(floater.x + radius,floater.y);
-    burstContext.arc(floater.x,floater.y,radius,0,Math.PI * 2);
-  }
-  burstContext.globalAlpha = 1;
-  burstContext.fillStyle = 'rgba(28,95,196,0.8)';
-  burstContext.fill();
-  drawFloaters(burstContext,burstFloaters);
   drawPopEffects(burstContext,burstPopEffects);
-  burstCanvasDirty = burstFloaters.length > 0 || burstPopEffects.length > 0;
+  burstCanvasDirty = burstPopEffects.length > 0;
 }
 
 bubbleCounter.addEventListener('animationend',event=>{
   if(event.target !== bubbleCounter)return;
   bubbleCounter.classList.remove('is-entering');
-  if(bubbleCounter.classList.contains('is-leaving') || bubbleCounter.classList.contains('is-finale')){
-    bubbleCounter.classList.remove('is-leaving','is-minimized','is-finale','no-transition');
+  if(bubbleCounter.classList.contains('is-leaving')){
+    bubbleCounter.classList.remove('is-leaving','is-minimized');
     bubbleCounter.hidden = true;
     bubbleCounterState = 'hidden';
     shownComboCount = 0;
@@ -1429,9 +1283,8 @@ bubbleCounterClose.addEventListener('click',()=>{
 });
 function createPopEffect(floater,list = popEffects){
   const colors = popColors[floater.type];
-  // Light pops (the finale) shed only three droplets; sparkly pops (a closed window) shed fewer
-  // droplets but add twinkling glitter that drifts down.
-  const count = floater.light ? 3 : floater.sparkly ? 4 + Math.round(floater.size / 10) : 6 + Math.round(floater.size / 6);
+  // Sparkly pops (a closed window) shed fewer droplets but add twinkling glitter that drifts down.
+  const count = floater.sparkly ? 4 + Math.round(floater.size / 10) : 6 + Math.round(floater.size / 6);
   const sparkleCount = floater.sparkly ? 5 + Math.round(floater.size / 4) : 0;
   list.push({
     x:floater.x,
@@ -1468,10 +1321,10 @@ function drawSparkle(context,x,y,size){
   context.fill();
 }
 
-function popFloater(floater,counts = true){
+function popFloater(floater){
   floater.popped = true;
-  if(counts)registerPop();
-  createPopEffect(floater,floater.isBurst ? burstPopEffects : popEffects);
+  registerPop();
+  createPopEffect(floater);
 }
 
 function updatePopEffects(delta){
@@ -1567,9 +1420,7 @@ function animateScene(time){
 
   updateFloaters(delta,now);
   updatePopEffects(delta);
-  updateBubbleStream(delta);
   updateCombo(delta);
-  updateBurstFloaters(delta,now);
   drawScene();
   sceneFrame = requestAnimationFrame(animateScene);
 }
@@ -1627,8 +1478,6 @@ window.addEventListener('resize',()=>{
 reducedMotion.addEventListener('change',()=>{
   scenePointer = null;
   popEffects = [];
-  bubbleStream = null;
-  burstFloaters = [];
   burstPopEffects = [];
   burstCanvasDirty = true;
   calmWater();
