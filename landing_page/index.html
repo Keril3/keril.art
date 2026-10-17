@@ -289,14 +289,14 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
    (stopping partly behind it), bobs her head, waves an outstretched arm towards the middle of the screen
    with happily closed eyes, then slides back out (tenshi-peek lasts tenshiShowTime). One wave is 0.93s,
    like the GIF: the arm sways from the shoulder and the hand flaps from the wrist. */
-.tenshi{position:fixed;left:0;bottom:0;z-index:40;width:340px;pointer-events:none;transform:translateX(-105%);transform-origin:0 100%}
+.tenshi{position:fixed;left:0;bottom:0;z-index:40;width:340px;pointer-events:none;transform:translate(-105%,10%) rotate(18deg);transform-origin:0 100%}
 .tenshi[hidden]{display:none}
 .tenshi.is-showing{animation:tenshi-peek 9s both}
 @keyframes tenshi-peek{
-  0%{transform:translateX(-105%) rotate(-10deg);animation-timing-function:cubic-bezier(.3,1.35,.55,1)}
-  10%{transform:translateX(-14%) rotate(-2deg)}
-  90%{transform:translateX(-14%) rotate(-2deg);animation-timing-function:cubic-bezier(.55,0,.8,.45)}
-  100%{transform:translateX(-105%) rotate(-10deg)}
+  0%{transform:translate(-105%,10%) rotate(18deg);animation-timing-function:cubic-bezier(.3,1.35,.55,1)}
+  10%{transform:translate(-10%,-24%) rotate(30deg)}
+  90%{transform:translate(-10%,-24%) rotate(30deg);animation-timing-function:cubic-bezier(.55,0,.8,.45)}
+  100%{transform:translate(-105%,10%) rotate(18deg)}
 }
 .tenshi__art{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 6px 14px rgba(11,37,69,0.3))}
 .tenshi__head,.tenshi__arm,.tenshi__hand{transform-box:view-box}
@@ -312,21 +312,17 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 .tenshi.is-showing .tenshi__halo{animation:tenshi-halo 1.4s ease-in-out infinite alternate}
 @keyframes tenshi-halo{to{transform:translateY(-4px)}}
 .tenshi .twinkle{transform-box:fill-box;transform-origin:center}
-.tenshi__bubble{position:absolute;top:14px;left:212px;z-index:1;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:14px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
+.tenshi__bubble{position:absolute;top:-76px;left:229px;z-index:1;rotate:-30deg;margin:0;padding:6px 13px;border:2px solid #4FA8E8;border-radius:14px;background:linear-gradient(180deg,#ffffff,#EAF6FF);box-shadow:0 4px 10px rgba(20,70,140,0.25);font-size:16px;white-space:nowrap;opacity:0}
 .tenshi__bubble::after{content:"";position:absolute;left:-9px;bottom:8px;border:7px solid transparent;border-right-color:#4FA8E8}
 .tenshi.is-showing .tenshi__bubble{animation:tenshi-bubble 9s both}
 @keyframes tenshi-bubble{0%,14%{opacity:0;transform:scale(0.6)}19%,84%{opacity:1;transform:scale(1)}89%,100%{opacity:0;transform:scale(0.9)}}
 /* The bubble stays light in the dark theme, so its text stays dark blue. */
 html[data-theme="dark"] .tenshi__bubble{color:#0A2A52!important}
-@media(max-width:480px){.tenshi{width:250px}.tenshi__bubble{top:4px;left:150px;font-size:14px}}
-/* Kept on the site for good, she sits half hidden in the bottom left corner and comes out to wave now and then. */
-.tenshi.is-resident{transform:translate(-38%,36%) rotate(8deg);transition:transform .9s cubic-bezier(.3,1.25,.55,1)}
-.tenshi.is-resident.is-waving{transform:translateX(-14%) rotate(-2deg)}
-.tenshi.is-resident.is-waving .tenshi__head{animation:tenshi-bob .465s ease-in-out .6s 6 alternate}
-.tenshi.is-resident.is-waving .tenshi__arm{animation:tenshi-sway .465s ease-in-out .6s 6 alternate}
-.tenshi.is-resident.is-waving .tenshi__hand{animation:tenshi-wave .465s ease-in-out .6s 6 alternate}
-.tenshi.is-resident .tenshi__bubble{transition:opacity .3s ease}
-.tenshi.is-resident.is-waving .tenshi__bubble{opacity:1;transition-delay:.5s}
+@media(max-width:480px){.tenshi{width:250px}.tenshi__bubble{top:-62px;left:163px;font-size:14px}}
+/* Kept on the site for good, she stays peeking from the bottom left corner in the finale's pose with her
+   greeting, without moving. */
+.tenshi.is-resident{transform:translate(-10%,-24%) rotate(30deg);transition:transform .9s cubic-bezier(.3,1.25,.55,1)}
+.tenshi.is-resident .tenshi__bubble{opacity:1;transition:opacity .3s ease .8s}
 @media(prefers-reduced-motion:reduce){.tenshi,.tenshi *{animation:none!important;transition:none!important}}
 html[data-theme="dark"] .bubble-counter__meter{border-color:#6F8FEA;background:rgba(5,10,36,0.8)}
 html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{color:#FF8FC8!important}
@@ -533,7 +529,8 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
     <g class="tenshi__head">
       <path d="M66 100C60 44 196 44 190 100L198 202C186 208 174 206 166 196L158 150H98L90 196C82 206 70 208 58 202Z" fill="url(#tenshi-hair)" stroke="#3F7FD1" stroke-width="3" stroke-linejoin="round"/>
     </g>
-    <path d="M64 272C64 216 94 192 128 192S192 216 192 272Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3"/>
+    <!-- The body goes on below the picture, so no gap shows under her when she leans. -->
+    <path d="M64 420V272C64 216 94 192 128 192S192 216 192 272V420Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3"/>
     <path d="M117 166h22v30h-22z" fill="#FFE3D6"/>
     <g stroke="#B3202C" stroke-width="2" stroke-linejoin="round">
       <path d="M124 204L114 230L122 226L128 208L134 226L142 230L132 204Z" fill="#D92B38"/>
@@ -561,6 +558,8 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
         <ellipse cx="128" cy="20" rx="44" ry="10" stroke="#FFF1A8" stroke-width="2"/>
       </g>
     </g>
+    <!-- The arm is raised 38° on the body, so with her 30° lean it still points up and to the right. -->
+    <g transform="rotate(-38 176 222)">
     <g class="tenshi__arm">
       <path d="M164 214C200 198 242 180 280 160L290 178C252 198 212 224 178 240Z" fill="#ffffff" stroke="#B6A3EE" stroke-width="3" stroke-linejoin="round"/>
       <g class="tenshi__hand">
@@ -572,6 +571,7 @@ html[data-theme="dark"] .bubble-counter.is-resetting .bubble-counter__count{colo
           <ellipse cx="303" cy="161" rx="14" ry="13" fill="#FFEDE3" stroke="none"/>
         </g>
       </g>
+    </g>
     </g>
   </svg>
 </div>
@@ -1287,7 +1287,7 @@ function startFinale(){
     tenshiToggle.classList.add('is-new');
   }
   tenshi.hidden = false;
-  tenshi.classList.remove('is-showing','is-waving');
+  tenshi.classList.remove('is-showing');
   void tenshi.offsetWidth;
   tenshi.classList.add('is-showing');
 }
@@ -1303,19 +1303,15 @@ tenshi.addEventListener('animationend',event=>{
   }
 });
 
-// After the easter egg has been completed once, Tenshi-tan can stay on the site for good: she then sits half
-// hidden in the bottom left corner on every visit and comes out to wave every tenshiWaveEvery ms.
+// After the easter egg has been completed once, Tenshi-tan can stay on the site for good: she then peeks from
+// the bottom left corner on every visit, still, with her raised hand and greeting.
 const tenshiUnlockedKey = 'keril-art-tenshi-unlocked';
 const tenshiResidentKey = 'keril-art-tenshi';
-const tenshiWaveEvery = 14000;
-const tenshiWaveTime = 3600;
 const tenshiToggle = document.querySelector('#tenshi-toggle');
 const tenshiOffer = document.querySelector('#tenshi-offer');
 let tenshiUnlocked = false;
 let tenshiResident = false;
 let tenshiOfferPending = false;
-let tenshiWaveTimer = 0;
-let tenshiWaveEnd = 0;
 try{
   tenshiUnlocked = localStorage.getItem(tenshiUnlockedKey) === '1';
   tenshiResident = tenshiUnlocked && localStorage.getItem(tenshiResidentKey) === 'on';
@@ -1329,23 +1325,12 @@ function renderTenshiToggle(){
   tenshiToggle.setAttribute('aria-label',copy.tenshiToggleLabel);
 }
 
-function waveTenshi(){
-  if(!tenshiResident || tenshi.classList.contains('is-showing') || reducedMotion.matches)return;
-  window.clearTimeout(tenshiWaveEnd);
-  tenshi.classList.remove('is-waving');
-  void tenshi.offsetWidth;
-  tenshi.classList.add('is-waving');
-  tenshiWaveEnd = window.setTimeout(()=>tenshi.classList.remove('is-waving'),tenshiWaveTime);
-}
-
 function setTenshiResident(resident,persist = false){
   tenshiResident = resident;
   if(persist){
     try{localStorage.setItem(tenshiResidentKey,resident ? 'on' : 'off')}catch(error){}
   }
   renderTenshiToggle();
-  window.clearInterval(tenshiWaveTimer);
-  window.clearTimeout(tenshiWaveEnd);
   if(resident){
     if(!tenshi.classList.contains('is-showing') && !tenshi.classList.contains('is-resident')){
       // Shown first at her starting place off screen, so the class change slides her into the corner.
@@ -1353,10 +1338,8 @@ function setTenshiResident(resident,persist = false){
       void tenshi.offsetWidth;
     }
     tenshi.classList.add('is-resident');
-    window.setTimeout(waveTenshi,900);
-    tenshiWaveTimer = window.setInterval(waveTenshi,tenshiWaveEvery);
   }else{
-    tenshi.classList.remove('is-resident','is-waving');
+    tenshi.classList.remove('is-resident');
     if(!tenshi.classList.contains('is-showing'))tenshi.hidden = true;
   }
 }
