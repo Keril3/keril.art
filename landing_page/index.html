@@ -26,7 +26,17 @@ function updateUiScale(){
 }
 updateUiScale();
 </script>
-<title>keril.art</title>
+<title>Кирилл Keril³ — keril.art</title>
+<meta name="description" content="Личный сайт Кирилла (Keril³) — начинающего разработчика, которого больше всего тянет в геймдев: обо мне, проекты и контакты.">
+<link rel="canonical" href="https://keril.art/">
+<!-- What messengers and social networks show in a link preview. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="keril.art">
+<meta property="og:url" content="https://keril.art/">
+<meta property="og:title" content="Кирилл Keril³ — начинающий разработчик">
+<meta property="og:description" content="Личный сайт-визитка: обо мне, проекты и контакты. В стиле Frutiger Aero и Windows XP.">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="en_US">
 <!-- The font starts downloading at once instead of when the first text is laid out. -->
 <link rel="preload" href="https://cdn.jsdelivr.net/gh/IdreesInc/Monocraft@v4.2.1/dist/Monocraft-ttf/Monocraft.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.55' stop-color='%23F1FBFF'/%3E%3Cstop offset='1' stop-color='%2389CBF5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M15 52a11 11 0 0 1-1.6-21.9a15 15 0 0 1 27.6-6.1a11 11 0 0 1 10.5 6.5a10.8 10.8 0 0 1-1 21.5Z' fill='url(%23g)' stroke='%231C5FC4' stroke-width='3.5' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -46,6 +56,11 @@ a{text-decoration:none}
 /* Everything inside grows with the window, text included (see updateUiScale in <head>). Inside a zoomed
    element translate() and vw are zoomed too, while getBoundingClientRect() reports the zoomed size. */
 .page-column,.theme-gate__window,.xp-popup{zoom:var(--ui-scale,1)}
+/* <main> and the footer keep the column's spacing inside them. */
+.page-main{display:flex;min-width:0;flex-direction:column;gap:32px}
+.page-footer{display:flex;flex-direction:column;gap:12px}
+/* Read by screen readers and search engines, not shown. */
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;border:0;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .status-bar{display:flex;align-items:center;gap:12px;padding:6px 14px;border:1px solid #ffffff;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));box-shadow:0 2px 8px rgba(20,70,140,0.2)}
 .status-bar__online{flex:none;font-size:14px;opacity:0.7}
 .dock{display:flex;flex-wrap:wrap;justify-content:center;gap:42px;padding:4px 0}
@@ -106,7 +121,7 @@ a{text-decoration:none}
 .route-path{min-width:0;overflow:hidden;color:#0B2545!important;font-size:14px;text-overflow:ellipsis;white-space:nowrap}
 .xp-window{overflow:hidden;border:2px solid #ffffff;border-radius:10px;background:#ffffff;box-shadow:0 10px 26px rgba(20,70,140,0.3)}
 .xp-window__bar{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;background:linear-gradient(180deg,#CFEBFF,#4FA8E8)}
-.xp-window__title{flex:1;min-width:0;overflow:hidden;font-size:18px;letter-spacing:1px;text-overflow:ellipsis;white-space:nowrap}
+.xp-window__title{flex:1;min-width:0;margin:0;overflow:hidden;font-size:18px;letter-spacing:1px;text-overflow:ellipsis;white-space:nowrap}
 .xp-window__buttons{display:flex;flex:none;gap:4px}
 .xp-window__button{display:inline-flex;width:19px;height:17px;padding:0;align-items:center;justify-content:center;border:1px solid #5A86B8;border-radius:3px;background:linear-gradient(180deg,#F2F8FF,#9FC3E8);box-shadow:inset 0 1px 0 rgba(255,255,255,0.8);cursor:pointer}
 .xp-window__button--close{border-color:#A82020;background:linear-gradient(180deg,#FF9A90,#D32F2F)}
@@ -208,7 +223,7 @@ html[data-theme="dark"] body{background:#0B1538}
 .xp-button:active{transform:translateY(1px)}
 html[data-theme="dark"] .xp-button{color:#0A2A52!important}
 /* Small white link under the signature: cookie settings. */
-.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin-top:-20px}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px}
 .page-shell .footer-link.footer-link{padding:2px 8px;border:0;border-radius:6px;background:none;color:#ffffff!important;font-size:12px;letter-spacing:0.08em;text-decoration:none;-webkit-text-stroke:1px #000000;paint-order:stroke fill;text-shadow:0 1px 2px rgba(11,37,69,0.8);cursor:pointer}
 @media(prefers-reduced-motion:reduce){.xp-popup{animation:none}}
 @media(max-width:480px){.xp-popup{bottom:10px;width:calc(100% - 20px)}.xp-popup__body{gap:10px;padding:12px 14px}.xp-popup__text{font-size:12px;line-height:1.5}.xp-popup__actions{flex-wrap:nowrap}.xp-popup__actions .xp-button{flex:1;padding:7px 8px;font-size:14px}}
@@ -324,12 +339,12 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 <div class="page-shell">
   <div class="page-column">
 
-    <div class="status-bar">
+    <header class="status-bar">
       <form class="path-search" role="search" autocomplete="off">
         <span class="path-search__root">C:\keril.art</span>
         <span class="path-search__caret caret" aria-hidden="true">_</span>
         <span class="path-search__separator" aria-hidden="true" hidden>\</span>
-        <input class="path-search__input" id="site-search" type="search" placeholder="поиск по сайту" spellcheck="false" aria-label="Поиск по разделам сайта" aria-autocomplete="list" aria-controls="path-suggestions" aria-expanded="false">
+        <input class="path-search__input" id="site-search" type="search" role="combobox" placeholder="поиск по сайту" spellcheck="false" aria-label="Поиск по разделам сайта" aria-autocomplete="list" aria-controls="path-suggestions" aria-expanded="false">
         <div class="path-suggestions" id="path-suggestions" role="listbox" aria-label="Результаты поиска" hidden></div>
       </form>
       <span class="status-bar__online">online</span>
@@ -344,9 +359,9 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
             <button class="language-option" type="button" role="menuitemradio" data-language="en" aria-checked="false"><span>English</span><span class="language-option__check" aria-hidden="true"></span></button>
           </div>
         </div>
-    </div>
+    </header>
 
-    <div class="dock">
+    <nav class="dock" aria-label="Разделы сайта" data-i18n-aria-label="navLabel">
       <a href="#page=about" data-route-page="about" aria-label="Об этом" data-i18n-aria-label="navAboutLabel">
         <svg width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="9" width="20" height="14" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M5 9 L10 9 L12 6 L18 6 L20 9" fill="none" stroke="#1C5FC4" stroke-width="1.5"/></svg>
         <span data-i18n="navAbout">об этом</span>
@@ -363,8 +378,10 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
         <svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="4" width="16" height="12" rx="1" fill="none" stroke="#1C5FC4" stroke-width="1.5"/><rect x="2" y="16" width="14" height="10" rx="1" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/></svg>
         <span data-i18n="navMail">связаться со мной</span>
       </a>
-    </div>
+    </nav>
 
+    <main class="page-main">
+    <h1 class="visually-hidden" data-i18n="pageHeading">Кирилл (Keril³) — начинающий разработчик</h1>
     <div class="hero">
       <svg class="twinkle hero__star hero__star--left" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24">
         <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/>
@@ -372,7 +389,7 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
       <svg class="twinkle twinkle--late hero__star hero__star--right" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24">
         <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/>
       </svg>
-      <div data-i18n="heroGreeting" class="hero-greeting">СОЕДИНЕНИЕ УСТАНОВЛЕНО.
+      <div data-i18n="heroGreeting" class="hero-greeting" aria-hidden="true">СОЕДИНЕНИЕ УСТАНОВЛЕНО.
 ДОБРО ПОЖАЛОВАТЬ!</div>
     </div>
 
@@ -387,7 +404,7 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
     <div class="home-details" id="home-details">
     <section id="about" class="xp-window" data-window-page="me" aria-labelledby="about-window-title">
       <div class="xp-window__bar">
-        <span data-i18n="aboutWindowTitle" id="about-window-title" class="window-title xp-window__title">обо_мне.txt</span>
+        <h2 data-i18n="aboutWindowTitle" id="about-window-title" class="window-title xp-window__title">обо_мне.txt</h2>
       </div>
       <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body xp-window__text">
         <p data-i18n="aboutMeIntro">Привет! Меня зовут Кирилл, в сети — Keril³. Я начинающий разработчик, и больше всего меня тянет в геймдев. Сейчас ищу первую работу или стажировку и открыт к предложениям.</p>
@@ -442,7 +459,7 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 
     <section id="projects" class="xp-window" data-window-page="projects" aria-labelledby="projects-window-title">
       <div class="xp-window__bar">
-        <span data-i18n="projectsWindowTitle" id="projects-window-title" class="window-title xp-window__title">проекты.zip</span>
+        <h2 data-i18n="projectsWindowTitle" id="projects-window-title" class="window-title xp-window__title">проекты.zip</h2>
       </div>
       <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body xp-window__text">
         <p data-i18n="projectsSoon">Скоро тут появятся проекты, которые мне не стыдно показать на публику.</p>
@@ -451,7 +468,7 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
 
     <section id="visitors" class="xp-window counter-window" aria-labelledby="counter-window-title">
       <div class="xp-window__bar">
-        <span data-i18n="counterWindowTitle" id="counter-window-title" class="window-title xp-window__title">посетители.exe</span>
+        <h2 data-i18n="counterWindowTitle" id="counter-window-title" class="window-title xp-window__title">посетители.exe</h2>
       </div>
       <div class="xp-window__collapse"><div class="xp-window__clip"><div class="xp-window__body counter-window__body">
         <div class="counter-window__part counter-window__part--summary"><div><div class="counter-window__summary">
@@ -463,15 +480,18 @@ html[data-theme="dark"] .theme-gate{background:rgba(3,6,22,0.5)}
     </section>
 
   </div>
+    </main>
 
-    <footer class="signature">
+    <footer class="page-footer">
+    <div class="signature">
       <svg class="signature__star twinkle" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
       <p class="signature__text"><span class="signature__made">made by</span><span class="signature__name">Keril<sup>3</sup></span></p>
       <svg class="signature__star twinkle twinkle--later" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#FFC9E8"/></svg>
-    </footer>
+    </div>
     <div class="footer-links">
       <button class="footer-link" id="cookie-settings" type="button" data-i18n="cookieSettings">настройки cookie</button>
     </div>
+    </footer>
   </div>
 
 </div>
@@ -540,7 +560,7 @@ let greetingTypingInterval;
 let visitorsAllTime = null;
 const translations = {
   ru:{
-    navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub (откроется в новой вкладке)',navMail:'связаться со мной',navMailLabel:'Связаться со мной',
+    navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub (откроется в новой вкладке)',navMail:'связаться со мной',navMailLabel:'Связаться со мной',navLabel:'Разделы сайта',pageHeading:'Кирилл (Keril³) — начинающий разработчик',pageTitle:'Кирилл Keril³ — keril.art',contactWindowTitle:'контакты.vcf',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',aboutSiteWindowTitle:'об_этом.txt',
     projectsWindowTitle:'проекты.zip',projectsSoon:'Скоро тут появятся проекты, которые мне не стыдно показать на публику.',aboutSiteIntro:'Это мой личный сайт-визитка: здесь можно узнать, кто я, посмотреть мои проекты и найти, как со мной связаться.',aboutSiteWhy:'Я сделал его, чтобы иметь своё место в интернете, а не только профили в соцсетях, и заодно попрактиковаться: сайт написан вручную, без конструкторов, и работает на моём собственном сервере, который я сам настроил.',aboutSiteStyle:'Оформление — смесь Frutiger Aero, Windows XP и эстетики Tenshi Kawaii: глянец, облака, холмы и окна, как на компьютерах из нулевых. Мне просто нравится этот стиль, а ещё хотелось сделать что-то непохожее на типичные сайты.',aboutMeIntro:'Привет! Меня зовут Кирилл, в сети — Keril³. Я начинающий разработчик, и больше всего меня тянет в геймдев. Сейчас ищу первую работу или стажировку и открыт к предложениям.',aboutMeEducation:'По образованию я инженер связи: бакалавриат по направлению «Инфокоммуникационные технологии и системы связи» и магистратура «Мобильные сети и технологии». Это пригодилось и здесь: сервер, на котором работает этот сайт, я поднял и настроил сам — Linux, nginx, домен, SSL-сертификаты и собственный VPN.',aboutMeSkills:'Изучаю C# и Unity — на них уже сделал прототипы нескольких игр, а параллельно сам осваиваю C++ и Unreal Engine. Есть небольшой опыт с Python. Английский — на уровне B2–C1, так что документация и общение на нём не проблема.',aboutMeHobbies:'Из игр люблю в основном шутеры и головоломки. А в свободное от кода время занимаюсь 3D-печатью, иногда — твердотельным моделированием и сборкой кастомных клавиатур.',aboutMeProjects:'Мои проекты лежат на GitHub, а лучшие скоро появятся в окне «проекты.zip». Если хотите предложить работу или просто пообщаться — все контакты в разделе «связаться со мной».',
     footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeGateTitle:'выбор_темы.exe',themeGateText:'Привет! Выбери тему оформления. Поменять её можно в любой момент кнопкой в верхней панели.',themeLight:'Светлая',themeDark:'Тёмная',themeToggleLabel:'Тёмная тема',themeGateHint:'← → — выбрать, Enter — подтвердить',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
@@ -550,7 +570,7 @@ const translations = {
     kindProject:'проект',githubWindowTitle:'репозитории.git',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoTranslated:'автоперевод',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
   },
   en:{
-    navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',
+    navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',navLabel:'Site sections',pageHeading:'Kirill (Keril³), a beginner developer',pageTitle:'Kirill Keril³ — keril.art',contactWindowTitle:'contacts.vcf',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',aboutSiteWindowTitle:'about_this.txt',
     projectsWindowTitle:'projects.zip',projectsSoon:"Projects I'm not embarrassed to show in public will appear here soon.",aboutSiteIntro:"This is my personal business-card site: here you can find out who I am, see my projects and learn how to reach me.",aboutSiteWhy:'I made it to have a place of my own on the internet, not just social media profiles, and to get some practice along the way: the site is written by hand, without site builders, and runs on my own server, which I set up myself.',aboutSiteStyle:'The look is a mix of Frutiger Aero, Windows XP, and the Tenshi Kawaii aesthetic: gloss, clouds, hills, and windows like on computers from the 2000s. I just love this style, and I wanted to make something unlike typical websites.',aboutMeIntro:"Hi! My name is Kirill, Keril³ online. I'm a beginner developer, and game development pulls me in the most. I'm currently looking for my first job or internship and open to offers.",aboutMeEducation:"I'm a telecom engineer by education: a bachelor's in Infocommunication Technologies and Communication Systems and a master's in Mobile Networks and Technologies. It came in handy here too: I set up the server this site runs on myself — Linux, nginx, the domain, SSL certificates, and my own VPN.",aboutMeSkills:"I'm learning C# and Unity and have already built prototypes of several games with them, while picking up C++ and Unreal Engine on my own. I have a little experience with Python. My English is B2–C1, so documentation and communication in it are no problem.",aboutMeHobbies:"In games, I mostly love shooters and puzzles. When I'm not coding, I do 3D printing, and now and then some solid modeling and custom keyboard building.",aboutMeProjects:"My projects live on GitHub, and the best of them will soon appear in the projects.zip window. If you'd like to offer me a job or just chat, all my contacts are on the “contact me” page.",
     footerNote:'All-time visitors',counterWindowTitle:'visitors.exe',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeGateTitle:'choose_theme.exe',themeGateText:'Hi! Pick a theme for the site. You can switch it anytime with the button in the top bar.',themeLight:'Light',themeDark:'Dark',themeToggleLabel:'Dark theme',themeGateHint:'← → to choose, Enter to confirm',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'Back to home',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
@@ -822,7 +842,7 @@ function createRouteWindow(page,titleText,content){
   panel.setAttribute('aria-label',titleText);
   const bar = document.createElement('div');
   bar.className = 'xp-window__bar';
-  const title = document.createElement('span');
+  const title = document.createElement('h2');
   title.className = 'window-title xp-window__title';
   title.textContent = titleText;
   bar.append(title);
@@ -1197,7 +1217,7 @@ function renderRoute(page){
   homeDetails.hidden = !isHome;
   routeView.hidden = isHome;
   if(isHome){
-    document.title = 'keril.art';
+    document.title = translations[currentLanguage].pageTitle;
     return;
   }
 
@@ -1215,7 +1235,7 @@ function renderRoute(page){
     // The "об этом" nav button opens its own window about the site itself.
     panels = [createRouteWindow('about',copy.aboutSiteWindowTitle,templateContent('#about-site-content'))];
   }else{
-    panels = [createRouteWindow('contact',copy.routeContact,templateContent('#contact-content'))];
+    panels = [createRouteWindow('contact',copy.contactWindowTitle,templateContent('#contact-content'))];
   }
   routeContent.replaceChildren(...panels);
   // Windows built from templates start with the Russian text.
@@ -1447,7 +1467,6 @@ function animateGreeting(text){
   window.clearInterval(greetingTypingInterval);
   heroGreeting.classList.remove('is-complete');
   heroGreeting.textContent = '';
-  heroGreeting.setAttribute('aria-label',text);
   const characters = [...text];
   let visibleCharacters = 0;
   greetingStartTimeout = window.setTimeout(()=>{
@@ -1484,7 +1503,8 @@ function applyLanguage(language,persist=false){
     try{localStorage.setItem('keril-art-language',currentLanguage)}catch(error){}
   }
   if(!suggestionsList.hidden)renderSuggestions();
-  if(currentPage !== 'home')renderRoute(currentPage);
+  if(currentPage === 'home')document.title = copy.pageTitle;
+  else renderRoute(currentPage);
   document.querySelectorAll('#home-details .xp-window').forEach(updateWindowButtons);
   document.querySelector('#visitor-stats-panel').replaceChildren(createVisitorStats());
 }
