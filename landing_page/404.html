@@ -139,7 +139,7 @@ html[data-theme="dark"] body{background:#0B1538}
 <script>
 const copy = {
   ru:{title:'ошибка_404.exe',message:'Такой страницы нет — кажется, она уплыла вместе с облаками.',home:'← На главную',close:'Закрыть и вернуться на главную',notFound:'не найден'},
-  en:{title:'error_404.exe',message:'This page does not exist — it seems to have floated away with the clouds.',home:'← Back to home',close:'Close and go back home',notFound:'not found'}
+  en:{title:'error_404.exe',message:"This page doesn't exist — looks like it floated away with the clouds.",home:'← Back to home',close:'Close and go back home',notFound:'not found'}
 }[document.documentElement.lang];
 document.querySelectorAll('[data-text]').forEach(element=>{element.textContent = copy[element.dataset.text]});
 document.querySelectorAll('[data-label]').forEach(element=>{
