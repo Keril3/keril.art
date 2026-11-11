@@ -150,15 +150,21 @@ kawaii     #FFC9E8   розовый акцент (звёздочки, серде
   32px колонки), `footer.page-footer` (подпись и "настройки cookie").
   В `main` первым идёт невидимый `h1.visually-hidden` (`pageHeading`:
   "Кирилл (Keril³) — начинающий разработчик"), заголовки окон — `h2`
-  (`.xp-window__title`, и в `createRouteWindow`), у баннера cookie и окна
-  выбора темы — `span`. Печатающееся приветствие `aria-hidden`: смысл
+  (`.xp-window__title`, и в `createRouteWindow`), у баннера cookie —
+  `span`. Печатающееся приветствие `aria-hidden`: смысл
   страницы читалке даёт `h1`. Поле поиска — `role="combobox"` (только с
   этой ролью у него допустим `aria-expanded`).
 - `<head>`: заголовок вкладки на главной — `pageTitle` ("Кирилл Keril³ —
   keril.art"), на страницах — "<раздел> | keril.art"; при смене языка
   меняется. Там же `meta description`, `canonical` и Open Graph
   (`og:title`, `og:description` — превью ссылки в Telegram/Discord) на
-  русском. Картинки превью (`og:image`) пока нет — нужен файл на сервере.
+  русском. Картинка превью — `og-image.jpg` (1200×630, 89 КБ, JPEG):
+  настоящий фон сайта со светлой темой и XP-окно "keril.art" с надписью
+  "Кирилл · Keril³ / начинающий разработчик · геймдев"; отрисована
+  браузером из `index.html` с добавленным окном, плюс `og:image:*` и
+  `twitter:card=summary_large_image` (Discord показывает крупную
+  картинку). Telegram и Discord кэшируют превью: после замены картинки
+  старое может держаться у них несколько дней.
   Если меняется текст "обо мне", сверить эти описания.
 - Иконки: во вкладке — SVG-облачко прямо в `<link rel="icon">` (data URI);
   `/favicon.ico` (16, 32, 48 px, прозрачный фон) — для сервисов, которые
@@ -346,8 +352,8 @@ VLESS+Reality, Hysteria2, VLESS+TLS) и AdGuard Home — их настройки
   явной просьбы.
 
 ### Выкладка
-`index.html`, `404.html`, `robots.txt`, `monocraft.woff2`, `favicon.ico` и
-`apple-touch-icon.png` заливаются из PowerShell (ключ лежит в агенте
+`index.html`, `404.html`, `robots.txt`, `monocraft.woff2`, `favicon.ico`,
+`apple-touch-icon.png` и `og-image.jpg` заливаются из PowerShell (ключ лежит в агенте
 Windows), по одному файлу за вызов, перезапускать ничего не нужно, потом
 результат проверяется на сайте (SHA256 живого файла = локального):
 ```powershell
@@ -371,15 +377,18 @@ scp -o BatchMode=yes index.html keril-deploy:/index.html
 - папка данных `/var/lib/keril.art/counter` (владелец `www-data`, `0750`);
 - в server-блоке nginx на `127.0.0.1:8444` — обработка `/counter.php`
   через `php8.1-fpm.sock` и строка `error_page 404 /404.html;`;
-- кэш (снаружи проверено 2026-11-12): `monocraft.woff2`, `favicon.ico`,
-  `apple-touch-icon.png` отдаются с `Cache-Control: max-age=604800`
-  (7 дней), заголовки безопасности у них на месте. У HTML своего
-  `Cache-Control` пока нет: повторный заход сверяется по ETag (304), но
-  браузер может какое-то время сам держать старую копию. Задуманная
-  схема — `map` по типу ответа (HTML `epoch` = `no-cache`, шрифт 30 дней,
-  иконки 7 дней) и `expires $keril_expires;` под `error_page`, как в
-  справочном `deploy/nginx/keril.art.conf`; как именно сделано на
-  сервере, знает владелец;
+- кэш (настроил Claude на сервере по просьбе владельца, снаружи проверено
+  2026-11-12): HTML (`/`, `/index.html`, `/404.html`) —
+  `Cache-Control: no-cache`, браузер каждый раз сверяет страницу по ETag
+  (304, если не менялась), так что выложенная версия видна сразу;
+  `monocraft.woff2`, `favicon.ico`, `apple-touch-icon.png`, `og-image.jpg`
+  — `max-age=604800` (7 дней); `counter.php` — свой `no-store`. Сделано
+  через `expires`, не `add_header` (иначе в `location` пропали бы HSTS и
+  CSP); заголовки безопасности на всех ответах на месте. Ответ с кодом
+  404 `no-cache` не получает — nginx не ставит `expires` на ошибки, но
+  без даты изменения браузер его и так не кэширует. Как именно это
+  записано в конфиге, знает владелец; справочный
+  `deploy/nginx/keril.art.conf` показывает вариант с `map`;
 - для Cloudflare Turnstile — секретный ключ виджета в
   `/etc/keril.art/turnstile-secret` (`root:www-data`, `0640`). Без этого
   файла `counter.php` считает визиты без проверки Turnstile.
