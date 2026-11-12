@@ -417,8 +417,9 @@ scp -o BatchMode=yes index.html keril-deploy:/index.html
   сниппетом заголовков безопасности — иначе `add_header` в `location`
   отменил бы HSTS и CSP уровня server; `location = /og-image.jpg` с
   `expires epoch`; статика — `expires 7d`. Заголовки безопасности на всех
-  ответах на месте. Справочный `deploy/nginx/keril.art.conf` показывает
-  другой вариант (с `map`) и рабочим конфигом не является;
+  ответах на месте. Справочный `deploy/nginx/keril.art.conf` повторяет
+  эту схему (переписан 12.11.2026 под новый сервер), но рабочим
+  конфигом не является;
 - для Cloudflare Turnstile — секретный ключ виджета в
   `/etc/keril.art/turnstile-secret` (`root:www-data`, `0640`). Без этого
   файла `counter.php` считает визиты без проверки Turnstile.
@@ -426,20 +427,24 @@ scp -o BatchMode=yes index.html keril-deploy:/index.html
 ### Защита (что где)
 - `index.html`: CSP через `<meta>`, работает без правок nginx. В
   `connect-src` разрешены `https://api.github.com` (список проектов) и
-  `https://api.mymemory.translated.net` (перевод описаний). Если в рабочем
-  nginx-конфиге тоже есть заголовок `Content-Security-Policy` (как в
-  справочном `deploy/nginx/keril.art.conf`), браузер применяет обе политики
-  сразу, и туда нужно добавить те же адреса в `connect-src`, иначе список
-  проектов не загрузится или описания не переведутся.
+  `https://api.mymemory.translated.net` (перевод описаний). nginx шлёт
+  ещё и свой заголовок `Content-Security-Policy` (`base-uri`, `object-src`,
+  `frame-ancestors`, `upgrade-insecure-requests` — то, что `<meta>` не
+  умеет); браузер применяет обе политики сразу. Если в заголовок nginx
+  когда-нибудь добавят `script-src`, `connect-src` или `font-src`, туда
+  нужно вписать те же адреса, иначе скрипты, список проектов, перевод
+  или шрифт перестанут грузиться.
 - `robots.txt` запрещает честным ботам трогать `counter.php`.
 - `counter.php`: защита от ботов и накрутки (см. ниже), тоже работает без
   правок nginx.
 - `deploy/nginx/keril.art.conf` — только справочный пример server-блока
-  на `127.0.0.1:8444` под эту схему: заголовки безопасности (HSTS, CSP,
-  `X-Frame-Options`, `nosniff` и др.), только GET/HEAD/POST, исполняется
-  только `counter.php`, скрытые файлы — 404 (кроме `.well-known`), общий
-  потолок 20 запросов/с на `counter.php` вместо лимитов по IP. Применять
-  ли его — решает владелец, сверив с рабочим конфигом.
+  на `127.0.0.1:8444` под новый сервер: `ssl proxy_protocol`, `http2 on`,
+  `real_ip` из PROXY-заголовка Xray, сниппет заголовков безопасности,
+  только GET/HEAD/POST, исполняется только `counter.php` (PHP 8.5) с
+  лимитом 30 запросов в минуту с IP, скрытые файлы — 404 (кроме
+  `.well-known`), кэш как описано выше. Имена зон и список расширений
+  в нём примерные; рабочий конфиг и его описание
+  (`E:\PersonalServer\SITE-SERVER-NOTES.md`) — у владельца.
 
 ### Счётчик и cookie
 Внизу сайта баннер "cookies.exe" (`#cookie-banner`, общий с окошком
