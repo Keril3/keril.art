@@ -434,6 +434,20 @@ scp -o BatchMode=yes index.html keril-deploy:/index.html
   когда-нибудь добавят `script-src`, `connect-src` или `font-src`, туда
   нужно вписать те же адреса, иначе скрипты, список проектов, перевод
   или шрифт перестанут грузиться.
+- `'unsafe-inline'` в `script-src` оставлен сознательно (решение владельца
+  12.11.2026): хэши inline-скриптов вместо него устаревали бы после каждой
+  правки скрипта и выключали бы весь JS на сайте, а места для внедрения
+  чужого кода нет — всё внешнее (GitHub, перевод) выводится только через
+  `textContent`, `innerHTML` берёт лишь постоянные иконки. Не менять без
+  просьбы владельца.
+- `/.well-known/security.txt` (RFC 9116): куда писать о найденной
+  уязвимости — только `hello@keril.art`. Источник в репозитории —
+  `landing_page/.well-known/security.txt`. На сервере файл создаёт
+  администратор (задача `E:\PersonalServer\TASK-keril-art-2026-11-12.md`,
+  там же `Cross-Origin-Opener-Policy: same-origin` и TLS 1.2); пока он не
+  создан, адрес отдаёт 404. Строку `Expires` нужно обновлять раз в год, до
+  12.11.2027 (новая дата не дальше года вперёд), и выкладывать как остальные
+  файлы: `scp -o BatchMode=yes E:\keril.art\landing_page\.well-known\security.txt keril-deploy:/.well-known/security.txt`.
 - `robots.txt` запрещает честным ботам трогать `counter.php`.
 - `counter.php`: защита от ботов и накрутки (см. ниже), тоже работает без
   правок nginx.
