@@ -4,7 +4,15 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://api.mymemory.translated.net; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4A9BEB">
 <script>
+// Phone browsers paint their toolbar in theme-color: the top of the sky of the current theme (see --sky).
+// One meta set by script, because the theme can be chosen by hand, not only by the system setting.
+var themeColors = {light:'#4A9BEB',dark:'#050A22'};
+function setThemeColor(theme){
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content = themeColors[theme];
+}
 // Apply the theme before the first paint: the visitor's own choice, otherwise the system setting.
 (function(){
   var root = document.documentElement;
@@ -13,6 +21,7 @@
   if(theme !== 'light' && theme !== 'dark')theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
+  setThemeColor(theme);
 })();
 // The interface grows gently with wide windows, at a quarter of the window's rate: it is drawn for
 // 1280px, is about 1.13× at 1920px and at most 1.25× (from 2560px). CSS zooms the content column and
@@ -85,6 +94,7 @@ a{text-decoration:none}
 .dock a [data-i18n]{font-size:20px!important}
 @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 .caret{animation:blink 1s steps(1) infinite}
+@media(prefers-reduced-motion:reduce){.caret{animation:none}}
 @keyframes twinkle{0%,100%{opacity:0.3;transform:scale(0.9)}50%{opacity:0.9;transform:scale(1.15)}}
 .twinkle{animation:twinkle 3.2s ease-in-out infinite}
 /* After .twinkle, so the delays are not reset by its animation shorthand. */
@@ -1438,6 +1448,12 @@ async function loadVisitorStats(request){
 function animateGreeting(text){
   window.clearTimeout(greetingStartTimeout);
   window.clearInterval(greetingTypingInterval);
+  // With reduced motion the greeting appears whole at once instead of being typed letter by letter.
+  if(reducedMotion.matches){
+    heroGreeting.textContent = text;
+    heroGreeting.classList.add('is-complete');
+    return;
+  }
   heroGreeting.classList.remove('is-complete');
   heroGreeting.textContent = '';
   const characters = [...text];
@@ -1695,6 +1711,7 @@ document.addEventListener('keydown',event=>{
 function applyTheme(theme,persist=false){
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
+  setThemeColor(theme);
   themeToggle.setAttribute('aria-pressed',String(theme === 'dark'));
   if(persist){
     try{localStorage.setItem('keril-art-theme',theme)}catch(error){}
