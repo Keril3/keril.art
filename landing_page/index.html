@@ -98,11 +98,16 @@ a{text-decoration:none}
 @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 .caret{animation:blink 1s steps(1) infinite}
 @media(prefers-reduced-motion:reduce){.caret{animation:none}}
-@keyframes twinkle{0%,100%{opacity:0.3;transform:scale(0.9)}50%{opacity:0.9;transform:scale(1.15)}}
+/* The stars twinkle with their glow only. Chromium doesn't hand a changing size (transform or scale, even in
+   steps) inside the zoomed column (.page-column has zoom) to the GPU: the pulsing stars made the open page
+   recalculate its styles every frame, 165 times a second, ~3% of a core with nothing happening. Opacity runs on
+   the GPU. Don't animate a size, a position or a colour inside .page-column for long. */
+@keyframes twinkle{0%,100%{opacity:0.3}50%{opacity:0.9}}
 .twinkle{animation:twinkle 3.2s ease-in-out infinite}
 /* After .twinkle, so the delays are not reset by its animation shorthand. */
 .twinkle--late{animation-delay:1.1s}
 .twinkle--later{animation-delay:1.6s}
+@media(prefers-reduced-motion:reduce){.twinkle{animation:none;opacity:0.9}}
 .hero{position:relative;padding:0 8px;text-align:center}
 .hero__star{position:absolute;z-index:0}
 .hero__star--left{top:10px;left:4%}
