@@ -51,8 +51,11 @@ updateUiScale();
 <meta name="twitter:card" content="summary_large_image">
 <!-- The font starts downloading at once instead of when the first text is laid out. -->
 <link rel="preload" href="monocraft.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.55' stop-color='%23F1FBFF'/%3E%3Cstop offset='1' stop-color='%2389CBF5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M15 52a11 11 0 0 1-1.6-21.9a15 15 0 0 1 27.6-6.1a11 11 0 0 1 10.5 6.5a10.8 10.8 0 0 1-1 21.5Z' fill='url(%23g)' stroke='%231C5FC4' stroke-width='3.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23fff'/%3E%3Cstop%20offset='.55'%20stop-color='%23F1FBFF'/%3E%3Cstop%20offset='1'%20stop-color='%2389CBF5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath%20d='M15%2052a11%2011%200%200%201-1.6-21.9a15%2015%200%200%201%2027.6-6.1a11%2011%200%200%201%2010.5%206.5a10.8%2010.8%200%200%201-1%2021.5Z'%20fill='url(%23g)'%20stroke='%231C5FC4'%20stroke-width='3.5'%20stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Who the site is about, for search engines (schema.org): the site name in results and the link to GitHub.
+     A data block, not a script: the browser does not run it, so the CSP does not apply. -->
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"keril.art","url":"https://keril.art/","inLanguage":["ru","en"]},{"@type":"Person","name":"Кирилл","alternateName":"Keril³","url":"https://keril.art/","sameAs":["https://github.com/Keril3"]}]}</script>
 
 <style>
 /* Monocraft 4.2.1 by Idrees Hassan (github.com/IdreesInc/Monocraft), SIL Open Font License 1.1.
@@ -132,9 +135,15 @@ a{text-decoration:none}
 .language-option{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:7px 9px;border:1px solid transparent;border-radius:4px;background:transparent;font-size:17px;text-align:left;cursor:pointer}
 .language-option:hover,.language-option[aria-checked="true"]{border-color:#8EBDE8;background:linear-gradient(180deg,#ffffff,#D8ECFC)}
 .language-option:focus-visible{outline:3px solid #FFC9E8;outline-offset:-3px}
-.hero-greeting{position:relative;max-width:100%;min-height:2.8em;font-size:28px;line-height:1.4;letter-spacing:0.12em;white-space:pre-line;opacity:0.85}
-.hero-greeting::after{content:"_";display:inline-block;margin-left:2px;animation:blink 1s steps(1) infinite}
-.hero-greeting.is-complete::after{display:none}
+.hero-greeting{position:relative;display:grid;max-width:100%;min-height:2.8em;font-size:28px;line-height:1.4;letter-spacing:0.12em;white-space:pre-line;opacity:0.85}
+/* The typed text lies over an invisible copy of the whole greeting in the same grid cell: the copy holds the
+   final height from the start, so the windows below do not jump when the typing wraps onto a new line
+   (it did on phones, where the greeting takes three lines). */
+.hero-greeting>span{grid-area:1/1}
+.hero-greeting__full{visibility:hidden}
+.hero-greeting__typed::after,.hero-greeting__full::after{content:"_";display:inline-block;margin-left:2px}
+.hero-greeting__typed::after{animation:blink 1s steps(1) infinite}
+.hero-greeting.is-complete span::after{display:none}
 @media(min-width:700px){.dock svg{width:45px;height:45px;filter:drop-shadow(0 2px 2px rgba(20,70,140,0.28))}}
 .visitor-count{font-size:15px}
 .window-title{color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;-webkit-text-stroke:0.75px #000000!important;paint-order:stroke fill;text-shadow:0 1px 1px rgba(0,0,0,0.35)}
@@ -308,7 +317,7 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
     <defs>
       <radialGradient id="cloud-puff" cx=".42" cy=".3" r=".75"><stop class="scene__cloud-light" offset=".55"/><stop class="scene__cloud-shade" offset="1"/></radialGradient>
       <!-- Noise pushes the edges of the round puffs around, which makes them fluffy. -->
-      <filter id="cloud-soft" x="-15%" y="-30%" width="130%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="4" seed="7"/><feDisplacementMap in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="2.4"/></filter>
+      <filter id="cloud-soft" x="-15%" y="-30%" width="130%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="4" seed="7" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="34" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="2.4"/></filter>
     </defs>
   </svg>
   <svg class="scene__cloud scene__cloud--1" viewBox="0 0 460 190"><g fill="url(#cloud-puff)" filter="url(#cloud-soft)"><ellipse cx="230" cy="135" rx="185" ry="28"/><circle cx="80" cy="130" r="26"/><circle cx="385" cy="125" r="30"/><circle cx="120" cy="115" r="42"/><circle cx="335" cy="105" r="48"/><circle cx="185" cy="90" r="56"/><circle cx="262" cy="80" r="66"/></g></svg>
@@ -370,11 +379,11 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
 
     <nav class="dock" aria-label="Разделы сайта" data-i18n-aria-label="navLabel">
       <a href="#page=about" data-route-page="about" aria-label="Об этом" data-i18n-aria-label="navAboutLabel">
-        <svg width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="9" width="20" height="14" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M5 9 L10 9 L12 6 L18 6 L20 9" fill="none" stroke="#1C5FC4" stroke-width="1.5"/></svg>
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="9" width="20" height="14" rx="2" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><path d="M5 9 L10 9 L12 6 L18 6 L20 9" fill="none" stroke="#1C5FC4" stroke-width="1.5"/></svg>
         <span data-i18n="navAbout">об этом</span>
       </a>
       <a href="#page=projects" data-route-page="projects" aria-label="Проекты" data-i18n-aria-label="navProjectsLabel">
-        <svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><ellipse cx="15" cy="15" rx="11" ry="4.5" fill="none" stroke="#1C5FC4" stroke-width="1"/><line x1="15" y1="4" x2="15" y2="26" stroke="#1C5FC4" stroke-width="1"/></svg>
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/><ellipse cx="15" cy="15" rx="11" ry="4.5" fill="none" stroke="#1C5FC4" stroke-width="1"/><line x1="15" y1="4" x2="15" y2="26" stroke="#1C5FC4" stroke-width="1"/></svg>
         <span data-i18n="navProjects">проекты</span>
       </a>
       <a href="https://github.com/Keril3" target="_blank" rel="noopener noreferrer" aria-label="GitHub (откроется в новой вкладке)" data-i18n-aria-label="navGithubLabel">
@@ -382,7 +391,7 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
         <span data-i18n="navGithub">github</span>
       </a>
       <a href="#page=contact" data-route-page="contact" aria-label="Связаться со мной" data-i18n-aria-label="navMailLabel">
-        <svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="4" width="16" height="12" rx="1" fill="none" stroke="#1C5FC4" stroke-width="1.5"/><rect x="2" y="16" width="14" height="10" rx="1" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/></svg>
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="4" width="16" height="12" rx="1" fill="none" stroke="#1C5FC4" stroke-width="1.5"/><rect x="2" y="16" width="14" height="10" rx="1" fill="#ffffff" stroke="#1C5FC4" stroke-width="1.5"/></svg>
         <span data-i18n="navMail">связаться со мной</span>
       </a>
     </nav>
@@ -1448,20 +1457,26 @@ async function loadVisitorStats(request){
 function animateGreeting(text){
   window.clearTimeout(greetingStartTimeout);
   window.clearInterval(greetingTypingInterval);
+  // The typed text and an invisible copy of the whole greeting that keeps its final size (see the CSS).
+  const typed = document.createElement('span');
+  typed.className = 'hero-greeting__typed';
+  const full = document.createElement('span');
+  full.className = 'hero-greeting__full';
+  full.textContent = text;
+  heroGreeting.replaceChildren(typed,full);
   // With reduced motion the greeting appears whole at once instead of being typed letter by letter.
   if(reducedMotion.matches){
-    heroGreeting.textContent = text;
+    typed.textContent = text;
     heroGreeting.classList.add('is-complete');
     return;
   }
   heroGreeting.classList.remove('is-complete');
-  heroGreeting.textContent = '';
   const characters = [...text];
   let visibleCharacters = 0;
   greetingStartTimeout = window.setTimeout(()=>{
     greetingTypingInterval = window.setInterval(()=>{
       visibleCharacters += 1;
-      heroGreeting.textContent = characters.slice(0,visibleCharacters).join('');
+      typed.textContent = characters.slice(0,visibleCharacters).join('');
       if(visibleCharacters >= characters.length){
         window.clearInterval(greetingTypingInterval);
         heroGreeting.classList.add('is-complete');
