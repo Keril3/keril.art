@@ -7,12 +7,17 @@ declare(strict_types=1);
 //   POST ?action=forget         delete this browser's record and its cookie (cookies declined later)
 // A visit is recorded only when the browser sends back the cookie set by an earlier response,
 // so clients that ignore cookies (most bots) are never counted. When /etc/keril.art/turnstile-secret exists,
-// that request also needs a Cloudflare Turnstile token in the X-Keril-Turnstile header.
+// a browser that is not in the list yet also needs a Cloudflare Turnstile token in the X-Keril-Turnstile header.
+// If the page could not reach Cloudflare (it is throttled in some Russian networks), it says so with
+// X-Keril-Turnstile-Status: unavailable, and the visit counts anyway, but only a few new visitors a day
+// from one address (a keyed hash of the address is kept until the end of the UTC day).
 
 const VISITOR_COOKIE = 'keril_visitor';
 const VISITOR_COOKIE_TTL = 31536000;
 const REQUEST_HEADER = 'HTTP_X_KERIL_COUNTER';
 const TURNSTILE_HEADER = 'HTTP_X_KERIL_TURNSTILE';
+const TURNSTILE_STATUS_HEADER = 'HTTP_X_KERIL_TURNSTILE_STATUS';
+const UNVERIFIED_ADDRESSES_MAX = 10000;
 const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const BOT_USER_AGENT_PATTERN = '/bot|crawl|spider|slurp|archiv|scrap|fetch|headless|phantom|selenium|puppeteer|playwright'
     . '|python|curl|wget|httpclient|okhttp|java\/|go-http|libwww|monitor|uptime|preview|facebookexternalhit|embedly/i';
@@ -129,6 +134,31 @@ function turnstilePassed(string $secret, mixed $token, string $host): bool
         && ($result['hostname'] ?? null) === $hostname;
 }
 
+/**
+ * A new visitor without a Turnstile token takes one of a few daily places for its address. Called under the lock.
+ * Only a keyed hash of the address is kept, in a file for the current UTC day; files of past days are removed
+ * at the end of every visit request.
+ */
+function takeUnverifiedPlace(string $directory, string $secret, string $today, int $limit): bool
+{
+    $address = $_SERVER['REMOTE_ADDR'] ?? '';
+    if ($limit < 1 || !is_string($address) || $address === '') {
+        return false;
+    }
+    $path = $directory . '/unverified-' . $today . '.json';
+    $places = json_decode((string) @file_get_contents($path), true);
+    if (!is_array($places)) {
+        $places = [];
+    }
+    $key = hash_hmac('sha256', 'unverified:' . $today . ':' . $address, $secret);
+    $used = is_int($places[$key] ?? null) ? $places[$key] : 0;
+    if ($used >= $limit || (!isset($places[$key]) && count($places) >= UNVERIFIED_ADDRESSES_MAX)) {
+        return false;
+    }
+    $places[$key] = $used + 1;
+    return writeAtomically($path, (string) json_encode($places));
+}
+
 function setVisitorCookie(string $value, int $expires): void
 {
     setcookie(VISITOR_COOKIE, $value, [
@@ -174,6 +204,9 @@ $visitorsPath = $dataDirectory . '/all-visitors.jsonl';
 $statsPath = $dataDirectory . '/stats-cache.json';
 // The list stops growing at this size, so a flood of fake visitors cannot fill the disk.
 $maxVisitors = max(1, (int) (getenv('KERIL_COUNTER_MAX_VISITORS') ?: 500000));
+// New visitors a day from one address counted without Turnstile (when Cloudflare is unreachable); 0 turns it off.
+$unverifiedSetting = getenv('KERIL_COUNTER_MAX_UNVERIFIED_PER_IP');
+$maxUnverifiedPerAddress = $unverifiedSetting === false ? 3 : max(0, (int) $unverifiedSetting);
 $today = gmdate('Y-m-d');
 
 $lock = @fopen($dataDirectory . '/all-visitors.lock', 'c');
@@ -216,14 +249,25 @@ if ($action === 'visit' && !$hasValidCookie && !$isBot) {
     }
 }
 
-// With a Turnstile secret on the server, a visit is counted only with a token from the widget on the page.
-// The check waits for Cloudflare, so it runs before taking the lock.
+$visitorHash = $hasValidCookie ? hash_hmac('sha256', 'all-time:' . $visitorId, $secret) : null;
+
+// With a Turnstile secret on the server, a new browser is counted only with a token from the widget on the page,
+// or, when the page could not reach Cloudflare, within the small daily allowance of its address (under the lock).
+// A browser already in the list passed that check when it was first counted. The Turnstile check waits for
+// Cloudflare, so it runs before taking the lock; the list is replaced atomically, so it can be read without it.
 $passedTurnstile = true;
-if ($action === 'visit' && $hasValidCookie && !$isBot) {
+$turnstileUnavailable = false;
+if ($action === 'visit' && $visitorHash !== null && !$isBot) {
     $turnstileSecret = @file_get_contents(getenv('KERIL_TURNSTILE_SECRET_FILE') ?: '/etc/keril.art/turnstile-secret');
     $turnstileSecret = $turnstileSecret === false ? '' : trim($turnstileSecret);
-    if ($turnstileSecret !== '') {
-        $passedTurnstile = turnstilePassed($turnstileSecret, $_SERVER[TURNSTILE_HEADER] ?? '', $_SERVER['HTTP_HOST'] ?? '');
+    if ($turnstileSecret !== '' && !isset(readVisitors($visitorsPath)[$visitorHash])) {
+        $token = $_SERVER[TURNSTILE_HEADER] ?? '';
+        if (is_string($token) && $token !== '') {
+            $passedTurnstile = turnstilePassed($turnstileSecret, $token, $_SERVER['HTTP_HOST'] ?? '');
+        } else {
+            $passedTurnstile = false;
+            $turnstileUnavailable = ($_SERVER[TURNSTILE_STATUS_HEADER] ?? '') === 'unavailable';
+        }
     }
 }
 
@@ -233,21 +277,21 @@ if (!flock($lock, LOCK_EX)) {
 $visitors = readVisitors($visitorsPath);
 $changed = false;
 $counted = false;
-$visitorHash = $hasValidCookie ? hash_hmac('sha256', 'all-time:' . $visitorId, $secret) : null;
 
 if ($action === 'forget') {
     if ($visitorHash !== null && isset($visitors[$visitorHash])) {
         unset($visitors[$visitorHash]);
         $changed = true;
     }
-} elseif ($visitorHash !== null && !$isBot && $passedTurnstile) {
+} elseif ($visitorHash !== null && !$isBot) {
     if (isset($visitors[$visitorHash])) {
         $counted = true;
         if ($visitors[$visitorHash]['lastSeen'] !== $today) {
             $visitors[$visitorHash]['lastSeen'] = $today;
             $changed = true;
         }
-    } elseif (count($visitors) < $maxVisitors) {
+    } elseif (count($visitors) < $maxVisitors && ($passedTurnstile
+        || ($turnstileUnavailable && takeUnverifiedPlace($dataDirectory, $secret, $today, $maxUnverifiedPerAddress)))) {
         $visitors[$visitorHash] = ['firstSeen' => $today, 'lastSeen' => $today];
         $counted = true;
         $changed = true;
@@ -274,6 +318,13 @@ foreach (glob($dataDirectory . '/visitors-*.jsonl') ?: [] as $oldLogPath) {
     if (preg_match('/visitors-(\d{4}-\d{2}-\d{2})\.jsonl\z/D', basename($oldLogPath), $matches)
         && $matches[1] < $retentionDate) {
         @unlink($oldLogPath);
+    }
+}
+// Address hashes of visits counted without Turnstile live only for their own day.
+foreach (glob($dataDirectory . '/unverified-*.json') ?: [] as $oldPlacesPath) {
+    if (preg_match('/unverified-(\d{4}-\d{2}-\d{2})\.json\z/D', basename($oldPlacesPath), $matches)
+        && $matches[1] < $today) {
+        @unlink($oldPlacesPath);
     }
 }
 
