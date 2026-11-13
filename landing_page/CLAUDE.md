@@ -118,6 +118,13 @@
   контур рисуется на `.status-bar` и только в клавиатурном режиме —
   класс `html.is-keyboard-nav` ставится по Tab и снимается любым нажатием
   мыши/пальца). Tab закрывает открытые подсказки поиска и меню языка.
+  Первый Tab показывает ссылку «К содержимому» / «Skip to content»
+  (`.skip-link`, `skipLink`, первый элемент `.page-shell`, спрятана над
+  окном, пока на ней нет фокуса): Enter переводит фокус на
+  `main#main` (`tabindex="-1"`), минуя поиск, тему, язык и меню.
+  Переход делает скрипт (`preventDefault` + `focus()`), а не якорь
+  `#main`: иначе сменился бы адрес `#page=…` и маршрут сбросился бы
+  на главную. Без JS ссылка работает как обычный якорь.
   Новые кнопки и ссылки должны получать
   этот же контур, без синих/своих вариантов. После закрытия окна с
   клавиатуры фокус возвращается на его кнопку, после "на весь экран" —
@@ -385,7 +392,8 @@ Hysteria2, VLESS+TLS) и AdGuard Home; AmneziaWG больше нет. Их на�
 
 ### Выкладка
 `index.html`, `404.html`, `robots.txt`, `monocraft.woff2`, `favicon.ico`,
-`apple-touch-icon.png` и `og-image.jpg` заливаются из PowerShell (ключ лежит в агенте
+`apple-touch-icon.png`, `og-image.jpg` и `.well-known/security.txt`
+заливаются из PowerShell (ключ лежит в агенте
 Windows), по одному файлу за вызов, перезапускать ничего не нужно, потом
 результат проверяется на сайте (SHA256 живого файла = локального):
 ```powershell
@@ -446,12 +454,16 @@ scp -o BatchMode=yes index.html keril-deploy:/index.html
   просьбы владельца.
 - `/.well-known/security.txt` (RFC 9116): куда писать о найденной
   уязвимости — только `hello@keril.art`. Источник в репозитории —
-  `landing_page/.well-known/security.txt`. На сервере файл создаёт
-  администратор (задача `E:\PersonalServer\TASK-keril-art-2026-11-12.md`,
-  там же `Cross-Origin-Opener-Policy: same-origin` и TLS 1.2); пока он не
-  создан, адрес отдаёт 404. Строку `Expires` нужно обновлять раз в год, до
+  `landing_page/.well-known/security.txt`. На сервере файл создан
+  13.11.2026 и совпадает с репозиторием (`keril-deploy` может его
+  перезаписывать). Строку `Expires` нужно обновлять раз в год, до
   12.11.2027 (новая дата не дальше года вперёд), и выкладывать как остальные
   файлы: `scp -o BatchMode=yes E:\keril.art\landing_page\.well-known\security.txt keril-deploy:/.well-known/security.txt`.
+- TLS (проверено снаружи 13.11.2026): на `127.0.0.1:8444` nginx принимает
+  TLS 1.2 и 1.3 с наборами шифров Mozilla intermediate (TLS 1.2 — для
+  старых устройств), заголовок `Cross-Origin-Opener-Policy: same-origin`
+  на сайте и на HTML (`snippets/keril-coop.conf`, подключён и в блоке
+  server, и в `location ~ \.html$`, где свой `add_header`).
 - `robots.txt` запрещает честным ботам трогать `counter.php`.
 - `counter.php`: защита от ботов и накрутки (см. ниже), тоже работает без
   правок nginx.

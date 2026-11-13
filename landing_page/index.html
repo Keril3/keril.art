@@ -88,6 +88,13 @@ a{text-decoration:none}
 .page-footer{display:flex;flex-direction:column;gap:12px}
 /* Read by screen readers and search engines, not shown. */
 .visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;border:0;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+/* "To the content" link for keyboard users: hidden above the window until Tab reaches it, then a small XP
+   button at the top left. Enter moves focus to <main>, past the search, theme, language and menu. */
+.skip-link{position:fixed;top:-64px;left:16px;z-index:60;padding:7px 14px;border:1px solid #2A5FA8;border-radius:6px;background:linear-gradient(180deg,#F4FAFF 0%,#BFE0FB 48%,#6FAEE8 50%,#3C82D6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 5px rgba(20,70,140,0.25);font-size:15px;transition:top .15s ease}
+.skip-link:focus{top:12px}
+html[data-theme="dark"] .skip-link{color:#0A2A52!important}
+.page-main:focus{outline:none}
+@media(prefers-reduced-motion:reduce){.skip-link{transition:none}}
 .status-bar{display:flex;align-items:center;gap:12px;padding:6px 14px;border:1px solid #ffffff;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.4));box-shadow:0 2px 8px rgba(20,70,140,0.2)}
 .status-bar__online{flex:none;font-size:14px;opacity:0.7}
 .dock{display:flex;flex-wrap:wrap;justify-content:center;gap:42px;padding:4px 0}
@@ -358,6 +365,7 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
   </svg>
 </div>
 <div class="page-shell">
+  <a class="skip-link" href="#main" data-i18n="skipLink">К содержимому</a>
   <div class="page-column">
 
     <header class="status-bar">
@@ -401,7 +409,7 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
       </a>
     </nav>
 
-    <main class="page-main">
+    <main class="page-main" id="main" tabindex="-1">
     <h1 class="visually-hidden" data-i18n="pageHeading">Кирилл (Keril³) — начинающий разработчик</h1>
     <div class="hero">
       <svg class="twinkle hero__star hero__star--left" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24">
@@ -557,7 +565,7 @@ let greetingTypingInterval;
 let visitorsAllTime = null;
 const translations = {
   ru:{
-    navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub (откроется в новой вкладке)',navMail:'связаться со мной',navMailLabel:'Связаться со мной',navLabel:'Разделы сайта',pageHeading:'Кирилл (Keril³) — начинающий разработчик',pageTitle:'Кирилл Keril³ — keril.art',contactWindowTitle:'контакты.vcf',
+    navAbout:'об этом',navAboutLabel:'Об этом',navProjects:'проекты',navProjectsLabel:'Проекты',navGithub:'github',navGithubLabel:'GitHub (откроется в новой вкладке)',navMail:'связаться со мной',navMailLabel:'Связаться со мной',skipLink:'К содержимому',navLabel:'Разделы сайта',pageHeading:'Кирилл (Keril³) — начинающий разработчик',pageTitle:'Кирилл Keril³ — keril.art',contactWindowTitle:'контакты.vcf',
     heroGreeting:'СОЕДИНЕНИЕ УСТАНОВЛЕНО.\nДОБРО ПОЖАЛОВАТЬ!',aboutWindowTitle:'обо_мне.txt',aboutSiteWindowTitle:'об_этом.txt',
     projectsWindowTitle:'проекты.zip',projectsSoon:'Скоро тут появятся проекты, которые мне не стыдно показать на публику.',aboutSiteIntro:'Это мой личный сайт-визитка: здесь можно узнать, кто я, посмотреть мои проекты и найти, как со мной связаться.',aboutSiteWhy:'Я сделал его, чтобы иметь своё место в интернете, а не только профили в соцсетях, и заодно попрактиковаться: сайт написан вручную, без конструкторов, и работает на моём собственном сервере, который я сам настроил.',aboutSiteStyle:'Оформление — смесь Frutiger Aero, Windows XP и эстетики Tenshi Kawaii: глянец, облака, холмы и окна, как на компьютерах из нулевых. Мне просто нравится этот стиль, а ещё хотелось сделать что-то непохожее на типичные сайты.',aboutMeIntro:'Привет! Меня зовут Кирилл, в сети — Keril³. Я начинающий разработчик, и больше всего меня тянет в геймдев. Сейчас ищу первую работу или стажировку и открыт к предложениям.',aboutMeEducation:'По образованию я инженер связи: бакалавриат по направлению «Инфокоммуникационные технологии и системы связи» и магистратура «Мобильные сети и технологии». Это пригодилось и здесь: сервер, на котором работает этот сайт, я поднял и настроил сам — Linux, nginx, домен и SSL-сертификаты.',aboutMeSkills:'Изучаю C# и Unity — на них уже сделал прототипы нескольких игр, а параллельно сам осваиваю C++ и Unreal Engine. Есть небольшой опыт с Python. Английский — на уровне B2–C1, так что документация и общение на нём не проблема.',aboutMeHobbies:'Из игр люблю в основном шутеры и головоломки. А в свободное от кода время занимаюсь 3D-печатью, иногда — твердотельным моделированием и сборкой кастомных клавиатур.',aboutMeProjects:'Мои проекты лежат на GitHub, а лучшие скоро появятся в окне «проекты.zip». Если хотите предложить работу или просто пообщаться — все контакты в разделе «связаться со мной».',
     footerNote:'Посетителей за всё время',counterWindowTitle:'посетители.exe',windowMinimize:'Свернуть',windowRestore:'Развернуть',windowClose:'Закрыть',windowMaximize:'Развернуть на весь экран',windowRestoreDown:'Вернуть в окно',statsAllTime:'За всё время',statsYear:'За год',statsMonth:'За месяц',themeToggleLabel:'Тёмная тема',cookieTitle:'cookies.exe',cookieText:'Сайт использует один cookie, чтобы считать уникальных посетителей. В нём только случайный идентификатор — без рекламы и трекеров. После согласия Cloudflare Turnstile проверяет, что заходит человек, а не бот. Без согласия посещение просто не учитывается. Когда открываются проекты или поиск, список проектов приходит напрямую с GitHub, а описания на другом языке переводит сервис MyMemory.',cookiePrivacy:'Политика конфиденциальности Cloudflare Turnstile ↗',cookieAccept:'Принять',cookieDecline:'Отказаться',cookieSettings:'настройки cookie',routeHome:'На главную',routeAbout:'Об этом',routeMe:'Обо мне',routeProjects:'Проекты',routeContact:'Связаться со мной',
@@ -567,7 +575,7 @@ const translations = {
     kindProject:'проект',githubWindowTitle:'репозитории.git',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoTranslated:'автоперевод',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
   },
   en:{
-    navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',navLabel:'Site sections',pageHeading:'Kirill (Keril³), a beginner developer',pageTitle:'Kirill Keril³ — keril.art',contactWindowTitle:'contacts.vcf',
+    navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',skipLink:'Skip to content',navLabel:'Site sections',pageHeading:'Kirill (Keril³), a beginner developer',pageTitle:'Kirill Keril³ — keril.art',contactWindowTitle:'contacts.vcf',
     heroGreeting:'CONNECTION ESTABLISHED.\nWELCOME!',aboutWindowTitle:'about_me.txt',aboutSiteWindowTitle:'about_this.txt',
     projectsWindowTitle:'projects.zip',projectsSoon:"Projects I'm not embarrassed to show in public will appear here soon.",aboutSiteIntro:"This is my personal business-card site: here you can find out who I am, see my projects and learn how to reach me.",aboutSiteWhy:'I made it to have a place of my own on the internet, not just social media profiles, and to get some practice along the way: the site is written by hand, without site builders, and runs on my own server, which I set up myself.',aboutSiteStyle:'The look is a mix of Frutiger Aero, Windows XP, and the Tenshi Kawaii aesthetic: gloss, clouds, hills, and windows like on computers from the 2000s. I just love this style, and I wanted to make something unlike typical websites.',aboutMeIntro:"Hi! My name is Kirill, Keril³ online. I'm a beginner developer, and game development pulls me in the most. I'm currently looking for my first job or internship and open to offers.",aboutMeEducation:"I'm a telecom engineer by education: a bachelor's in Infocommunication Technologies and Communication Systems and a master's in Mobile Networks and Technologies. It came in handy here too: I set up the server this site runs on myself — Linux, nginx, the domain, and SSL certificates.",aboutMeSkills:"I'm learning C# and Unity and have already built prototypes of several games with them, while picking up C++ and Unreal Engine on my own. I have a little experience with Python. My English is B2–C1, so documentation and communication in it are no problem.",aboutMeHobbies:"In games, I mostly love shooters and puzzles. When I'm not coding, I do 3D printing, and now and then some solid modeling and custom keyboard building.",aboutMeProjects:"My projects live on GitHub, and the best of them will soon appear in the projects.zip window. If you'd like to offer me a job or just chat, all my contacts are on the “contact me” page.",
     footerNote:'All-time visitors',counterWindowTitle:'visitors.exe',windowMinimize:'Minimize',windowRestore:'Restore',windowClose:'Close',windowMaximize:'Maximize',windowRestoreDown:'Restore down',statsAllTime:'All time',statsYear:'Past year',statsMonth:'Past month',themeToggleLabel:'Dark theme',cookieTitle:'cookies.exe',cookieText:'This site uses a single cookie to count unique visitors. It holds only a random ID — no ads, no trackers. Once you accept, Cloudflare Turnstile checks that the visitor is a person, not a bot. Without consent your visit is simply not counted. When you open the projects or the search, the project list comes straight from GitHub, and descriptions in the other language are translated by MyMemory.',cookiePrivacy:'Cloudflare Turnstile privacy policy ↗',cookieAccept:'Accept',cookieDecline:'Decline',cookieSettings:'cookie settings',routeHome:'Back to home',routeAbout:'About this',routeMe:'About me',routeProjects:'Projects',routeContact:'Contact me',
@@ -1277,6 +1285,11 @@ function syncRouteWithLocation(){
   if(page !== currentPage)renderRoute(page);
 }
 window.addEventListener('popstate',syncRouteWithLocation);
+// The skip link moves focus to the content without changing the #page=… address the routes use.
+document.querySelector('.skip-link').addEventListener('click',event=>{
+  event.preventDefault();
+  document.querySelector('#main').focus();
+});
 window.addEventListener('hashchange',syncRouteWithLocation);
 
 const cookieBanner = document.querySelector('#cookie-banner');
