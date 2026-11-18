@@ -225,16 +225,17 @@ html[data-theme="dark"] .repo-list__item.is-highlighted{background:rgba(255,201,
 .repo-list__translated{cursor:help}
 .repo-list__links{display:flex;flex:none;align-items:flex-start;gap:8px}
 @media(max-width:480px){.repo-list__item{flex-wrap:wrap;gap:8px 12px;padding:16px 4px}.repo-list__main{flex-basis:calc(100% - 4ch)}.repo-list__links{margin-left:calc(2ch + 12px)}}
-.xp-window.is-popping{animation:window-pop .26s ease-in forwards}
-@keyframes window-pop{40%{transform:scale(1.05)}100%{transform:scale(1.12);opacity:0}}
+/* Closing: the window fades out with a slight shrink, like in Windows; it comes back the same way in reverse. */
+.xp-window.is-closing{animation:window-close .2s ease-in forwards}
+@keyframes window-close{to{transform:scale(0.96);opacity:0}}
 .xp-window.is-closed{visibility:hidden}
-.xp-window.is-returning{animation:window-return .55s cubic-bezier(.2,1.4,.4,1)}
-@keyframes window-return{from{transform:scale(0.6);opacity:0}}
+.xp-window.is-returning{animation:window-return .25s ease-out}
+@keyframes window-return{from{transform:scale(0.96);opacity:0}}
 .visitor-stats{display:flex;flex-direction:column;margin:0;padding:0;list-style:none}
 .visitor-stats__row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:12px 2px;border-top:1px dotted #4FA8E8;font-size:17px}
 .visitor-stats__row:first-child{border-top:0}
 .visitor-stats__value{font-size:24px}
-@media(prefers-reduced-motion:reduce){.xp-window.is-popping,.xp-window.is-returning{animation:none}.xp-window__collapse{transition:none}}
+@media(prefers-reduced-motion:reduce){.xp-window.is-closing,.xp-window.is-returning{animation:none}.xp-window__collapse{transition:none}}
 /* The background: a landscape in the manner of the Windows XP "Bliss" wallpaper. A sky gradient, a few clouds
    drifting left to right, and a green hill in front of them. It is drawn once and the clouds move as GPU layers,
    so no script runs for it. 404.html has the same markup and rules: change both. */
@@ -332,8 +333,6 @@ html[data-theme="dark"] .path-search__input::placeholder{color:#9DB8DD}
 html[data-theme="dark"] .path-suggestions,html[data-theme="dark"] .language-menu{border-color:rgba(170,210,255,0.5);background:linear-gradient(180deg,rgba(36,50,112,0.98),rgba(20,30,78,0.98))}
 html[data-theme="dark"] .path-suggestion:hover,html[data-theme="dark"] .path-suggestion[aria-selected="true"],html[data-theme="dark"] .language-option:hover,html[data-theme="dark"] .language-option[aria-checked="true"]{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.45),rgba(42,60,154,0.45));box-shadow:none}
 html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:linear-gradient(180deg,rgba(111,143,234,0.4),rgba(42,60,154,0.55))}
-.burst-canvas{position:fixed;inset:0;z-index:30;display:block;width:100%;height:100%;pointer-events:none}
-.burst-canvas[hidden]{display:none}
 @media(max-width:480px){.status-bar{flex-wrap:wrap;justify-content:space-between;border-radius:14px}.path-search{order:3;flex-basis:100%}.path-suggestions{width:100%}.dock{gap:24px}.dock a [data-i18n]{font-size:18px!important}.hero-greeting{font-size:20px;letter-spacing:0.06em}}
 </style>
 
@@ -558,7 +557,6 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
   </div>
 
 </div>
-<canvas class="burst-canvas" id="burst-canvas" aria-hidden="true" hidden></canvas>
 <div class="turnstile-slot" id="turnstile-slot"></div>
 <section class="xp-window xp-popup" id="cookie-banner" aria-labelledby="cookie-banner-title" hidden>
   <div class="xp-window__bar">
@@ -653,10 +651,6 @@ function renderVisitorCount(){
   visitorCount.textContent = `${translations[currentLanguage].footerNote}: ${count}`;
 }
 
-function randomBetween(minimum,maximum){
-  return minimum + Math.random() * (maximum - minimum);
-}
-
 window.addEventListener('resize',updateUiScale);
 
 const routePages = ['home','about','me','projects','contact'];
@@ -702,140 +696,16 @@ function addWindowButtons(windowElement){
   updateWindowButtons(windowElement);
 }
 
-// A closed window bursts like a bubble above the page: rings, droplets and glitter on #burst-canvas.
-// The canvas is shown and animated only while a burst plays.
-const burstCanvas = document.querySelector('#burst-canvas');
-const burstContext = burstCanvas.getContext('2d');
-const burstDuration = 1;
-const burstRingDuration = 0.5;
-const burstDropletColors = ['#ffffff','#CFEBFF','#7FCDFB'];
-const burstSparkleColors = ['#ffffff','#ffffff','#FFC9E8','#CFEBFF'];
-let burstEffects = [];
-let burstFrame = 0;
-let burstPreviousTime = 0;
-let burstPixelRatio = 1;
-
-function createBurstEffect(x,y,size){
-  const dropletCount = 4 + Math.round(size / 10);
-  const sparkleCount = 5 + Math.round(size / 4);
-  return {
-    x,
-    y,
-    size,
-    life:0,
-    droplets:Array.from({length:dropletCount},(_,index)=>({
-      angle:index / dropletCount * Math.PI * 2 + randomBetween(-0.3,0.3),
-      distance:randomBetween(0.7,1.3) * (10 + size * 0.9),
-      size:randomBetween(1,1.6 + size / 14),
-      color:burstDropletColors[Math.floor(Math.random() * burstDropletColors.length)]
-    })),
-    sparkles:Array.from({length:sparkleCount},()=>({
-      angle:randomBetween(0,Math.PI * 2),
-      distance:randomBetween(0.6,1.4) * (18 + size * 1.5),
-      size:randomBetween(2.6,5.2),
-      color:burstSparkleColors[Math.floor(Math.random() * burstSparkleColors.length)],
-      phase:randomBetween(0,Math.PI * 2)
-    }))
-  };
-}
-
-function drawBurstSparkle(x,y,size){
-  burstContext.beginPath();
-  burstContext.moveTo(x,y - size);
-  burstContext.quadraticCurveTo(x,y,x + size,y);
-  burstContext.quadraticCurveTo(x,y,x,y + size);
-  burstContext.quadraticCurveTo(x,y,x - size,y);
-  burstContext.quadraticCurveTo(x,y,x,y - size);
-  burstContext.fill();
-}
-
-function drawBurstEffect(effect){
-  const sparkleProgress = effect.life / burstDuration;
-  const sparkleEase = 1 - (1 - sparkleProgress) ** 3;
-  for(const sparkle of effect.sparkles){
-    burstContext.globalAlpha = Math.max(0,(1 - sparkleProgress) * (0.55 + 0.45 * Math.sin(effect.life * 28 + sparkle.phase)));
-    burstContext.fillStyle = sparkle.color;
-    drawBurstSparkle(
-      effect.x + Math.cos(sparkle.angle) * sparkle.distance * sparkleEase,
-      effect.y + Math.sin(sparkle.angle) * sparkle.distance * sparkleEase + 16 * sparkleProgress * sparkleProgress,
-      sparkle.size * (1 - sparkleProgress * 0.4)
-    );
-  }
-  if(effect.life >= burstRingDuration)return;
-  const progress = effect.life / burstRingDuration;
-  const easeOut = 1 - (1 - progress) ** 3;
-  const fade = 1 - progress;
-  burstContext.globalAlpha = fade * 0.9;
-  burstContext.beginPath();
-  burstContext.arc(effect.x,effect.y,effect.size / 2 * (1 + easeOut * 1.3),0,Math.PI * 2);
-  burstContext.strokeStyle = '#ffffff';
-  burstContext.lineWidth = 1.5 * fade + 0.3;
-  burstContext.stroke();
-  for(const droplet of effect.droplets){
-    burstContext.globalAlpha = fade;
-    burstContext.beginPath();
-    burstContext.arc(effect.x + Math.cos(droplet.angle) * droplet.distance * easeOut,effect.y + Math.sin(droplet.angle) * droplet.distance * easeOut,droplet.size * (1 - progress * 0.5),0,Math.PI * 2);
-    burstContext.fillStyle = droplet.color;
-    burstContext.fill();
-    burstContext.strokeStyle = 'rgba(79,168,232,0.7)';
-    burstContext.lineWidth = 0.6;
-    burstContext.stroke();
-  }
-}
-
-function animateBursts(time){
-  const delta = burstPreviousTime ? Math.min((time - burstPreviousTime) / 1000,0.05) : 0;
-  burstPreviousTime = time;
-  burstEffects = burstEffects.filter(effect=>{
-    effect.life += delta;
-    return effect.life < burstDuration;
-  });
-  burstContext.setTransform(burstPixelRatio,0,0,burstPixelRatio,0,0);
-  burstContext.clearRect(0,0,window.innerWidth,window.innerHeight);
-  burstEffects.forEach(drawBurstEffect);
-  if(burstEffects.length){
-    burstFrame = requestAnimationFrame(animateBursts);
-  }else{
-    burstFrame = 0;
-    burstPreviousTime = 0;
-    burstCanvas.hidden = true;
-  }
-}
-
-function burstWindow(rect){
-  // The effects spread over the window's whole area.
-  const columns = Math.max(2,Math.round(rect.width / 90));
-  const rows = Math.max(1,Math.round(rect.height / 90));
-  for(let row = 0;row < rows;row++){
-    for(let column = 0;column < columns;column++){
-      burstEffects.push(createBurstEffect(
-        rect.left + (column + 0.5) / columns * rect.width + randomBetween(-12,12),
-        rect.top + (row + 0.5) / rows * rect.height + randomBetween(-10,10),
-        randomBetween(34,62)
-      ));
-    }
-  }
-  if(burstFrame)return;
-  burstPixelRatio = Math.min(window.devicePixelRatio || 1,2);
-  burstCanvas.width = Math.round(window.innerWidth * burstPixelRatio);
-  burstCanvas.height = Math.round(window.innerHeight * burstPixelRatio);
-  burstCanvas.hidden = false;
-  burstFrame = requestAnimationFrame(animateBursts);
-}
-
 function closeWindow(windowElement){
-  if(windowElement.classList.contains('is-popping') || windowElement.classList.contains('is-closed'))return;
+  if(windowElement.classList.contains('is-closing') || windowElement.classList.contains('is-closed'))return;
   const animate = !reducedMotion.matches;
   const hadFocus = windowElement.contains(document.activeElement);
-  if(animate){
-    burstWindow(windowElement.getBoundingClientRect());
-    windowElement.classList.add('is-popping');
-  }
+  if(animate)windowElement.classList.add('is-closing');
   // The window keeps its place while it is gone, so the page does not jump, and comes back after 2s.
   window.setTimeout(()=>{
-    windowElement.classList.remove('is-popping');
+    windowElement.classList.remove('is-closing');
     windowElement.classList.add('is-closed');
-  },animate ? 260 : 0);
+  },animate ? 200 : 0);
   window.setTimeout(()=>{
     windowElement.classList.remove('is-closed');
     if(animate)windowElement.classList.add('is-returning');
@@ -1250,7 +1120,7 @@ function cloneHomeWindow(id){
   panel.removeAttribute('aria-labelledby');
   panel.setAttribute('aria-label',panel.querySelector('.xp-window__title').textContent);
   panel.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));
-  panel.classList.remove('is-minimized','is-closed','is-popping','is-returning');
+  panel.classList.remove('is-minimized','is-closed','is-closing','is-returning');
   return panel;
 }
 
