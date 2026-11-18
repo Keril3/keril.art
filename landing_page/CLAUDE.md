@@ -651,6 +651,18 @@ PHP и nginx на этой машине не установлены; для пр
 Playwright документ `https://keril.art/` подменялся локальным `index.html`,
 остальное (шрифт, счётчик, Turnstile) шло по-настоящему; headless-браузер
 счётчик не засчитывает (User-Agent).
+Мелочи, на которых уже спотыкались: обработчик `context.route` — функция
+одного аргумента (`lambda route: ...`), иначе Playwright подставит второй;
+тему, язык и согласие задавать через `context.add_init_script`
+(`keril-art-cookies`='declined', чтобы тест не считался визитом); полосы
+прокрутки Playwright прячет, для их проверки
+`launch(ignore_default_args=['--hide-scrollbars'])`; превью ссылки —
+скачать страницу с User-Agent `TelegramBot (like TwitterBot)` и разобрать
+`og:*`.
+
+Не делать (решено): английские Open Graph (у языков нет отдельных адресов),
+sitemap (одна страница), HSTS preload/includeSubDomains (на поддомене VPN),
+публичный репозиторий, правки профиля GitHub.
 
 ## Пет-проекты на поддоменах (план, не реализовано)
 Каждый пет-проект — свой поддомен (`project1.keril.art` и т.п.),
