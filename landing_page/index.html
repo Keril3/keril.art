@@ -549,6 +549,7 @@ const themeToggle = document.querySelector('#theme-toggle');
 let currentPage = 'home';
 let greetingStartTimeout;
 let greetingTypingInterval;
+let greetingHasAnimated = false;
 let visitorsAllTime = null;
 const translations = {
   ru:{
@@ -1328,6 +1329,12 @@ function animateGreeting(text){
   full.className = 'hero-greeting__full';
   full.textContent = text;
   heroGreeting.replaceChildren(typed,full);
+  if(greetingHasAnimated){
+    typed.textContent = text;
+    heroGreeting.classList.add('is-complete');
+    return;
+  }
+  greetingHasAnimated = true;
   // With reduced motion the greeting appears whole at once instead of being typed letter by letter.
   if(reducedMotion.matches){
     typed.textContent = text;
