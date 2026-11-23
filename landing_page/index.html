@@ -475,7 +475,7 @@ html[data-theme="dark"] .path-suggestion__icon{border-color:#6F8FEA;background:l
       </div>
     </template>
 
-    <!-- Body of the "репозитории.git" window on the projects page; the list is filled from the GitHub API. -->
+    <!-- Body of the "проекты.zip" window on the projects page; the list is filled from the GitHub API. -->
     <template id="github-content">
       <div class="xp-window__text">
         <p data-i18n="githubIntro">Все мои открытые репозитории на GitHub. Новые появляются здесь сами.</p>
@@ -559,7 +559,7 @@ const translations = {
     searchPlaceholder:'поиск по сайту',searchLabel:'Поиск по разделам сайта',resultsLabel:'Результаты поиска',noResults:'Ничего не найдено',languageButton:'Выбрать язык',languageMenu:'Язык сайта',
     kindPage:'страница',kindLink:'ссылка',suggestAboutTitle:'Об этом',suggestAboutDetail:'Для чего этот сайт',suggestMeTitle:'Обо мне',suggestMeDetail:'Кто я, навыки, образование и хобби',
     suggestProjectsTitle:'Проекты',suggestProjectsDetail:'SugarBridge и мои репозитории с GitHub',suggestContactTitle:'Связаться со мной',suggestContactDetail:'Почта, Discord и Telegram',contactIntro:'Со мной можно связаться здесь:',contactEmail:'Почта',contactEmailLink:'Написать на почту',contactDiscordLink:'Открыть профиль в Discord (в новой вкладке)',contactTelegramLink:'Открыть чат в Telegram (в новой вкладке)',suggestGithubTitle:'GitHub',suggestGithubDetail:'Все мои проекты, откроется в новой вкладке',
-    kindProject:'проект',githubWindowTitle:'репозитории.git',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
+    kindProject:'проект',githubWindowTitle:'проекты.zip',githubIntro:'Все мои открытые репозитории на GitHub. Новые появляются здесь сами.',githubLoading:'Загружаю список с GitHub…',githubError:'Не получилось загрузить список с GitHub. Все проекты можно посмотреть прямо там:',githubEmpty:'Открытых репозиториев пока нет.',repoNoDescription:'Без описания',repoUpdated:'обновлён',repoStars:'Звёзды на GitHub',repoGithubLink:'Открыть {name} на GitHub (в новой вкладке)',repoHomepageLink:'Открыть сайт {name} (в новой вкладке)'
   },
   en:{
     navAbout:'about this',navAboutLabel:'About this',navProjects:'projects',navProjectsLabel:'Projects',navGithub:'github',navGithubLabel:'GitHub (opens in a new tab)',navMail:'contact me',navMailLabel:'Contact me',skipLink:'Skip to content',navLabel:'Site sections',pageHeading:'Kirill (Keril³), a beginner developer',pageTitle:'Kirill Keril³ — keril.art',contactWindowTitle:'contacts.vcf',
@@ -569,7 +569,7 @@ const translations = {
     searchPlaceholder:'search this site',searchLabel:'Search site sections',resultsLabel:'Search results',noResults:'No results found',languageButton:'Choose language',languageMenu:'Site language',
     kindPage:'page',kindLink:'link',suggestAboutTitle:'About this',suggestAboutDetail:'What this site is for',suggestMeTitle:'About me',suggestMeDetail:'Who I am, skills, education, and hobbies',
     suggestProjectsTitle:'Projects',suggestProjectsDetail:'SugarBridge and my repositories from GitHub',suggestContactTitle:'Contact me',suggestContactDetail:'Email, Discord, and Telegram',contactIntro:'You can reach me here:',contactEmail:'Email',contactEmailLink:'Send an email',contactDiscordLink:'Open Discord profile (new tab)',contactTelegramLink:'Open Telegram chat (new tab)',suggestGithubTitle:'GitHub',suggestGithubDetail:'All my projects, opens in a new tab',
-    kindProject:'project',githubWindowTitle:'repositories.git',githubIntro:'All my public repositories on GitHub. New ones show up here on their own.',githubLoading:'Loading the list from GitHub…',githubError:"Couldn't load the list from GitHub. You can see all my projects there:",githubEmpty:'No public repositories yet.',repoNoDescription:'No description',repoUpdated:'updated',repoStars:'GitHub stars',repoGithubLink:'Open {name} on GitHub (new tab)',repoHomepageLink:'Open the {name} website (new tab)'
+    kindProject:'project',githubWindowTitle:'projects.zip',githubIntro:'All my public repositories on GitHub. New ones show up here on their own.',githubLoading:'Loading the list from GitHub…',githubError:"Couldn't load the list from GitHub. You can see all my projects there:",githubEmpty:'No public repositories yet.',repoNoDescription:'No description',repoUpdated:'updated',repoStars:'GitHub stars',repoGithubLink:'Open {name} on GitHub (new tab)',repoHomepageLink:'Open the {name} website (new tab)'
   }
 };
 let currentLanguage = 'ru';
@@ -751,7 +751,7 @@ function createVisitorStats(){
   return list;
 }
 
-// Public repositories of the GitHub profile fill the "репозитории.git" window on the projects page
+// Public repositories of the GitHub profile fill the "проекты.zip" window on the projects page
 // and the site search. The browser asks the GitHub API directly (no token) once per page view. The saved
 // copy from the last visit is shown at once and replaced by the answer; it is also what stays on screen
 // when GitHub cannot be reached. An unchanged list comes back as 304 from GitHub, which does not count
